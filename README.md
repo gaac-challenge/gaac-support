@@ -1,14 +1,53 @@
-# GAAC 全程沙盘
+# GAAC 技术支持（GAAC Support）
 
-Grand Agentic AI Challenge（智能体大奖赛）的赛程推演页面：从赛前准备、五队轮流上机，到赛后 90 天，按赛务预案模拟各种活动和风险。
+智能体大奖赛的参赛技术支持与阅读资料站。第一阶段已迁移技术支持的十个页面；赛程推演和阅读板块通过旧版入口继续使用。
 
-- `index.html`：页面（Mercury 风格，浅色 / 深色）
-- `scenario.js`：默认场景。赛前任务和工期估计、赛后步骤、可注入的风险、一键情景、风险登记册
-- `engine.js`：推演规则（补时、挪补赛、候补补位、启动门禁、春节顺延等），纯计算，也能用 Node 跑
-- `infra/`：LLM 推理基础设施全景（调研报告 + 单篇文档）。由 `~/projects/yue/inference-infra/tools/build_concepts.py` 生成，不要手改，改内容请改那边的 md 再重跑脚本
-- `prep/`：vLLM × DeepSeek-V4.1-Flash 中文读本（原 gaac-prep 站点）。由 `参考资料/DeepSeek_V4.1_Flash_推理数据/publish_to_sandbox.py` 同步过来，不要手改
-- `agent-bench/`：Agent 质量评测的各个赛项。现在只有 `deep-research/`（深度研究评测基准资料站，原 xiaokuge.github.io/deep-research-benchmark/），由 `~/projects/yue/deep-research-benchmark/tools/publish_to_sandbox.py` 从那边已公开的 `origin/main` 同步过来，不要手改
+## 本地开发与构建
 
-工期和日期都是推演假设，不是正式赛程。赛制依据 oaic.ai/gaac（2026-11-02 更新，页面注明“赛制暂定，仅供参考”）。
+使用 Node.js 24 和 pnpm 10。
 
-本地使用：三个文件放在同一个文件夹里，双击 `index.html` 即可，不需要构建。
+```sh
+pnpm install --frozen-lockfile
+pnpm dev
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
+
+`dist/` 是静态产物，直接交给静态文件服务器即可。部署到子路径时，构建和服务器必须使用相同的前缀：
+
+```sh
+GAAC_BASE=/gaac-support/ pnpm build
+python3 tools/check-links.py --directory dist --base /gaac-support/ --files-only --strict
+```
+
+默认前缀是 `/`。React Router 使用构建前缀作为 basename。构建会为每个固定路由写入 `index.html`，因此普通静态服务器可以直接打开各板块入口。有参数的详情页通过服务器的 404 回退（`dist/404.html`）启动应用；GitHub Pages 也能使用它。若所用服务器无法指定 404 页面，请为实际的详情地址生成静态入口。当前没有启用 GitHub Pages。
+
+## 路由
+
+| 路由 | 内容 | 当前实现 |
+| --- | --- | --- |
+| `/` | 技术支持首页与街景 | React |
+| `/tasks`、`/model`、`/search`、`/eval` | 比赛任务、统一模型、搜索服务、测评服务 | React |
+| `/data`、`/tools`、`/notices`、`/status`、`/desk` | 数据集、工具应用、公告与答疑、运行状态、本队任务台 | React，保留原来的占位内容 |
+| `/sandbox` | 组委会赛程推演 | 旧版入口 `legacy/sandbox/` |
+| `/blog`、`/blog/:slug` | 动手笔记 | `legacy/blog/` |
+| `/comic`、`/comic/:volume` | 科学连环画 | `legacy/comic/` |
+| `/infra`、`/infra/:slug` | 推理基础设施 | `legacy/infra/` |
+| `/prep`、`/prep/:slug` | DeepSeek 推理读本 | `legacy/prep/` |
+| `/bench/deep-research/*` | 深度研究评测与原有子结构 | `legacy/agent-bench/deep-research/site/` |
+
+「资料」和页脚「推演」指向可用的旧版页面。第一阶段的详情路由提供板块旧版入口，第二阶段搬迁对应版式和数据。各板块的 slug 由其迁移提交记录。
+
+## 板块与协作约定
+
+1. 每个板块在 `src/sections/<section>/` 下维护自己的 `routes.ts`、页面、组件、样式和内容数据。
+2. 已注册板块迁移时只修改自己目录下的 `routes.ts`，将 `legacy` 换成页面的 `load`。新增板块在 `src/sections/index.ts` 注册一项。
+3. 路由以 `/` 开头，保留 `label`、所属导航分组和 `navigation`。静态资源通过 `publicUrl` 加前缀，站内 React 路由使用 `SiteLink`。
+4. 通用页面外壳、`PageHeader`、Markdown `Article` 与 `Figure` 在 `src/components/`。共用设计变量在 `src/styles/theme.css`，板块样式限定在板块容器内。
+5. 转换脚本放在各自板块或 `tools/`，输出可重现的 JSON 或 Markdown；图像和 SVG 原样迁移。正文不要依赖原页面注入脚本。
+6. 旧版输入在 `public/legacy/<section>/`，某板块迁移且验收后删除对应旧目录。Vite 为受移动影响的沙盘导航和旧手册入口生成兼容链接。
+7. 同步上游时先 `git fetch upstream`，对照变更手动更新对应内容数据与素材，重跑转换和检查；不把旧静态目录整批覆盖到应用中。
+
+`tools/convert-support.py` 从历史提交或 `--source` 指定的 HTML 目录提取十页正文。街景的 `street.js` 保留原文件，在独立 frame 中运行，导航离开后由浏览器销毁该 frame。旧版赛程推演中的日期都是推演假设，正式规则以参赛手册为准。

@@ -1,0 +1,1602 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>GAAC 全程沙盘</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Mercury 风格：应用外壳（侧栏 + 顶栏 + 卡片），偏紫的中性灰阶，一个靛紫主色，粉红 / 琥珀只表示风险。
+   图表只用一种颜色：已经发生的部分是靛紫，没发生的是灰色轨道。数值用等宽数字，小时写成上标。 */
+:root{
+  --bg:#f7f7fa; --surface:#ffffff; --sunken:#f4f5f9; --raised:#ffffff;
+  --line:#ededf3; --line-2:#dddde5; --track:#ededf3; --bar:#dddde5;
+  --ink:#1e1e2a; --ink-2:#535461; --muted:#70707d; --faint:#9d9da8;
+  --acc:#5266eb; --acc-ink:#4354c8; --acc-1:#9cb4e8; --acc-2:#3442a6; --on-acc2:#ffffff; --acc-soft:#edecfb; --acc-wash:rgba(82,102,235,.05);
+  --crit:#d03275; --crit-soft:rgba(208,50,117,.10);
+  --warn:#bd6200; --warn-soft:rgba(189,98,0,.10);
+  --good:#188554; --good-soft:rgba(24,133,84,.10);
+  --hol:rgba(196,80,0,.06); --hol-ink:#9c6045;
+  --t-infra-bg:#edecfb; --t-infra:#5266eb; --t-dr-bg:#e4f0f5; --t-dr:#007f95; --t-ppt-bg:#e7f1ea; --t-ppt:#188554; --t-fa-bg:#faeae3; --t-fa:#c45000;
+  --shadow:0 1px 2px rgba(30,30,42,.05),0 2px 8px rgba(30,30,42,.04);
+  --shadow-2:0 4px 16px rgba(30,30,42,.08);
+  --tip-bg:#1e1e2a; --tip-ink:#f4f5f9;
+  --f:'Inter','PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif;
+  --fd:'Inter Tight','Inter','PingFang SC','Hiragino Sans GB','Noto Sans SC',sans-serif;
+  --fm:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#171721; --surface:#1e1e2a; --sunken:#191923; --raised:#272735;
+    --line:#2a2a38; --line-2:#363644; --track:#2a2a38; --bar:#363644;
+    --ink:#f4f5f9; --ink-2:#c3c3cc; --muted:#9d9da8; --faint:#70707d;
+    --acc:#7084f0; --acc-ink:#b4c9f8; --acc-1:#3f4c9a; --acc-2:#a9b6f7; --on-acc2:#1e1e2a; --acc-soft:rgba(112,132,240,.16); --acc-wash:rgba(112,132,240,.06);
+    --crit:#e0528c; --crit-soft:rgba(224,82,140,.16);
+    --warn:#d9742f; --warn-soft:rgba(217,116,47,.16);
+    --good:#77c599; --good-soft:rgba(119,197,153,.14);
+    --hol:rgba(252,155,111,.07); --hol-ink:#edb69d;
+    --t-infra-bg:rgba(112,132,240,.18); --t-infra:#9cb4e8; --t-dr-bg:rgba(119,190,207,.16); --t-dr:#77becf; --t-ppt-bg:rgba(119,197,153,.16); --t-ppt:#77c599; --t-fa-bg:rgba(252,155,111,.16); --t-fa:#fc9b6f;
+    --shadow:0 1px 2px rgba(0,0,0,.3); --shadow-2:0 6px 20px rgba(0,0,0,.35);
+    --tip-bg:#f4f5f9; --tip-ink:#1e1e2a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#171721; --surface:#1e1e2a; --sunken:#191923; --raised:#272735;
+  --line:#2a2a38; --line-2:#363644; --track:#2a2a38; --bar:#363644;
+  --ink:#f4f5f9; --ink-2:#c3c3cc; --muted:#9d9da8; --faint:#70707d;
+  --acc:#7084f0; --acc-ink:#b4c9f8; --acc-1:#3f4c9a; --acc-2:#a9b6f7; --on-acc2:#1e1e2a; --acc-soft:rgba(112,132,240,.16); --acc-wash:rgba(112,132,240,.06);
+  --crit:#e0528c; --crit-soft:rgba(224,82,140,.16);
+  --warn:#d9742f; --warn-soft:rgba(217,116,47,.16);
+  --good:#77c599; --good-soft:rgba(119,197,153,.14);
+  --hol:rgba(252,155,111,.07); --hol-ink:#edb69d;
+  --t-infra-bg:rgba(112,132,240,.18); --t-infra:#9cb4e8; --t-dr-bg:rgba(119,190,207,.16); --t-dr:#77becf; --t-ppt-bg:rgba(119,197,153,.16); --t-ppt:#77c599; --t-fa-bg:rgba(252,155,111,.16); --t-fa:#fc9b6f;
+  --shadow:0 1px 2px rgba(0,0,0,.3); --shadow-2:0 6px 20px rgba(0,0,0,.35);
+  --tip-bg:#f4f5f9; --tip-ink:#1e1e2a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
+h1,h2,h3,h4,p,ul,ol,dl,dd,figure{margin:0}
+ul,ol{padding:0;list-style:none}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:6px}
+.num,.mono{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--fm);font-size:12px}
+sup{font-size:.42em;vertical-align:.95em;margin-left:.15em;font-weight:400;color:var(--muted);letter-spacing:0}
+
+/* ---------- app shell ---------- */
+.app{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;padding:18px 14px 14px;gap:18px;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 8px 6px}
+.mark{width:28px;height:28px;border-radius:8px;background:var(--ink);display:grid;place-items:center;flex:none}
+.mark svg{width:16px;height:16px;color:var(--surface)}
+.brand b{display:block;font-size:14px;font-weight:600;line-height:1.2}
+.brand small{display:block;font-size:11.5px;color:var(--muted)}
+.nav{display:grid;gap:2px}
+.nav-h{font:500 10.5px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding:10px 10px 4px}
+.nav a{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;color:var(--ink-2);font-size:13.5px;font-weight:500}
+.nav a svg{width:16px;height:16px;flex:none;color:var(--muted)}
+.nav a:hover{background:var(--sunken);color:var(--ink)}
+.nav a.on{background:var(--sunken);color:var(--ink)}
+.nav a.on svg{color:var(--acc)}
+.side-foot{margin-top:auto;display:grid;gap:10px}
+.scen{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:4px;font-size:12.5px;color:var(--muted)}
+.scen b{color:var(--ink);font-size:13px;font-weight:600}
+.theme{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:transparent;border-radius:8px;padding:7px 10px;font-size:12.5px;color:var(--ink-2)}
+.theme svg{width:15px;height:15px}
+.theme:hover{border-color:var(--line-2);color:var(--ink)}
+.main{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 32px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line);min-height:56px}
+.crumb{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center;white-space:nowrap;overflow:hidden}
+.crumb b{color:var(--ink);font-weight:500}
+.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.content{padding:28px 32px 96px;display:grid;gap:44px;max-width:1240px;width:100%}
+.mnav{display:none}
+@media (max-width:1000px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{display:none}
+  .top{padding:10px 16px;flex-wrap:wrap}
+  .content{padding:20px 16px 72px}
+  .mnav{display:flex;gap:6px;overflow-x:auto;padding:8px 16px;border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:6}
+  .mnav a{white-space:nowrap;font-size:13px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2)}
+}
+section{display:grid;gap:16px;min-width:0;scroll-margin-top:72px}
+.sh{display:flex;justify-content:space-between;align-items:flex-end;gap:12px 20px;flex-wrap:wrap}
+.sh > div:first-child{display:grid;gap:4px;max-width:760px}
+h2{font-family:var(--fd);font-weight:500;font-size:22px;letter-spacing:-.01em;line-height:1.3}
+.sh p{color:var(--muted);font-size:13.5px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);min-width:0}
+.card-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line)}
+.card-h h3{font-size:14px;font-weight:600}
+.card-h p{font-size:12.5px;color:var(--muted)}
+.lbl{font-size:12px;color:var(--muted)}
+.eyebrow{font:500 11px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* buttons & controls */
+.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line-2);background:var(--surface);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:500;color:var(--ink);line-height:1.35;box-shadow:var(--shadow);white-space:nowrap}
+.btn svg{width:14px;height:14px}
+.btn:hover{border-color:var(--faint)}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#fff}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.ghost{box-shadow:none;background:transparent;border-color:transparent;color:var(--ink-2)}
+.btn.ghost:hover{background:var(--sunken);color:var(--ink)}
+.btn[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.segc{display:inline-flex;background:var(--sunken);border:1px solid var(--line);border-radius:9px;padding:2px;gap:2px}
+.segc button{border:0;background:transparent;border-radius:7px;padding:5px 12px;font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap}
+.segc button small{font-family:var(--fm);font-size:11px;margin-left:6px;color:var(--faint)}
+.segc button[aria-pressed="true"]{background:var(--raised);color:var(--ink);box-shadow:var(--shadow)}
+.segc button[aria-pressed="true"] small{color:var(--muted)}
+.selc{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-2);background:var(--surface);border-radius:8px;padding:0 4px 0 10px;box-shadow:var(--shadow);font-size:12px;color:var(--muted)}
+.selc select{border:0;background:transparent;font-size:13px;font-weight:500;color:var(--ink);padding:6px 4px;outline:none}
+.inp,.stepper input,.rk-f input,.rk-f select{background:var(--sunken);border:1px solid var(--line-2);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;min-width:0}
+.inp:focus,.stepper input:focus,.rk-f input:focus,.rk-f select:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.stepper{display:inline-flex;align-items:stretch;border:1px solid var(--line-2);border-radius:8px;overflow:hidden;background:var(--sunken)}
+.stepper button{width:30px;border:0;background:transparent;color:var(--ink-2);font-size:15px;line-height:1}
+.stepper button:hover{background:var(--line);color:var(--ink)}
+.stepper input{width:64px;border:0;border-left:1px solid var(--line-2);border-right:1px solid var(--line-2);border-radius:0;text-align:center;padding:6px 4px;-moz-appearance:textfield}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.stepper input:focus{box-shadow:none}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;line-height:1;padding:4px 7px;border-radius:5px;background:var(--sunken);color:var(--ink-2);white-space:nowrap}
+.tag.acc{background:var(--acc-soft);color:var(--acc-ink)}
+.tag.crit{background:var(--crit-soft);color:var(--ink)}
+.tag.warn{background:var(--warn-soft);color:var(--ink)}
+.tag.good{background:var(--good-soft);color:var(--ink)}
+.tag.ink{background:var(--ink);color:var(--surface)}
+.tag i{width:6px;height:6px;border-radius:50%;display:inline-block;background:currentColor}
+.tag.crit i{background:var(--crit)} .tag.warn i{background:var(--warn)} .tag.good i{background:var(--good)} .tag.acc i{background:var(--acc)}
+.rn{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 5px;border-radius:999px;font:600 10.5px var(--fm);color:#fff;background:var(--crit);flex:none}
+.rn.warning{background:var(--warn)}
+.ic{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--sunken);color:var(--ink-2);flex:none}
+.ic svg{width:15px;height:15px}
+.ic.acc{background:var(--acc-soft);color:var(--acc)}
+.ic.crit{background:var(--crit-soft);color:var(--crit)}
+.ic.warn{background:var(--warn-soft);color:var(--warn)}
+.ic.good{background:var(--good-soft);color:var(--good)}
+.tchip{width:22px;height:22px;border-radius:6px;display:inline-grid;place-items:center;flex:none;background:var(--tbg);color:var(--tfg)}
+.tchip svg{width:13px;height:13px}
+.tchip.lg{width:34px;height:34px;border-radius:9px}
+.tchip.lg svg{width:18px;height:18px}
+.t-infra{--tbg:var(--t-infra-bg);--tfg:var(--t-infra)} .t-dr{--tbg:var(--t-dr-bg);--tfg:var(--t-dr)} .t-ppt{--tbg:var(--t-ppt-bg);--tfg:var(--t-ppt)} .t-fa{--tbg:var(--t-fa-bg);--tfg:var(--t-fa)}
+
+/* ---------- overview ---------- */
+.hello{display:grid;gap:10px}
+h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,3.8vw,46px);line-height:1.15;letter-spacing:-.02em;text-wrap:balance}
+h1 span{color:var(--muted)}
+.ov{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px}
+@media (max-width:900px){.ov{grid-template-columns:minmax(0,1fr)}}
+.hero{padding:20px 22px;display:grid;gap:10px;align-content:start;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-80px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,var(--acc-soft),transparent 68%);pointer-events:none}
+.big{font-family:var(--fd);font-weight:300;font-size:clamp(44px,5vw,60px);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.hero .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.hero .split{margin-top:8px;border-top:1px solid var(--line);padding-top:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.hero .split div{display:grid;gap:1px}
+.hero .split b{font-family:var(--fd);font-weight:400;font-size:20px;font-variant-numeric:tabular-nums}
+.find{padding:4px 0}
+.fr{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;padding:12px 18px;align-items:start}
+.fr + .fr{border-top:1px solid var(--line)}
+.fr b{display:block;font-size:13.5px;font-weight:600}
+.fr p{font-size:13px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--shadow)}
+@media (max-width:1100px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stats > div{padding:16px 18px;display:grid;gap:4px;align-content:start;min-width:0;border-left:1px solid var(--line)}
+.stats > div:first-child{border-left:0}
+@media (max-width:1100px){.stats > div:nth-child(3n+1){border-left:0}.stats > div:nth-child(n+4){border-top:1px solid var(--line)}}
+@media (max-width:560px){.stats > div{border-left:1px solid var(--line)!important;border-top:0!important}.stats > div:nth-child(odd){border-left:0!important}.stats > div:nth-child(n+3){border-top:1px solid var(--line)!important}}
+.stats b{font-family:var(--fd);font-weight:300;font-size:30px;line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stats b small{font-family:var(--f);font-size:13px;color:var(--muted);font-weight:400;margin-left:3px;letter-spacing:0}
+.stats .sub{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+
+/* life strip */
+.life{padding:18px 20px 16px;display:grid;gap:14px}
+.life-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.life-top b{font-size:14px;font-weight:600}
+.life-top span{font-size:12.5px;color:var(--muted)}
+.strip{position:relative;height:64px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+.strip .sg{position:absolute;top:28px;height:10px;border-radius:5px}
+.strip .sg.on{box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px var(--ink)}
+.sg.pre{background:var(--bar)} .sg.in{background:var(--acc)} .sg.p1{background:var(--acc-1)} .sg.p2{background:color-mix(in srgb,var(--acc-1) 60%,var(--track))} .sg.p3{background:color-mix(in srgb,var(--acc-1) 30%,var(--track))}
+.strip .dot{position:absolute;top:4px;transform:translateX(-50%);min-width:19px;height:19px;padding:0 4px;border-radius:999px;display:grid;place-items:center;font:600 10px var(--fm);color:#fff;background:var(--crit);pointer-events:none;box-shadow:0 0 0 2px var(--surface)}
+.strip .dot.warning{background:var(--warn)}
+.strip .ph{position:absolute;top:20px;height:26px;width:2px;margin-left:-1px;background:var(--ink);border-radius:1px;pointer-events:none}
+.strip .ph::after{content:"";position:absolute;left:-4px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 2px var(--surface)}
+.strip .today{position:absolute;top:24px;height:18px;border-left:1.5px dashed var(--acc);pointer-events:none}
+.strip .hol{position:absolute;top:40px;height:4px;border-radius:2px;background:var(--hol-ink);opacity:.6;pointer-events:none}
+.strip .ax{position:absolute;top:46px;font:11px var(--fm);color:var(--faint);transform:translateX(-50%);white-space:nowrap;pointer-events:none}
+.legs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:900px){.legs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.legs li{display:grid;gap:3px;align-content:start;min-width:0}
+.legs .sw{width:22px;height:6px;border-radius:3px}
+.legs b{font-size:13px;font-weight:600}
+.legs .when{font:11.5px var(--fm);color:var(--ink-2)}
+.legs p{font-size:12.5px;color:var(--muted)}
+.legs .hn{color:var(--hol-ink)}
+
+/* timeline card */
+.tl-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line)}
+.tl-h h3{font-size:15px;font-weight:600}
+.tl-h p{font-size:12.5px;color:var(--muted);max-width:70ch}
+.chartbox{overflow-x:auto;padding:8px 10px 0}
+.gantt{display:block;width:100%;min-width:820px;height:auto;user-select:none;-webkit-user-select:none}
+.gantt text{font-family:var(--f);fill:var(--ink)}
+.gantt .t-m{font-size:12px;font-weight:600}
+.gantt .t-d{font:10.5px var(--fm);fill:var(--faint)}
+.gantt .grid{stroke:var(--line);stroke-width:1}
+.gantt .grid.mo{stroke:var(--line-2)}
+.gantt .hol{fill:var(--hol)}
+.gantt .hol-t{font-size:10.5px;fill:var(--hol-ink);font-weight:500}
+.gantt .rowsel{fill:var(--acc-wash)}
+.gantt .av{fill:var(--sunken);stroke:var(--line-2)}
+.gantt .av.on{fill:var(--acc);stroke:var(--acc)}
+.gantt .av-t{font-size:12.5px;font-weight:600}
+.gantt .av.on + .av-t{fill:#fff}
+.gantt .nm{font-size:12.5px;font-weight:600}
+.gantt .nm-s{font-size:11px;fill:var(--muted)}
+.gantt .trk{fill:var(--track)}
+.gantt .el1{fill:var(--acc-1)} .gantt .el2{fill:var(--acc)} .gantt .el3{fill:var(--acc-2)}
+.gantt .done1{fill:var(--acc-1);opacity:.55} .gantt .done2{fill:var(--acc);opacity:.45} .gantt .done3{fill:var(--acc-2);opacity:.45}
+.gantt .seg-t{font-size:10.5px;font-weight:500;pointer-events:none}
+.gantt .seg-t.m{fill:var(--muted)} .gantt .seg-t.w{fill:#fff} .gantt .seg-t.w3{fill:var(--on-acc2)}
+.gantt .out{fill:var(--crit)}
+.gantt .out.soft{fill:var(--crit);opacity:.5}
+.gantt .out.deg{fill:url(#pt-warn)}
+.gantt .ghost{fill:none;stroke:var(--warn);stroke-width:1.5;stroke-dasharray:4 3}
+.gantt .ho{fill:url(#pt-dots)}
+.gantt .over{fill:var(--warn);opacity:.35}
+.gantt .void{fill:url(#pt-hatch)}
+.gantt .emp{fill:none;stroke:var(--line-2);stroke-width:1.5;stroke-dasharray:5 4}
+.gantt .mk{fill:none;stroke:var(--acc);stroke-width:1.5;stroke-dasharray:5 3}
+.gantt .mkr{fill:url(#pt-dots)}
+.gantt .rv{fill:var(--bar)}
+.gantt .rv.late{fill:var(--warn);opacity:.6}
+.gantt .rsv{fill:var(--acc-wash);stroke:var(--line-2);stroke-dasharray:3 4}
+.gantt .pz{fill:url(#pt-hatch);opacity:.7}
+.gantt .cap{font-size:10.5px;fill:var(--muted)}
+.gantt .sm{font-size:11px;fill:var(--muted)}
+.gantt .lb{fill:var(--bar)}
+.gantt .lb.crit{fill:var(--acc)}
+.gantt .lb.cont{fill:var(--track)}
+.gantt .lb.hit{stroke:var(--crit);stroke-width:1.5}
+.gantt .lb.late{stroke:var(--warn);stroke-width:1.5;stroke-dasharray:4 2}
+.gantt .lb.ext{stroke:var(--warn);stroke-width:1.5}
+.gantt .lb.drop{fill:url(#pt-crit);stroke:var(--crit);stroke-dasharray:3 2}
+.gantt .lt{font-size:11px;font-weight:500;pointer-events:none;fill:var(--ink-2)}
+.gantt .lt.w{fill:#fff}
+.gantt .lt.o{fill:var(--muted);font-weight:400}
+.gantt .msd{fill:var(--ink);stroke:var(--surface);stroke-width:2}
+.gantt .msd.hit{fill:var(--crit)} .gantt .msd.late{fill:var(--warn)}
+.gantt .mst{font-size:11px;fill:var(--ink-2);pointer-events:none}
+.gantt .vm{stroke:var(--ink);stroke-width:1.2}
+.gantt .vm.ghost{stroke:var(--faint);stroke-dasharray:3 3}
+.gantt .vm.gate{stroke:var(--acc);stroke-dasharray:4 3}
+.gantt .vm.soft{stroke:var(--line-2);stroke-dasharray:2 3}
+.gantt .vmp{fill:var(--sunken);stroke:var(--line-2)}
+.gantt .vmp.ink{fill:var(--ink);stroke:var(--ink)}
+.gantt .vmp.gate{fill:var(--acc-soft);stroke:none}
+.gantt .vmt{font-size:10.5px;font-weight:600;fill:var(--ink-2)}
+.gantt .vmt.ink{fill:var(--surface)}
+.gantt .vmt.gate{fill:var(--acc-ink)}
+.gantt .today{stroke:var(--acc);stroke-dasharray:3 3;stroke-width:1.3}
+.gantt .today-t{font:500 10px var(--fm);fill:var(--acc)}
+.gantt .rb circle{fill:var(--crit);stroke:var(--surface);stroke-width:2}
+.gantt .rb.warning circle{fill:var(--warn)}
+.gantt .rb text{font:600 9.5px var(--fm);fill:#fff;pointer-events:none}
+.gantt .phl{stroke:var(--ink);stroke-width:1.5;pointer-events:none}
+.gantt .phk{fill:var(--ink);stroke:var(--surface);stroke-width:2}
+.gantt .php{fill:var(--tip-bg)}
+.gantt .pht{font:500 11px var(--fm);fill:var(--tip-ink)}
+.gantt .ln-sep{stroke:var(--line)}
+.scrub{display:flex;align-items:center;gap:12px;padding:10px 18px 14px;border-top:1px solid var(--line)}
+.scrub .time{font:500 12px var(--fm);color:var(--ink);background:var(--sunken);border:1px solid var(--line);border-radius:6px;padding:4px 8px;white-space:nowrap}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;min-width:0;height:20px;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--acc) 0 var(--p,0%),var(--track) var(--p,0%) 100%)}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--track)}
+input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--acc)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--raised);border:1px solid var(--line-2);box-shadow:0 1px 4px rgba(0,0,0,.25);margin-top:-6px}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--raised);border:1px solid var(--line-2);box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;padding:0 18px 14px;font-size:12px;color:var(--muted)}
+.legend li{display:flex;align-items:center;gap:6px}
+.legend svg.k{width:24px;height:12px;flex:none}
+
+/* now + teams */
+.two{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px;align-items:start}
+.two.r{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
+@media (max-width:900px){.two,.two.r{grid-template-columns:minmax(0,1fr)}}
+.now{padding:20px 22px;display:grid;gap:12px;align-content:start}
+.now .big{font-size:40px}
+.now-meta{font:12px var(--fm);color:var(--muted)}
+.rows{display:grid;border-top:1px solid var(--line);margin-top:4px}
+.r{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 0}
+.r + .r{border-top:1px solid var(--line)}
+.r b{display:block;font-size:13px;font-weight:600}
+.r p{font-size:12.5px;color:var(--muted)}
+.r ul{display:grid;gap:2px;font-size:12.5px;color:var(--ink-2)}
+.r ul span{color:var(--muted);margin-right:6px}
+.ledger .lr{display:grid;grid-template-columns:auto minmax(0,1fr) 120px auto;gap:14px;align-items:center;padding:12px 18px;transition:background .12s}
+.ledger .lr + .lr{border-top:1px solid var(--line)}
+.ledger .lr:hover{background:var(--sunken)}
+@media (max-width:640px){.ledger .lr{grid-template-columns:auto minmax(0,1fr) auto}.ledger .prog{display:none}}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--sunken);border:1px solid var(--line-2);font-weight:600;font-size:13.5px;flex:none}
+.av.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.av.alarm{background:var(--crit);border-color:var(--crit);color:#fff}
+.lr .nm{font-size:13.5px;font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lr .nt{font-size:12.5px;color:var(--muted)}
+.lr .rk{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.prog{display:grid;gap:5px}
+.prog .bar{height:5px;border-radius:3px;background:var(--track);overflow:hidden;display:flex;gap:2px}
+.prog .bar span{height:100%;position:relative;background:var(--track)}
+.prog .bar span i{position:absolute;inset:0 auto 0 0;background:var(--acc)}
+.prog .chips{display:flex;gap:4px}
+.prog .chips .tchip{width:18px;height:18px;border-radius:5px}
+.prog .chips .tchip svg{width:11px;height:11px}
+.prog .chips .tchip.todo{opacity:.3}
+.prog .chips .tchip.live{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--acc)}
+.lr .val{text-align:right;font-family:var(--fd);font-size:19px;font-weight:400;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lr .val small{font-family:var(--f);font-size:12px;color:var(--muted);margin-left:2px}
+
+/* log + side */
+.logc{display:grid;grid-template-rows:auto minmax(0,1fr);max-height:640px}
+.log{overflow-y:auto;overscroll-behavior:contain}
+.le{display:grid;grid-template-columns:104px auto minmax(0,1fr) auto;gap:12px;align-items:start;padding:10px 18px;cursor:pointer;border-left:2px solid transparent;transition:background .12s}
+.le + .le{border-top:1px solid var(--line)}
+.le:hover{background:var(--sunken)}
+.le.future{opacity:.45}
+.le.cur{background:var(--acc-wash);border-left-color:var(--acc);opacity:1}
+.le-t{font:11.5px var(--fm);color:var(--muted);padding-top:6px;white-space:nowrap}
+.le .ic{width:26px;height:26px}
+.le .ic svg{width:13px;height:13px}
+.le-b b{display:block;font-size:13px;font-weight:600;line-height:1.45}
+.le-b p{font-size:12.5px;color:var(--muted)}
+.le .tag{margin-top:4px}
+.alerts{display:grid;gap:12px;align-content:start}
+.al{padding:14px 16px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start}
+.al + .al{border-top:1px solid var(--line)}
+.al b{font-size:13px;font-weight:600;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.al p{font-size:12.5px;color:var(--muted);margin-top:2px}
+.empty{padding:16px 18px;font-size:13px;color:var(--muted)}
+
+/* risks */
+.presets{display:flex;flex-wrap:wrap;gap:6px;padding:14px 18px 6px}
+.pdesc{padding:0 18px 12px;font-size:12.5px;color:var(--muted)}
+.rlist{border-top:1px solid var(--line)}
+.rr{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:start;padding:12px 18px}
+.rr + .rr{border-top:1px solid var(--line)}
+.rr.dead{opacity:.55}
+.rr .ttl{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.rr .ttl b{font-size:13.5px;font-weight:600}
+.rr .ttl span{font-size:12px;color:var(--muted)}
+.rk-f{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px}
+.rk-f label{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);white-space:nowrap}
+.rk-f input{width:64px;padding:4px 8px}
+.rk-f select{padding:4px 8px}
+.rr .eff{font-size:12.5px;color:var(--muted);margin-top:6px}
+.rr .eff b{color:var(--ink);font-weight:600}
+.rr .side-r{display:flex;align-items:center;gap:6px}
+.xbtn{border:0;background:transparent;color:var(--faint);width:26px;height:26px;border-radius:6px;display:grid;place-items:center}
+.xbtn:hover{background:var(--sunken);color:var(--ink)}
+.xbtn svg{width:13px;height:13px}
+.radd{display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid var(--line);flex-wrap:wrap}
+
+/* params */
+.pcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+@media (max-width:1100px){.pcards{grid-template-columns:minmax(0,1fr)}}
+.pr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 18px}
+.pr + .pr{border-top:1px solid var(--line)}
+.pr b{display:block;font-size:13px;font-weight:500}
+.pr small{display:block;font-size:11.5px;color:var(--muted);line-height:1.4}
+.pr .inp{width:150px}
+.pr select.inp{width:96px}
+
+/* tables */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr{transition:background .12s}
+tbody tr:hover td{background:var(--sunken)}
+th{font:500 11px var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--faint);background:transparent}
+tr.live td{background:var(--acc-wash)}
+td.mono{font-family:var(--fm);font-size:12px;color:var(--ink-2)}
+td.wide{white-space:normal;min-width:200px;color:var(--muted);font-size:12.5px}
+td.wide b{color:var(--ink);font-weight:600}
+td .who{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+td .who .av{width:26px;height:26px;font-size:12px}
+.ptbl .stepper input{width:46px;padding:4px}
+.ptbl .stepper button{width:24px}
+.ptbl .stepper.chg{border-color:var(--acc)}
+.neg{color:var(--ink);font-weight:600}
+.neg::before{content:"▲ ";color:var(--warn);font-size:9px}
+tr.on td{background:var(--crit-soft)}
+.inj{border:1px dashed var(--line-2);background:transparent;border-radius:6px;font-size:12px;padding:3px 9px;color:var(--ink-2)}
+.inj:hover{border-color:var(--acc);color:var(--acc-ink)}
+details.fold > summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px}
+details.fold > summary::-webkit-details-marker{display:none}
+details.fold > summary h3{font-size:14px;font-weight:600}
+details.fold > summary span{font-size:12.5px;color:var(--muted)}
+details.fold > summary::after{content:"";width:8px;height:8px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg);margin-top:-4px}
+details.fold[open] > summary::after{transform:rotate(-135deg);margin-top:4px}
+details.fold[open] > summary{border-bottom:1px solid var(--line)}
+
+/* team zoom */
+.ztabs{display:flex;gap:6px;flex-wrap:wrap}
+.ztabs button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line-2);background:var(--surface);font-weight:600;font-size:13.5px;box-shadow:var(--shadow)}
+.ztabs button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff}
+.ztabs button:disabled{opacity:.35;cursor:default;box-shadow:none}
+.detail{display:block;width:100%;min-width:760px;height:auto}
+.detail text{font-family:var(--f);fill:var(--ink)}
+.detail .band{fill:var(--sunken)}
+.detail .band.f{fill:var(--acc-soft)}
+.detail .bn{font-size:11.5px;font-weight:600;fill:var(--ink-2)}
+.detail .tick{stroke:var(--line)}
+.detail .tick.p{stroke:var(--line-2);stroke-dasharray:3 3}
+.detail .tk{font:500 10.5px var(--fm);fill:var(--ink-2)}
+.detail .tkd{font:10.5px var(--fm);fill:var(--faint)}
+.detail .en{font-size:13px;font-weight:600}
+.detail .zh{font-size:11.5px;fill:var(--muted)}
+.detail .trk{fill:var(--track)}
+.detail .b1{fill:var(--acc)}
+.detail .b2{fill:var(--acc-2);opacity:.55}
+.detail .opt{fill:none;stroke:var(--line-2);stroke-dasharray:5 4;stroke-width:1.5}
+.detail .wash{fill:var(--acc-wash)}
+.detail .nl{stroke:var(--ink);stroke-width:1.5}
+.detail .np{fill:var(--tip-bg)}
+.detail .npt{font:500 10.5px var(--fm);fill:var(--tip-ink)}
+.detail .x{fill:url(#pt-hatch)}
+.detail .xt{font-size:11.5px;font-weight:600;fill:var(--ink-2)}
+.detail .o{fill:var(--crit)}
+.detail .ot{font-size:10.5px;font-weight:600;fill:var(--crit)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:1100px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.cards{grid-template-columns:minmax(0,1fr)}}
+.tcard{padding:18px;display:grid;gap:12px;align-content:start}
+.tcard-h{display:flex;gap:12px;align-items:center}
+.tcard-h b{display:block;font-size:14px;font-weight:600}
+.tcard-h small{display:block;font-size:12px;color:var(--muted)}
+.tcard .meta{display:flex;justify-content:space-between;font:11.5px var(--fm);color:var(--muted);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0}
+.tcard .meta b{color:var(--ink);font-weight:500}
+.tcard dl{display:grid;gap:10px;font-size:12.5px}
+.tcard dt{font:500 10.5px var(--fm);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:2px}
+.tcard dd{color:var(--ink-2);line-height:1.55}
+
+/* score */
+.score{padding:18px 20px;display:grid;gap:14px}
+.alloc{display:flex;gap:3px;height:12px}
+.alloc div{border-radius:4px;background:var(--tfg)}
+.alloc .opt{background:transparent;border:1.5px dashed var(--line-2)}
+.arows{display:grid}
+.ar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0}
+.ar + .ar{border-top:1px solid var(--line)}
+.ar b{font-size:13px;font-weight:600}
+.ar small{display:block;font-size:12px;color:var(--muted)}
+.ar .v{font-family:var(--fd);font-size:20px;font-variant-numeric:tabular-nums}
+.ar .v small{display:inline;margin-left:2px}
+.snotes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:800px){.snotes{grid-template-columns:minmax(0,1fr)}}
+.snotes h4{font-size:13px;font-weight:600;margin-bottom:4px}
+.snotes p{font-size:12.5px;color:var(--muted)}
+.snotes .prize{font-family:var(--fd);font-weight:300;font-size:30px;color:var(--ink);letter-spacing:-.02em}
+.split3{display:flex;gap:3px;height:6px;margin:6px 0}
+.split3 i{border-radius:3px;background:var(--acc)}
+.split3 i:nth-child(2){opacity:.6}.split3 i:nth-child(3){opacity:.3}
+
+/* notes */
+.notes{padding:18px 20px;display:grid;gap:10px}
+.notes ol{list-style:decimal;padding-left:20px;display:grid;gap:6px;font-size:13px;color:var(--ink-2)}
+.notes ol li::marker{color:var(--faint);font-family:var(--fm)}
+.notes p{font-size:12px;color:var(--muted)}
+.notes code{font:11.5px var(--fm);background:var(--sunken);border:1px solid var(--line);padding:1px 5px;border-radius:4px}
+
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--tip-bg);color:var(--tip-ink);font-size:12px;line-height:1.5;padding:8px 10px;border-radius:8px;max-width:320px;white-space:pre-line;box-shadow:var(--shadow-2)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+<script src="scenario.js"></script>
+<script src="engine.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M4 10.5L12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/></symbol>
+    <symbol id="i-gantt" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 6h9M8 12h10M6 18h8"/></g></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></g></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="18" r="1" fill="currentColor"/></g></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M12 4l9 16H3z"/><path d="M12 10v4.5M12 17.5v.2"/></g></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></g></symbol>
+    <symbol id="i-table" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M3.5 10h17M3.5 14.5h17M9.5 10v9"/></g></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1-3.8 3.8-5.5 7-5.5s6 1.7 7 5.5"/></g></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-5.5"/></g></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M12 3.5l7 2.8v5.2c0 4.3-3 7.8-7 9-4-1.2-7-4.7-7-9V6.3z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M5 4.5h10.5a3 3 0 013 3V20H8a3 3 0 01-3-3z"/><path d="M5 17a3 3 0 013-3h10.5"/></g></symbol>
+    <symbol id="i-score" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5 19V11M12 19V5M19 19v-5"/></g></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></g></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M19.5 14.5A8 8 0 019.5 4.5a8 8 0 1010 10z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/><circle cx="9" cy="15" r="1.2" fill="currentColor"/></g></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M6 20V4.5"/><path d="M6 5h11l-2.5 4L17 13H6"/></g></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M6 5v8a3 3 0 003 3h9M14.5 12.5L18 16l-3.5 3.5"/></symbol>
+    <symbol id="i-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5" fill="currentColor"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 11v5M12 8v.2"/></g></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12a7 7 0 107-7H8"/><path d="M10.5 2.5L8 5l2.5 2.5"/></g></symbol>
+    <symbol id="i-infra" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="17" height="7" rx="1.5"/><path d="M7 7h.01M7 17h.01M11 7h6M11 17h6"/></g></symbol>
+    <symbol id="i-dr" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4L21 21M7.5 9h6M7.5 12h4"/></g></symbol>
+    <symbol id="i-ppt" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="19" height="13" rx="1.5"/><path d="M12 16.5V20M8.5 20.5h7M6.5 7.5h7"/><rect x="6.5" y="10.5" width="4" height="3"/><path d="M13.5 11h4M13.5 13h3"/></g></symbol>
+    <symbol id="i-fa" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5h17"/><rect x="5.5" y="12" width="3" height="6"/><rect x="10.5" y="8" width="3" height="10"/><rect x="15.5" y="4" width="3" height="14"/></g></symbol>
+    <symbol id="i-generic" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/></g></symbol>
+    <symbol id="i-base" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3.5l8.5 4.5L12 12.5 3.5 8z"/><path d="M3.5 12.5L12 17l8.5-4.5M3.5 16.5L12 21l8.5-4.5"/></g></symbol>
+    <symbol id="i-rules" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h9l3.5 3.5v13.5H6z"/><path d="M9 11h6.5M9 14.5h6.5M9 18h4"/></g></symbol>
+    <symbol id="i-people" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8.5" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9.5" r="2.5"/><path d="M16.5 14.6c2.6.2 4.4 1.9 5 4.9"/></g></symbol>
+    <symbol id="i-money" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M14.8 9.2c-.5-1-1.6-1.6-2.8-1.6-1.6 0-2.8.9-2.8 2.2 0 3 5.8 1.7 5.8 4.6 0 1.3-1.3 2.2-3 2.2-1.3 0-2.5-.6-3-1.7M12 6v1.6M12 16.6v1.6"/></g></symbol>
+    <symbol id="i-open" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.3 10.8l7.4-3.6M8.3 13.2l7.4 3.6"/></g></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M4 5h16v11H9l-5 4z"/></symbol>
+    <symbol id="i-opt" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 6v12M6 12h12"/></symbol>
+    <pattern id="pt-dots" width="5" height="5" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="var(--sunken)"/><circle cx="2.5" cy="2.5" r=".9" fill="var(--faint)"/></pattern>
+    <pattern id="pt-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--sunken)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--line-2)" stroke-width="2"/></pattern>
+    <pattern id="pt-crit" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--surface)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--crit)" stroke-width="1.5" opacity=".5"/></pattern>
+    <pattern id="pt-warn" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--warn-soft)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--warn)" stroke-width="2"/></pattern>
+  </defs>
+</svg>
+
+<div class="app">
+  <aside class="side" aria-label="导航">
+    <div class="brand"><span class="mark"><svg><use href="#i-gantt"/></svg></span><div><b>GAAC 沙盘</b><small>智能体大奖赛 · 全程推演</small></div></div>
+    <nav class="nav" id="nav">
+      <p class="nav-h">推演</p>
+      <a href="#overview" data-s="overview"><svg><use href="#i-home"/></svg>总览</a>
+      <a href="#timeline" data-s="timeline"><svg><use href="#i-gantt"/></svg>时间轴</a>
+      <a href="#now" data-s="now"><svg><use href="#i-clock"/></svg>此刻</a>
+      <a href="#log" data-s="log"><svg><use href="#i-list"/></svg>推演日志</a>
+      <p class="nav-h">设置</p>
+      <a href="#risks" data-s="risks"><svg><use href="#i-alert"/></svg>情景与风险</a>
+      <a href="#params" data-s="params"><svg><use href="#i-sliders"/></svg>推演参数</a>
+      <p class="nav-h">明细</p>
+      <a href="#sched" data-s="sched"><svg><use href="#i-table"/></svg>排期一览</a>
+      <a href="#team" data-s="team"><svg><use href="#i-user"/></svg>一队的窗口</a>
+      <a href="#score" data-s="score"><svg><use href="#i-score"/></svg>怎么算分</a>
+      <a href="#prep" data-s="prep"><svg><use href="#i-check"/></svg>赛前任务表</a>
+      <a href="#register" data-s="register"><svg><use href="#i-shield"/></svg>风险登记册</a>
+      <a href="#notes" data-s="notes"><svg><use href="#i-book"/></svg>说明</a>
+      <p class="nav-h">相关</p>
+      <a href="infra/index.html"><svg><use href="#i-base"/></svg>推理基础设施全景</a>
+      <a href="prep/index.html"><svg><use href="#i-rules"/></svg>DeepSeek 推理读本</a>
+      <a href="agent-bench/deep-research/site/index.html"><svg><use href="#i-score"/></svg>Agent 质量评测 · 深度研究</a>
+      <a href="blog/index.html"><svg><use href="#i-list"/></svg>动手笔记 · 一篇一个小问题</a>
+      <a href="comic/index.html"><svg><use href="#i-book"/></svg>科学连环画 · AI 能自己造 AI 吗</a>
+      <a href="support/index.html"><svg><use href="#i-infra"/></svg>GAAC 技术支持</a>
+    </nav>
+    <div class="side-foot">
+      <div class="scen" id="scenBox"></div>
+      <button class="theme" id="themeBtn" type="button"></button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <nav class="mnav" aria-label="导航">
+      <a href="#overview">总览</a><a href="#timeline">时间轴</a><a href="#now">此刻</a><a href="#log">日志</a><a href="#risks">情景与风险</a><a href="#params">参数</a><a href="#sched">排期</a><a href="#team">一队</a><a href="#prep">任务表</a><a href="#register">登记册</a><a href="infra/index.html">推理基础设施 ↗</a><a href="prep/index.html">DeepSeek 推理读本 ↗</a><a href="agent-bench/deep-research/site/index.html">Agent 质量评测 · 深度研究 ↗</a><a href="blog/index.html">动手笔记 ↗</a><a href="comic/index.html">科学连环画 ↗</a>
+    </nav>
+    <header class="top">
+      <div class="crumb">GAAC<span>/</span>全程沙盘<span>/</span><b id="crumbStage">赛前</b></div>
+      <div class="top-actions">
+        <label class="selc"><span>情景</span><select id="topPreset" aria-label="情景"></select></label>
+        <button class="btn" id="topDice" type="button"><svg><use href="#i-dice"/></svg>掷骰子</button>
+        <button class="btn ghost" id="reset" type="button"><svg><use href="#i-reset"/></svg>恢复默认</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <section id="overview" aria-labelledby="h1">
+        <div class="hello">
+          <div class="eyebrow" id="eyebrow"></div>
+          <h1 id="h1"></h1>
+        </div>
+        <div class="ov">
+          <div class="card hero" id="hero"></div>
+          <div class="card find" id="findings"></div>
+        </div>
+        <div class="stats" id="stats"></div>
+        <div class="card life">
+          <div class="life-top"><b>从准备到赛后 90 天</b><span id="lifeNote"></span></div>
+          <div class="strip" id="strip" aria-label="全程时间带，点击或拖动跳到任一时刻"></div>
+          <ol class="legs" id="legs"></ol>
+        </div>
+      </section>
+
+      <section id="timeline" aria-labelledby="h-tl">
+        <div class="sh"><div><h2 id="h-tl">时间轴</h2><p id="tlNote"></p></div><div class="segc" id="vtabs" role="group" aria-label="看哪一段"></div></div>
+        <div class="card">
+          <div class="tl-h"><div><h3 id="tlTitle"></h3><p id="tlSub"></p></div></div>
+          <div class="chartbox" id="ganttBox"></div>
+          <ul class="legend" id="legend" aria-label="图例"></ul>
+          <div class="scrub">
+            <button class="btn primary" id="play" type="button"><svg><use href="#i-play"/></svg><span>播放</span></button>
+            <input type="range" id="scrub" min="0" max="100" step="1" value="0" aria-label="时间轴">
+            <span class="time" id="scrubT"></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="now" aria-labelledby="h-now">
+        <div class="sh"><div><h2 id="h-now">此刻</h2><p>时间轴拖到哪里，这里就显示那一刻：机器上是谁、各组在忙什么、刚发生的风险和下一个节点。</p></div></div>
+        <div class="two">
+          <div class="card now" id="nowCard"></div>
+          <div class="card ledger"><div class="card-h"><h3>各队</h3><p id="ledgerNote"></p></div><div id="ledger"></div></div>
+        </div>
+      </section>
+
+      <section id="log" aria-labelledby="h-log">
+        <div class="sh"><div><h2 id="h-log">推演日志</h2><p>按时间排的每一件事：节点、风险，以及按预案做出的应对。点任意一条，时间轴跳过去。</p></div><div class="segc" id="logTabs" role="group" aria-label="日志筛选"></div></div>
+        <div class="two r">
+          <div class="card logc"><div class="card-h"><h3 id="logTitle"></h3><p>浅色的是时间轴之后才发生的</p></div><ol class="log" id="logList"></ol></div>
+          <div class="alerts">
+            <div class="card"><div class="card-h"><h3>可能引出的争执</h3><p>预案 §5</p></div><div id="disputes"></div></div>
+            <div class="card"><div class="card-h"><h3>排期里的隐患</h3><p>不注入风险也可能有</p></div><div id="warns"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="risks" aria-labelledby="h-risks">
+        <div class="sh"><div><h2 id="h-risks">情景与风险</h2><p>选一个情景，或自己添加风险。每条风险按预案第 3–7 节的规则处置，结果画进时间轴和日志。</p></div></div>
+        <div class="card">
+          <div class="presets" id="presets" role="group" aria-label="情景"></div>
+          <p class="pdesc" id="presetDesc"></p>
+          <div class="rlist" id="rlist"></div>
+          <div class="radd"><label class="selc"><svg width="14" height="14" style="color:var(--muted)"><use href="#i-plus"/></svg><select id="radd" aria-label="添加风险"></select></label><span class="lbl" id="raddNote"></span></div>
+        </div>
+      </section>
+
+      <section id="params" aria-labelledby="h-params">
+        <div class="sh"><div><h2 id="h-params">推演参数</h2><p id="paramNote"></p></div><button class="btn" id="literal" type="button">官网字面口径</button></div>
+        <div class="pcards" id="pcards"></div>
+      </section>
+
+      <section id="sched" aria-labelledby="h-sched">
+        <div class="sh"><div><h2 id="h-sched">排期一览</h2><p id="schedNote"></p></div></div>
+        <div class="card tbl"><table><thead id="schedHead"></thead><tbody id="schedBody"></tbody></table></div>
+      </section>
+
+      <section id="team" aria-labelledby="h-team">
+        <div class="sh"><div><h2 id="h-team">一队的窗口</h2><p id="zoomNote"></p></div><div class="ztabs" id="ztabs" role="group" aria-label="选择队伍"></div></div>
+        <div class="card">
+          <div class="tl-h"><div><h3 id="zoomTitle"></h3><p id="zoomSub"></p></div></div>
+          <div class="chartbox" id="detailBox"></div>
+        </div>
+        <div class="cards" id="cards"></div>
+      </section>
+
+      <section id="score" aria-labelledby="h-score">
+        <div class="sh"><div><h2 id="h-score">怎么算分</h2><p id="scoreNote"></p></div></div>
+        <div class="card score" id="scoreCard"></div>
+      </section>
+
+      <section id="prep" aria-labelledby="h-prep">
+        <div class="sh"><div><h2 id="h-prep">赛前任务表</h2><p id="prepNote"></p></div><button class="btn" id="durReset" type="button"><svg><use href="#i-reset"/></svg>工期恢复估计值</button></div>
+        <details class="card fold" id="prepFold"><summary><h3>全部任务</h3><span id="prepSum"></span></summary>
+          <div class="tbl ptbl"><table><thead><tr><th>任务</th><th>负责</th><th>工期（天）</th><th>开始</th><th>完成</th><th>余量</th><th>状态</th></tr></thead><tbody id="prepBody"></tbody></table></div>
+        </details>
+      </section>
+
+      <section id="register" aria-labelledby="h-reg">
+        <div class="sh"><div><h2 id="h-reg">风险登记册</h2><p id="regSum"></p></div></div>
+        <details class="card fold" id="regFold"><summary><h3>预案第 3–7 节的全部风险</h3><span>可注入的风险可以直接加进推演</span></summary>
+          <div class="tbl"><table><thead><tr><th>阶段</th><th>风险</th><th>怎么应对</th><th>提前准备</th><th>出处</th><th></th></tr></thead><tbody id="regBody"></tbody></table></div>
+        </details>
+      </section>
+
+      <section id="notes" aria-labelledby="h-notes">
+        <div class="sh"><div><h2 id="h-notes">哪些是官网写的，哪些是假设</h2></div></div>
+        <div class="card notes"><ol id="notesList"></ol><p id="sourceNote"></p></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="tip" id="tip" hidden></div>
+
+<script>
+(() => {
+  'use strict';
+  const C = window.SANDBOX, ENG = window.GAACEngine;
+  if (!C || !ENG){ document.querySelector('.content').innerHTML = '<p style="padding:40px 0">没有读到 scenario.js 或 engine.js。请确认它们和 index.html 在同一个文件夹里。</p>'; return; }
+
+  /* ---------- helpers ---------- */
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const pad = n => String(n).padStart(2, '0');
+  const clampInt = (v, lo, hi, d) => { v = Math.round(Number(v)); if (!Number.isFinite(v)) return d; return Math.max(lo, Math.min(hi, v)); };
+  const textW = (s, size) => { let w = 0; for (const ch of String(s)) w += ch.charCodeAt(0) > 0x2e7f ? size : size * 0.58; return w; };
+  const CN = ['零','一','两','三','四','五','六','七','八'];
+  const DEF = C.defaults, NAMES = C.teamNames, MACHINE = C.machineName || 'EdgePod';
+  const TYPES = Object.fromEntries(C.riskTypes.map(x => [x.type, x]));
+  const STAGE = {pre: '赛前', in: '赛中', post: '赛后'};
+  const ICONS = new Set(['infra','dr','ppt','fa','generic']);
+  const TASKS = (C.tasks || []).slice(0, 8).map((x, i) => ({...x, slot: i + 1, icon: ICONS.has(x.icon) ? x.icon : 'generic'}));
+  const T1 = TASKS.filter(x => x.phase === 1), T2 = TASKS.filter(x => x.phase !== 1);
+  const TBY = Object.fromEntries(TASKS.map(x => [x.id, x]));
+  const PH = C.phases;
+  const list = arr => arr.map(x => x.en).join('、');
+  const tchip = (x, cls = '') => `<span class="tchip t-${esc(x.id)} ${cls}"><svg><use href="#i-${x.icon}"/></svg></span>`;
+  const ico = (name, cls = '') => `<span class="ic ${cls}"><svg><use href="#i-${name}"/></svg></span>`;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rnHTML = n => { const r = R.risks[n - 1]; return `<span class="rn ${r ? r.def.sev : ''}">#${n}</span>`; };
+  const shortLabel = s => String(s).split(/：| · |（| → /)[0];
+
+  /* ---------- theme ---------- */
+  const store = {get(k){ try { return localStorage.getItem(k); } catch { return null; } }, set(k, v){ try { localStorage.setItem(k, v); } catch {} }};
+  const sysDark = () => matchMedia('(prefers-color-scheme: dark)').matches;
+  function applyTheme(th){ if (th) document.documentElement.dataset.theme = th; else delete document.documentElement.dataset.theme; paintThemeBtn(); }
+  function curDark(){ const th = document.documentElement.dataset.theme; return th ? th === 'dark' : sysDark(); }
+  function paintThemeBtn(){ const d = curDark(); $('themeBtn').innerHTML = `<svg><use href="#i-${d ? 'sun' : 'moon'}"/></svg>${d ? '切到浅色' : '切到深色'}`; }
+  applyTheme(store.get('gaac-theme'));
+  $('themeBtn').addEventListener('click', () => { const th = curDark() ? 'light' : 'dark'; store.set('gaac-theme', th); applyTheme(th); });
+
+  /* ---------- params ---------- */
+  const FIELDS = [
+    {g: '赛制', k: 'start', label: '开赛日期（原定）', help: '推演假设，官网未公布', type: 'date'},
+    {g: '赛制', k: 'hour', label: '开赛时刻', help: '预案建议 09:00', type: 'hour'},
+    {g: '赛制', k: 'teams', label: '队伍数', help: '官网：首届 5 队', type: 'num', min: 1, max: 8},
+    {g: '赛制', k: 'window', label: '每队窗口（小时）', help: '官网：168 小时', type: 'num', min: 24, max: 720, step: 6},
+    {g: '赛制', k: 'phase1', label: '第一阶段（小时）', help: '官网：0–30 小时', type: 'num', min: 1, max: 700},
+    {g: '赛制', k: 'sealAt', label: '封存点（第几小时）', help: 'V1.3 参考：第 120 小时', type: 'num', min: 2, max: 719, step: 6},
+    {g: '赛前', k: 'prepStart', label: '准备开始', help: '默认今天', type: 'date'},
+    {g: '赛前', k: 'edgepodArrive', label: 'EdgePod 到位', help: '假设已在现场', type: 'date'},
+    {g: '赛前', k: 'scope', label: 'Benchmark 范围', help: '最低可用版见预案 §2.4', type: 'seg', options: [['mvp', '最低可用'], ['full', '完整版']]},
+    {g: '赛前', k: 'launch', label: '开赛策略', help: '预案建议按启动门禁', type: 'seg', options: [['gate', '按门禁'], ['fixed', '硬开']]},
+    {g: '赛前', k: 'practiceLead', label: '练习期（天）', help: '开赛前至少开放几天', type: 'num', min: 0, max: 30},
+    {g: '预案', k: 'gap', label: '换队间隔（小时）', help: '预案建议 24 小时', type: 'num', min: 0, max: 168, step: 6},
+    {g: '预案', k: 'handover', label: '交接耗时（小时）', help: '估计 7–15 小时', type: 'num', min: 1, max: 96},
+    {g: '预案', k: 'makeupDays', label: '补赛窗口（天）', help: '最后一队之后的缓冲', type: 'num', min: 0, max: 14},
+    {g: '预案', k: 'standby', label: '候补队', help: '预案建议 2 支', type: 'num', min: 0, max: 2},
+    {g: '预案', k: 'holidayPlan', label: '节假日方案', help: '保障不了就节前停赛', type: 'seg', options: [['keep', '照常比'], ['pause', '节前停赛']]},
+    {g: '预案', k: 'noMakeupMax', label: '不补时上限（小时）', help: '累计不超过就不补', type: 'num', min: 0, max: 24},
+    {g: '预案', k: 'moveOver', label: '挪补赛阈值（小时）', help: '单次宕机超过就挪', type: 'num', min: 2, max: 168, step: 6}
+  ];
+  const FBY = Object.fromEntries(FIELDS.map(f => [f.k, f]));
+  const validDate = s => ENG.isoUTC(s) != null;
+  function clampP(p){
+    const q = {...p};
+    ['start', 'prepStart', 'edgepodArrive'].forEach(k => { if (!validDate(q[k])) q[k] = DEF[k]; });
+    q.hour = clampInt(q.hour, 0, 23, DEF.hour);
+    q.teams = clampInt(q.teams, 1, Math.min(8, NAMES.length - 2), DEF.teams);
+    q.window = clampInt(q.window, 24, 720, DEF.window);
+    q.phase1 = clampInt(q.phase1, 1, q.window - 2, Math.min(DEF.phase1, q.window - 2));
+    q.sealAt = clampInt(q.sealAt, q.phase1 + 1, q.window - 1, Math.min(Math.max(DEF.sealAt, q.phase1 + 1), q.window - 1));
+    q.practiceLead = clampInt(q.practiceLead, 0, 30, DEF.practiceLead);
+    q.gap = clampInt(q.gap, 0, 168, DEF.gap);
+    q.handover = clampInt(q.handover, 1, 96, DEF.handover);
+    q.makeupDays = clampInt(q.makeupDays, 0, 14, DEF.makeupDays);
+    q.standby = clampInt(q.standby, 0, 2, DEF.standby);
+    q.noMakeupMax = clampInt(q.noMakeupMax, 0, 24, DEF.noMakeupMax);
+    q.moveOver = clampInt(q.moveOver, 2, 168, DEF.moveOver);
+    if (!['mvp', 'full'].includes(q.scope)) q.scope = DEF.scope;
+    if (!['gate', 'fixed'].includes(q.launch)) q.launch = DEF.launch;
+    if (!['keep', 'pause'].includes(q.holidayPlan)) q.holidayPlan = DEF.holidayPlan;
+    q.dur = {...(p.dur || {})};
+    return q;
+  }
+
+  /* ---------- state ---------- */
+  let P = clampP({...DEF});
+  let risks = [], uid = 0, presetId = 'clean';
+  let R = null, B = null;
+  let view = 'pre', t = 0, sel = 0, logFilter = 'all';
+  let playing = false, raf = 0, curLog = -2;
+  let GX = null;
+
+  /* ---------- params panel ---------- */
+  (function buildParams(){
+    const groups = [['赛制', '每队的窗口和阶段'], ['赛前', '准备的假设'], ['预案', '换队、补时和节假日的规则']];
+    $('pcards').innerHTML = groups.map(([g, sub]) => `<div class="card"><div class="card-h"><h3>${esc(g)}</h3><p>${esc(sub)}</p></div>${FIELDS.filter(f => f.g === g).map(f => {
+      let c;
+      if (f.type === 'date') c = `<input class="inp" type="date" data-k="${f.k}" aria-label="${esc(f.label)}">`;
+      else if (f.type === 'hour') c = `<select class="inp" data-k="${f.k}" aria-label="${esc(f.label)}">${Array.from({length: 24}, (_, h) => `<option value="${h}">${pad(h)}:00</option>`).join('')}</select>`;
+      else if (f.type === 'seg') c = `<div class="segc" data-k="${f.k}" role="group" aria-label="${esc(f.label)}">${f.options.map(o => `<button type="button" data-v="${o[0]}">${esc(o[1])}</button>`).join('')}</div>`;
+      else c = `<div class="stepper" data-k="${f.k}"><button type="button" data-d="-1" aria-label="减少">−</button><input type="number" data-k="${f.k}" min="${f.min}" max="${f.max}" step="${f.step || 1}" inputmode="numeric" aria-label="${esc(f.label)}"><button type="button" data-d="1" aria-label="增加">+</button></div>`;
+      return `<div class="pr"><div><b>${esc(f.label)}</b><small>${esc(f.help)}</small></div>${c}</div>`;
+    }).join('')}</div>`).join('');
+    const setK = (k, v) => { stop(); const np = {...P}; np[k] = v; if (k === 'scope') np.dur = {}; P = clampP(np); recompute(); syncInputs(); };
+    $('pcards').addEventListener('click', e => {
+      const sb = e.target.closest('.segc[data-k] button'); if (sb){ setK(sb.parentElement.dataset.k, sb.dataset.v); return; }
+      const st = e.target.closest('.stepper button'); if (st){ const k = st.parentElement.dataset.k, f = FBY[k]; setK(k, P[k] + (+st.dataset.d) * (f.step || 1)); }
+    });
+    $('pcards').addEventListener('change', e => {
+      const el = e.target.closest('[data-k]'); if (!el || el.classList.contains('segc') || el.classList.contains('stepper')) return;
+      const f = FBY[el.dataset.k]; if (!f) return;
+      if (el.value === '' && f.type === 'num'){ syncInputs(); return; }
+      setK(f.k, f.type === 'num' || f.type === 'hour' ? Number(el.value) : el.value);
+    });
+  })();
+  function syncInputs(){
+    FIELDS.forEach(f => {
+      if (f.type === 'seg') $('pcards').querySelectorAll(`.segc[data-k="${f.k}"] button`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === P[f.k])));
+      else { const el = $('pcards').querySelector(`input[data-k="${f.k}"],select[data-k="${f.k}"]`); if (el && document.activeElement !== el) el.value = P[f.k]; }
+    });
+    $('literal').setAttribute('aria-pressed', String(Object.entries(C.literal || {}).every(([k, v]) => P[k] === v)));
+  }
+  $('reset').addEventListener('click', () => { stop(); P = clampP({...DEF}); risks = []; presetId = 'clean'; recompute(); syncInputs(); });
+  $('literal').addEventListener('click', () => { stop(); P = clampP({...P, ...(C.literal || {})}); recompute(); syncInputs(); });
+
+  /* ---------- risks ---------- */
+  const mkRisk = (type, vals) => { const d = TYPES[type]; const r = {uid: ++uid, type}; d.fields.forEach(f => { r[f.k] = vals && vals[f.k] != null ? vals[f.k] : f.def; }); return r; };
+  function loadPreset(id){ const p = C.presets.find(x => x.id === id); if (!p) return; presetId = id; risks = p.risks.map(r => mkRisk(r.type, r)); }
+  function dice(){
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const by = s => C.riskTypes.filter(x => x.stage === s);
+    const chosen = [pick(by('pre')), pick(by('in')), pick(by('in')), pick(by('post'))];
+    if (Math.random() < .5) chosen.push(pick(C.riskTypes));
+    const seen = new Set();
+    risks = chosen.filter(d => { if (seen.has(d.type) && d.type !== 'outage') return false; seen.add(d.type); return true; }).map(d => {
+      const v = {};
+      d.fields.forEach(f => {
+        if (f.type === 'team') v[f.k] = NAMES[Math.floor(Math.random() * P.teams)];
+        else if (f.type === 'sel') v[f.k] = pick(f.options)[0];
+        else { const hi = f.k === 'at' ? P.window - 1 : Math.min(f.max, Math.max(f.def * 2, f.min + 1)); const lo = f.k === 'at' ? 1 : Math.max(f.min, Math.round(f.def / 2)); v[f.k] = Math.round(lo + Math.random() * (hi - lo)); }
+      });
+      return mkRisk(d.type, v);
+    });
+    presetId = '__dice';
+  }
+  const presetName = () => { const p = C.presets.find(x => x.id === presetId); return p ? p.name : presetId === '__dice' ? '随机' : '自定义'; };
+  function renderPresets(){
+    $('presets').innerHTML = C.presets.map(p => `<button class="btn" type="button" data-p="${esc(p.id)}" aria-pressed="${p.id === presetId}">${esc(p.name)}</button>`).join('') +
+      `<button class="btn" type="button" data-p="__dice" aria-pressed="${presetId === '__dice'}"><svg><use href="#i-dice"/></svg>掷骰子</button>` + (risks.length ? `<button class="btn ghost" type="button" data-p="__clear">清空</button>` : '');
+    const p = C.presets.find(x => x.id === presetId);
+    $('presetDesc').textContent = p ? p.desc : presetId === '__dice' ? '随机抽了几件事，赛前、赛中、赛后各至少一件。再掷一次换一组。' : '自定义组合。';
+    $('topPreset').innerHTML = C.presets.map(p => `<option value="${esc(p.id)}" ${p.id === presetId ? 'selected' : ''}>${esc(p.name)}</option>`).join('') + (C.presets.some(p => p.id === presetId) ? '' : `<option value="" selected>${esc(presetName())}</option>`);
+    const hit = R.risks.filter(r => r.status === 'hit').length;
+    $('scenBox').innerHTML = `<span>当前情景</span><b>${esc(presetName())}</b><span>${risks.length ? `${risks.length} 条风险 · ${hit} 条触发` : '没有注入风险'}</span>`;
+  }
+  const onPreset = id => { stop(); if (id === '__clear'){ risks = []; presetId = 'clean'; } else if (id === '__dice') dice(); else loadPreset(id); recompute(); };
+  $('presets').addEventListener('click', e => { const b = e.target.closest('button[data-p]'); if (b) onPreset(b.dataset.p); });
+  $('topPreset').addEventListener('change', e => { if (e.target.value) onPreset(e.target.value); });
+  $('topDice').addEventListener('click', () => onPreset('__dice'));
+  (function buildAdd(){
+    $('radd').innerHTML = `<option value="">添加一条风险…</option>` + ['pre', 'in', 'post'].map(s => `<optgroup label="${STAGE[s]}">${C.riskTypes.filter(x => x.stage === s).map(x => `<option value="${esc(x.type)}">${esc(x.name)}</option>`).join('')}</optgroup>`).join('');
+    $('radd').addEventListener('change', e => { const v = e.target.value; e.target.value = ''; if (!v) return; stop(); risks.push(mkRisk(v)); presetId = '__custom'; recompute(); });
+  })();
+  function fieldCtl(r, f){
+    const name = `${r.uid}:${f.k}`;
+    if (f.type === 'team'){ const opts = NAMES.slice(0, P.teams); if (!opts.includes(r[f.k])) opts.push(r[f.k]); return `<label>${esc(f.label)}<select data-r="${name}">${opts.map(L => `<option value="${esc(L)}" ${L === r[f.k] ? 'selected' : ''}>${esc(L)} 队</option>`).join('')}</select></label>`; }
+    if (f.type === 'sel') return `<label>${esc(f.label || '')}<select data-r="${name}">${f.options.map(o => `<option value="${esc(o[0])}" ${o[0] === r[f.k] ? 'selected' : ''}>${esc(o[1])}</option>`).join('')}</select></label>`;
+    return `<label>${esc(f.label)}<input type="number" data-r="${name}" min="${f.min}" max="${f.max}" value="${esc(r[f.k])}">${esc(f.unit || '')}</label>`;
+  }
+  function renderRisks(){
+    renderPresets();
+    if (!risks.length){ $('rlist').innerHTML = `<p class="empty">还没有注入风险，现在看到的是预案本身的节奏。</p>`; $('raddNote').textContent = ''; return; }
+    $('rlist').innerHTML = risks.map((r, i) => {
+      const d = TYPES[r.type], rr = R.risks[i] || {};
+      const st = rr.status === 'dead' ? `<span class="tag">未生效</span>` : rr.status === 'hit' ? `<span class="tag ${d.sev === 'critical' ? 'crit' : 'warn'}"><i></i>已触发</span>` : `<span class="tag">没有触发</span>`;
+      const eff = rr.status === 'dead' ? esc(rr.effect) : rr.status === 'hit' ? `<b>${esc(rr.effect)}</b>${rr.h != null ? ` · ${esc(fT(rr.h))}` : ''}` : '';
+      return `<div class="rr${rr.status === 'dead' ? ' dead' : ''}">
+        <span class="ic ${d.sev === 'critical' ? 'crit' : 'warn'}" style="font:600 11px var(--fm)">#${i + 1}</span>
+        <div><div class="ttl"><b>${esc(d.name)}</b><span>${STAGE[d.stage]} · 预案 ${esc(d.ref)}</span></div>
+          ${d.fields.length ? `<div class="rk-f">${d.fields.map(f => fieldCtl(r, f)).join('')}</div>` : ''}
+          ${eff ? `<p class="eff">${eff}</p>` : ''}</div>
+        <div class="side-r">${st}<button class="xbtn" type="button" data-x="${r.uid}" aria-label="删除这条风险"><svg><use href="#i-x"/></svg></button></div>
+      </div>`;
+    }).join('');
+    $('raddNote').textContent = `共 ${risks.length} 条`;
+  }
+  $('rlist').addEventListener('change', e => {
+    const el = e.target.closest('[data-r]'); if (!el) return;
+    const [u, k] = el.dataset.r.split(':'); const r = risks.find(x => x.uid === +u); if (!r) return;
+    const f = TYPES[r.type].fields.find(x => x.k === k);
+    r[k] = f.type === 'num' ? clampInt(el.value, f.min, f.max, f.def) : el.value;
+    presetId = '__custom'; stop(); recompute();
+  });
+  $('rlist').addEventListener('click', e => { const b = e.target.closest('[data-x]'); if (!b) return; risks = risks.filter(x => x.uid !== +b.dataset.x); presetId = risks.length ? '__custom' : 'clean'; stop(); recompute(); });
+
+  /* ---------- simulate ---------- */
+  function recompute(){
+    const lst = risks.map(({uid, ...r}) => r);
+    try { R = ENG.simulate(C, P, lst); B = lst.length ? ENG.simulate(C, P, []) : R; }
+    catch (err){ $('h1').textContent = `推演出错：${err.message}`; console.error(err); return; }
+    const [L0, L1] = life(); t = Math.max(L0, Math.min(L1, t));
+    if (sel >= R.event.slots.length) sel = 0;
+    renderAll();
+  }
+  const life = () => [R.stages[0].a, R.stages[2].b];
+  const evEnd = () => Math.max(R.stages[1].b, R.event.mkB || 0, ...R.event.mk.map(m => m.ho.b));
+  function domainOf(v){ const s = R.stages; if (v === 'pre') return [s[0].a - 12, s[0].b + 30]; if (v === 'in') return [s[1].a, Math.max(evEnd(), s[1].a + 24)]; return [s[2].a - 12, s[2].b + 12]; }
+  const stageOf = h => h < R.stages[1].a ? 'pre' : h < R.stages[1].b ? 'in' : 'post';
+  const fT = h => stageOf(h) === 'in' ? R.F.dt(h) : R.F.day(h);
+  function todayH(){ const d = new Date(); return (Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - R.T0) / 3600e3 + d.getHours(); }
+  function clockOf(sl, h){ if (h >= sl.e) return sl.quit ? sl.quit.at : sl.moved ? sl.moved.from : P.window; let lo = 0, hi = P.window; for (let i = 0; i < 22; i++){ const m = (lo + hi) / 2; if (sl.wall(m) <= h) lo = m; else hi = m; } return Math.floor(lo); }
+  const bigDate = (h, withHour) => { const d = R.F.D(h); return `${d.getUTCMonth() + 1}月${d.getUTCDate()}日${withHour ? `<sup>${pad(d.getUTCHours())}:00</sup>` : ''}`; };
+  const dd = (cur, base) => { if (!risks.length || cur == null || base == null || Math.abs(cur - base) < 1) return ''; return `<span class="tag warn">比无风险${cur > base ? '晚' : '早'} ${esc(R.F.dur(Math.abs(cur - base)))}</span>`; };
+
+  /* ---------- overview ---------- */
+  function renderOverview(){
+    const F = R.F, M = R.metrics, BM = B.metrics, s = R.stages;
+    const dPre = Math.round((s[0].b - s[0].a) / 24), dIn = Math.round((s[1].b - s[1].a) / 24);
+    $('eyebrow').textContent = C.eyebrow || C.name;
+    $('h1').innerHTML = `${P.teams === 1 ? '一支队伍' : `${CN[P.teams]}支队伍`}，一台 ${esc(MACHINE)}。<br><span>赛前 ${dPre} 天，比赛 ${dIn} 天，再加赛后 90 天。</span>`;
+    const chip = M.slip > 0 ? `<span class="tag warn"><i></i>比原定晚 ${esc(F.dur(M.slip))}</span>` : M.unfinished ? `<span class="tag warn"><i></i>按期，${M.unfinished} 项没做完</span>` : `<span class="tag good"><i></i>按原定日期</span>`;
+    $('hero').innerHTML = `<div class="lbl">开赛</div><div class="big">${bigDate(M.start, true)}</div>
+      <div class="row">${chip}${dd(M.start, BM.start)}<span>原定 ${esc(F.dt(M.planned))} · ${P.launch === 'gate' ? '按启动门禁' : '按日期硬开'}</span></div>
+      <div class="split">
+        <div><span class="lbl">启动门禁</span><b>${esc(F.day(M.gateReady))}</b></div>
+        <div><span class="lbl">全部完赛</span><b>${esc(F.day(M.eventEnd))}</b></div>
+        <div><span class="lbl">赛后第 90 天</span><b>${esc(F.day(M.day90 - 24))}</b></div>
+      </div>`;
+    const hol = R.holidays.filter(x => x.h + 12 >= M.start && x.h + 12 < M.eventEnd).map(x => { const on = R.event.played.find(sl => x.h + 12 >= sl.s && x.h + 12 < sl.e); return `${x.name}${on ? `落在 ${on.who} 队窗口` : '时机器空闲'}`; });
+    const rows = [
+      ['flag', M.slip > 0 || M.unfinished ? 'warn' : 'good', M.slip > 0 ? `启动门禁 ${F.day(M.gateReady)} 才满足` : M.unfinished ? `硬开，${M.unfinished} 项准备没做完` : '启动门禁按时满足',
+        `卡住开赛的是这条线：${M.critTxt}。`],
+      ['infra', M.over > 0 ? 'warn' : 'acc', `${R.event.played.length} 队 ${F.day(M.start)} – ${F.day(M.eventEnd)} 依次独占 ${MACHINE}`,
+        `${hol.length ? hol.join('，') + '。' : ''}${M.over > 0 ? `比公布的赛程晚 ${F.dur(M.over)}结束。` : '按公布的赛程结束。'}`],
+      ['check', M.prizeExt ? 'warn' : 'acc', `${M.announce != null ? F.day(M.announce) : '—'} 公布成绩，${M.prize != null ? F.day(M.prize) : '—'} 奖金到账`,
+        M.prizeExt ? `奖金发放撞上春节，顺延 ${F.days(M.prizeExt)}。` : '赛后流程顺利。'],
+      ['alert', risks.length ? (R.disputes.some(d => d.star) ? 'crit' : 'warn') : '', risks.length ? `注入 ${risks.length} 条风险，${M.riskHit} 条触发` : '还没有注入风险',
+        risks.length ? `引出 ${R.disputes.length} 类可能的争执${M.riskDead ? `；${M.riskDead} 条没生效` : ''}。` : '在“情景与风险”里选一个情景，或者在顶栏掷骰子。']
+    ];
+    $('findings').innerHTML = rows.map(r => `<div class="fr">${ico(r[0], r[1])}<div><b>${esc(r[2])}</b><p>${esc(r[3])}</p></div></div>`).join('');
+    const day = h => `赛后第 ${Math.floor((h - M.dayOne) / 24) + 1} 天`;
+    const st = [
+      ['全部完赛', esc(F.day(M.eventEnd)), M.over > 0 ? `比公布晚 ${esc(F.dur(M.over))}` : '按公布的赛程', dd(M.eventEnd, BM.eventEnd)],
+      ['比赛', `${dIn}<small>天</small>`, `${R.event.played.length} 队 × ${P.window} 小时`, ''],
+      ['公布成绩', M.announce != null ? esc(F.day(M.announce)) : '—', M.announce != null ? day(M.announce) : '', dd(M.announce, BM.announce)],
+      ['奖金到账', M.prize != null ? esc(F.day(M.prize)) : '—', M.prizeExt ? `遇春节顺延 ${esc(F.days(M.prizeExt))}` : M.prize != null ? day(M.prize) : '', dd(M.prize, BM.prize)],
+      ['补时 / 作废', `${M.makeupH}<small>/ ${M.voidH + M.emptyH} 小时</small>`, [M.delayedN ? `${M.delayedN} 队晚开表` : '', M.movedN ? `${M.movedN} 队补赛` : '', M.standbyN ? `${M.standbyN} 支候补` : ''].filter(Boolean).join(' · ') || '没有补时和空档', ''],
+      ['可能的争执', `${R.disputes.length}<small>类</small>`, R.disputes.some(x => x.star) ? `★ ${R.disputes.filter(x => x.star).length} 类最容易闹大` : R.disputes.length ? '预案 §5' : '没有', '']
+    ];
+    $('stats').innerHTML = st.map(x => `<div><span class="lbl">${x[0]}</span><b>${x[1]}</b><span class="sub">${x[2]}${x[3]}</span></div>`).join('');
+    $('paramNote').textContent = '默认值是预案里的建议值（还没拍板），写在同目录的 scenario.js。整数参数用 − / + 调，二选一的直接点。“官网字面口径” = 00:00 开赛、换队不留间隔。';
+  }
+
+  /* ---------- life strip ---------- */
+  function lifeSegs(){ const s = R.stages, pb = R.post.bands; return [{v: 'pre', cls: 'pre', a: s[0].a, b: s[0].b}, {v: 'in', cls: 'in', a: s[1].a, b: s[1].b}, ...pb.map((b, i) => ({v: 'post', cls: ['p1', 'p2', 'p3'][i] || 'p3', a: b.a, b: b.b}))]; }
+  const lp = h => { const [L0, L1] = life(); return (h - L0) / (L1 - L0) * 100; };
+  function renderLife(){
+    const F = R.F, M = R.metrics, [L0, L1] = life();
+    let s = lifeSegs().map(sg => `<span class="sg ${sg.cls}${sg.v === view ? ' on' : ''}" data-v="${sg.v}" style="left:${lp(sg.a)}%;width:calc(${lp(sg.b) - lp(sg.a)}% - 3px)"></span>`).join('');
+    R.holidays.concat(R.blackout ? [{h: R.blackout.a, len: R.blackout.b - R.blackout.a}] : []).forEach(x => { if (x.h >= L0 && x.h <= L1) s += `<span class="hol" style="left:${lp(x.h)}%;width:${Math.max(.3, (x.len || 24) / (L1 - L0) * 100)}%"></span>`; });
+    const placed = [];
+    R.flags.forEach(f => { if (f.h < L0 || f.h > L1) return; let p = lp(f.h); while (placed.some(q => Math.abs(q - p) < 1.8)) p += 1.8; placed.push(p); s += `<span class="dot ${f.sev}" style="left:${p}%" title="#${f.n} ${esc(f.title)}">${f.n}</span>`; });
+    // 月份刻度
+    for (let d = Math.ceil(L0 / 24) * 24; d < L1; d += 24){ const dt = F.D(d); if (dt.getUTCDate() === 1) s += `<span class="ax" style="left:${lp(d)}%">${dt.getUTCFullYear() !== F.y0 ? dt.getUTCFullYear() + '/' : ''}${dt.getUTCMonth() + 1}月</span>`; }
+    const th = todayH(); if (th >= L0 && th <= L1) s += `<span class="today" style="left:${lp(th)}%" title="今天"></span>`;
+    s += `<span class="ph" id="lifePh" style="left:${lp(t)}%"></span>`;
+    $('strip').innerHTML = s;
+    $('lifeNote').textContent = `${F.day(L0)} → ${F.day(L1 - 24)} · 点或拖这条带子跳到任一时刻`;
+    const hol = (a, b) => R.holidays.filter(x => x.h < b && x.h + 24 > a);
+    const holN = (a, b) => { const h = hol(a, b); return h.length ? ` <span class="hn">经过${esc(h.map(x => `${x.name} ${F.day(x.h)}`).join('、'))}。</span>` : ''; };
+    const cnt = st => R.flags.filter(f => stageOf(f.h) === st).length;
+    const rn = st => cnt(st) ? ` ${cnt(st)} 条风险。` : '';
+    const pb = R.post.bands;
+    const items = [
+      {cls: 'pre', name: '赛前准备', when: `${F.day(R.stages[0].a)} – ${F.day(M.start - 1)}`, note: `${Math.round((M.start - R.stages[0].a) / 24)} 天，启动门禁 ${F.day(M.gateReady)} 满足。${rn('pre')}`, x: ''},
+      {cls: 'in', name: `比赛 · ${R.event.played.length} 队`, when: `${F.day(M.start)} – ${F.day(M.eventEnd - 1)}`, note: `${F.dur(M.eventEnd - M.start)}。${rn('in')}`, x: holN(M.start, M.eventEnd)},
+      ...(C.postEvent || []).map((pe, i) => ({cls: ['p1', 'p2', 'p3'][i], name: pe.name, when: `${F.day(pb[i].a)} – ${F.day(pb[i].b - 24)}`, note: (i === 0 && M.announce != null ? `${F.day(M.announce)} 公布成绩。` : i === 1 && M.prize != null ? `${F.day(M.prize)} 奖金到账。` : '') + (i === 0 ? rn('post') : ''), x: holN(pb[i].a, pb[i].b) + `<br>${esc(pe.note)}`}))
+    ];
+    $('legs').innerHTML = items.map(it => `<li><span class="sw sg ${it.cls}" style="position:static"></span><b>${esc(it.name)}</b><span class="when">${esc(it.when)}</span><p>${esc(it.note)}${it.x}</p></li>`).join('');
+  }
+  function placeLifePh(){ const el = $('lifePh'); if (el) el.style.left = lp(t) + '%'; $('strip').querySelectorAll('.sg').forEach(sg => sg.classList.toggle('on', sg.dataset.v === view)); }
+  (function lifePointer(){
+    const el = $('strip'); let drag = false;
+    const go = e => { const rc = el.getBoundingClientRect(); const f = Math.max(0, Math.min(1, (e.clientX - rc.left) / rc.width)); const [L0, L1] = life(); stop(); setT(L0 + f * (L1 - L0), true); };
+    el.addEventListener('pointerdown', e => { if (e.button !== 0) return; drag = true; el.setPointerCapture(e.pointerId); go(e); });
+    el.addEventListener('pointermove', e => { if (drag) go(e); });
+    el.addEventListener('pointerup', () => { drag = false; });
+  })();
+
+  /* ---------- timeline ---------- */
+  function renderVTabs(){
+    const s = R.stages;
+    const v = [['pre', '赛前', `${Math.round((s[0].b - s[0].a) / 24)} 天`], ['in', '赛中', `${Math.round((s[1].b - s[1].a) / 24)} 天`], ['post', '赛后', '90 天']];
+    $('vtabs').innerHTML = v.map(x => `<button type="button" data-v="${x[0]}" aria-pressed="${view === x[0]}">${x[1]}<small>${esc(x[2])}</small></button>`).join('');
+    $('crumbStage').textContent = STAGE[view];
+  }
+  $('vtabs').addEventListener('click', e => {
+    const b = e.target.closest('button[data-v]'); if (!b) return;
+    stop(); view = b.dataset.v;
+    const [a, z] = domainOf(view); if (t < a || t > z) t = R.stages.find(x => x.id === view).a;
+    renderVTabs(); renderBoard(); renderTime();
+  });
+  const sk = (w, h) => `<svg class="k" viewBox="0 0 24 12" aria-hidden="true">${w}</svg>`;
+  function renderBoard(){
+    if (view === 'in'){
+      $('tlTitle').textContent = `${MACHINE} 上机日历`;
+      $('tlSub').textContent = `每行一队，窗口 ${P.window} 小时，分三段：第一阶段 ${P.phase1} 小时、开发期、第 ${P.sealAt} 小时封存后的正式评测。已经比完的部分是靛紫，没比的是灰色轨道。`;
+      $('tlNote').textContent = '红块是宕机，点状条是换队交接，橙色虚框是比公布时间晚开表的部分，窗口下的细条是评审。';
+      $('legend').innerHTML = [
+        [sk(`<rect x="0" y="2" width="8" height="8" rx="2" fill="var(--acc-1)"/><rect x="8.5" y="2" width="8" height="8" rx="2" fill="var(--acc)"/><rect x="17" y="2" width="7" height="8" rx="2" fill="var(--acc-2)"/>`), '第一阶段 · 开发期 · 正式评测'],
+        [sk(`<rect x="0" y="2" width="24" height="8" rx="3" fill="var(--track)"/>`), '还没比'],
+        [sk(`<rect x="0" y="1" width="24" height="10" rx="2" fill="var(--crit)"/>`), '宕机'],
+        [sk(`<rect x="0" y="3" width="24" height="6" rx="2" fill="url(#pt-dots)"/>`), '交接'],
+        [sk(`<rect x="1" y="1" width="22" height="10" rx="3" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="4 3"/>`), '晚开表'],
+        [sk(`<rect x="0" y="1" width="24" height="10" rx="2" fill="url(#pt-hatch)"/>`), '作废'],
+        [sk(`<rect x="0" y="0" width="24" height="12" fill="var(--hol)"/>`), '节假日'],
+        ...TASKS.map(x => [tchip(x), x.en])
+      ].map(x => `<li>${x[0]}${esc(x[1])}</li>`).join('');
+      renderEvent();
+    } else {
+      const pre = view === 'pre';
+      $('tlTitle').textContent = pre ? '赛前：从准备开始到开赛' : '赛后：算分、复现、公布，再到 90 天计划';
+      $('tlSub').textContent = pre ? '每行一条工作线。靛紫是关键路径，也就是决定启动门禁时间的那条链；其余是灰色。竖线标出原定开赛、门禁满足和实际开赛。' : '从最后一队下机算赛后第 1 天。复现要用机器，算分要等复现，公布要等 7 天异议期；奖金发放遇到春节会顺延。';
+      $('tlNote').textContent = pre ? '工期是估计值，在“赛前任务表”里可以改。' : '赛后步骤都从早上开工。';
+      $('legend').innerHTML = [
+        [sk(`<rect x="0" y="2" width="24" height="8" rx="3" fill="var(--acc)"/>`), '关键路径'],
+        [sk(`<rect x="0" y="2" width="24" height="8" rx="3" fill="var(--bar)"/>`), '任务'],
+        [sk(`<rect x="1" y="2" width="22" height="8" rx="3" fill="var(--bar)" stroke="var(--crit)" stroke-width="1.5"/>`), '受风险影响'],
+        ...(pre ? [[sk(`<rect x="1" y="2" width="22" height="8" rx="3" fill="var(--bar)" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="4 2"/>`), '开赛时没做完']] : []),
+        [sk(`<circle cx="12" cy="6" r="4" fill="var(--ink)"/>`), '节点'],
+        [sk(`<rect x="0" y="0" width="24" height="12" fill="var(--hol)"/>`), '节假日'],
+        [sk(`<line x1="12" y1="0" x2="12" y2="12" stroke="var(--acc)" stroke-dasharray="3 2" stroke-width="1.5"/>`), '今天']
+      ].map(x => `<li>${x[0]}${esc(x[1])}</li>`).join('');
+      renderLanes(view);
+    }
+  }
+
+  function axis(X, A, Z, top, yb, opt){
+    const F = R.F, pxDay = (X(A + 24) - X(A));
+    let s = '';
+    const hols = R.holidays.map(x => ({a: x.h, b: x.h + 24, name: x.name, d: F.day(x.h)}));
+    if (R.blackout) hols.push({a: R.blackout.a, b: R.blackout.b, name: R.blackout.name, d: ''});
+    hols.forEach(x => {
+      const a = Math.max(A, x.a), b = Math.min(Z, x.b); if (b <= a) return;
+      s += `<rect class="hol" x="${X(a)}" y="${top - 6}" width="${X(b) - X(a)}" height="${yb - top + 6}"/>`;
+      if (R.blackout && x.name !== R.blackout.name && x.a >= R.blackout.a && x.a < R.blackout.b) return;
+      s += `<text class="hol-t" x="${(X(a) + X(b)) / 2}" y="${yb + 16}" text-anchor="middle">${esc(x.name)}${x.d ? ' ' + esc(x.d) : ''}</text>`;
+    });
+    const step = [1, 2, 7, 14].find(v => pxDay * v >= 24) || 28;
+    const months = [];
+    for (let d = Math.floor(A / 24) * 24, j = 0; d < Z; d += 24, j++){
+      const dt = F.D(d), first = dt.getUTCDate() === 1, a = Math.max(A, d), b = Math.min(Z, d + 24);
+      const mon = dt.getUTCDay() === 1;
+      if (d > A && (first || (pxDay >= 10 && (step === 1 || mon)))) s += `<line class="grid${first ? ' mo' : ''}" x1="${X(d)}" x2="${X(d)}" y1="${top - 6}" y2="${yb}"/>`;
+      if (step === 1){ if (X(b) - X(a) >= 14) s += `<text class="t-d" x="${(X(a) + X(b)) / 2}" y="${top - 14}" text-anchor="middle">${dt.getUTCDate()}</text>`; }
+      else if (d >= A && mon && (step <= 7 || Math.floor(d / 168) % 2 === 0) && X(d) + 14 < X(Z)) s += `<text class="t-d" x="${X(d) + 3}" y="${top - 14}">${dt.getUTCDate()}</text>`;
+      if (first && d > A) months.push({x: X(d), d: dt});
+    }
+    const all = [{x: X(A), d: F.D(A)}, ...months];
+    if (all.length > 1 && all[1].x - all[0].x < 70) all.shift();
+    let lastX = -999;
+    all.forEach(mo => { if (mo.x - lastX < 70 || mo.x > X(Z) - 30) return; const y = mo.d.getUTCFullYear(); s += `<text class="t-m" x="${mo.x + 3}" y="${top - 32}">${y !== F.y0 ? y + '年' : ''}${mo.d.getUTCMonth() + 1}月</text>`; lastX = mo.x; });
+    if (opt && opt.today){ const th = todayH(); if (th >= A && th <= Z) s += `<line class="today" x1="${X(th)}" x2="${X(th)}" y1="${top - 6}" y2="${yb}"/><text class="today-t" x="${X(th) + 4}" y="${yb - 5}">今天</text>`; }
+    return s;
+  }
+  function playheadSVG(){
+    if (!GX || t < GX.A || t > GX.Z) return '';
+    const px = GX.X(t), lab = fT(t), lw = Math.max(64, textW(lab, 11) + 16), lx = Math.min(Math.max(px - lw / 2, 4), GX.W - lw - 2);
+    return `<line class="phl" x1="${px}" x2="${px}" y1="${GX.top - 8}" y2="${GX.yb + 2}"/><circle class="phk" cx="${px}" cy="${GX.top - 8}" r="4.5"/><rect class="php" x="${lx}" y="${GX.yb + 24}" width="${lw}" height="20" rx="10"/><text class="pht" x="${lx + lw / 2}" y="${GX.yb + 38}" text-anchor="middle">${esc(lab)}</text>`;
+  }
+  function drawPlayhead(){ const layer = document.getElementById('phLayer'); if (layer) layer.innerHTML = playheadSVG(); }
+
+  function slotState(sl){
+    if (sl.kind === 'empty') return {k: 'empty', pill: '空档', cls: 'wait'};
+    if (t < sl.s) return {k: 'wait', pill: '等待', cls: 'wait'};
+    const out = sl.outs.find(o => t >= o.a && t < o.b);
+    if (out && t < Math.max(sl.e, out.b)) return {k: 'out', pill: '宕机', cls: 'alarm', out};
+    if (t < sl.e){ const k = sl.seal != null && t >= sl.seal ? 'formal' : sl.p1 != null && t >= sl.p1 ? 'dev' : 'p1'; return {k, pill: k === 'p1' ? PH[0].name : k === 'dev' ? '开发期' : '正式评测', cls: 'active'}; }
+    const m = R.event.mk.find(x => x.sl === sl);
+    if (m && t < m.a) return {k: 'mkwait', pill: '等补赛', cls: 'wait'};
+    if (m && t < m.b) return {k: 'mk', pill: '补赛', cls: 'active'};
+    if (sl.quit) return {k: 'quit', pill: '已退出', cls: 'done'};
+    return {k: 'done', pill: '完成', cls: 'done'};
+  }
+
+  /* ---- 赛中：每队一行，进度条式窗口 ---- */
+  function renderEvent(){
+    const F = R.F, ev = R.event, slots = ev.slots, n = slots.length;
+    const [A, Z] = domainOf('in');
+    const W = 1060, L = 168, RR = 20, top = 62, rowH = 66, bh = 26;
+    const plotW = W - L - RR, k = plotW / (Z - A), X = h => L + (Math.max(A, Math.min(Z, h)) - A) * k;
+    const yb = top + n * rowH, H = yb + 52;
+    GX = {X, A, Z, top, yb, W, H, L, rowH, kind: 'in'};
+    let s = `<svg class="gantt" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(`${MACHINE} 上机日历：` + slots.map(x => x.kind === 'empty' ? `${x.L} 队空档` : `${x.who} 队 ${F.dt(x.s)} 至 ${F.dt(x.e)}`).join('；'))}">`;
+    slots.forEach((sl, i) => { if (i === sel) s += `<rect class="rowsel" x="0" y="${top + i * rowH - 4}" width="${W}" height="${rowH}" rx="8"/>`; });
+    if (ev.pause){ const a = Math.max(A, ev.pause[0]), b = Math.min(Z, ev.pause[1]); if (b > a) s += `<rect class="pz" x="${X(a)}" y="${top - 6}" width="${X(b) - X(a)}" height="${yb - top + 6}"/><text class="cap" x="${X(a) + 6}" y="${yb - 6}">节前停赛</text>`; }
+    if (P.makeupDays > 0){ const a = Math.max(A, ev.mkA), b = Math.min(Z, ev.mkB); if (b > a) s += `<rect class="rsv" x="${X(a)}" y="${top - 6}" width="${X(b) - X(a)}" height="${yb - top + 6}" rx="8"/><text class="cap" x="${X(a) + 6}" y="${yb - 6}">补赛窗口 ${P.makeupDays} 天</text>`; }
+    s += axis(X, A, Z, top, yb, {});
+    const segs = sl => {
+      const p1 = sl.p1 != null ? sl.p1 : sl.e, se = sl.seal != null ? sl.seal : sl.e;
+      return [[sl.s, p1, 1, PH[0].name.replace('第一阶段', 'Infra')], [p1, se, 2, '开发'], [se, sl.e, 3, '评测']].filter(x => x[1] > x[0]);
+    };
+    const badges = [];
+    slots.forEach((sl, i) => {
+      const st = slotState(sl), y = top + i * rowH, by = y + 6, cy = by + bh / 2;
+      // 左侧：头像 + 名字 + 状态
+      const on = st.cls === 'active', alarm = st.cls === 'alarm';
+      s += `<g data-tip="${esc(`${sl.who} 队${sl.kind === 'standby' ? `（候补，接 ${sl.L} 队）` : ''}\n${sl.kind === 'empty' ? '赛前退出，空档' : `${F.dt(sl.s)} → ${F.dt(sl.e)}`}`)}"><circle cx="30" cy="${cy}" r="15" class="av${on ? ' on' : ''}" style="${alarm ? 'fill:var(--crit);stroke:var(--crit)' : ''}"/><text class="av-t" x="30" y="${cy + 4.5}" text-anchor="middle" style="${on || alarm ? 'fill:#fff' : ''}">${esc(sl.who)}</text>`;
+      s += `<text class="nm" x="54" y="${cy - 2}">${esc(sl.who)} ${sl.kind === 'standby' ? '候补' : '队'}</text><text class="nm-s" x="54" y="${cy + 13}">${esc(st.pill)}</text></g>`;
+      // 交接（上一队下机后），画在本行
+      const pv = slots.slice(0, i).reverse().find(x => x.ho);
+      if (pv && sl.kind !== 'empty'){
+        const ho = pv.ho, hx = X(ho.a), hw = X(ho.b) - hx;
+        if (hw > 2) s += `<rect class="ho" x="${hx + 1}" y="${cy - 4}" width="${hw - 2}" height="8" rx="4" data-tip="${esc(`换队交接（${pv.who} 队下机后）${ho.extra ? ` · 重装失败多花 ${ho.extra} 小时` : ''}\n${F.dt(ho.a)} → ${F.dt(ho.b)}（${F.dur(ho.b - ho.a)}）\n${C.handover}`)}"/>`;
+        if (ho.b > sl.ann){ const ox = X(Math.max(ho.a, sl.ann)); if (X(ho.b) - ox > 1) s += `<rect class="over" x="${ox}" y="${cy - 4}" width="${X(ho.b) - ox}" height="8" rx="4" pointer-events="none"/>`; }
+      }
+      if (sl.kind === 'empty'){
+        const x1 = X(sl.s), w = X(sl.e) - x1;
+        s += `<rect class="emp" x="${x1}" y="${by}" width="${w}" height="${bh}" rx="8" data-tip="${esc(`${sl.L} 队赛前退出，候补没补上\n${F.dt(sl.s)} → ${F.dt(sl.e)}\n空档作缓冲，后面的队不提前。`)}"/>`;
+        if (w > 150) s += `<text class="sm" x="${x1 + 12}" y="${cy + 4}">${esc(sl.L)} 队退出 · 空档作缓冲</text>`;
+        return;
+      }
+      if (sl.delay > 0){ const gx = X(sl.ann), gw = X(sl.s) - gx; if (gw > 2) s += `<rect class="ghost" x="${gx}" y="${by}" width="${gw}" height="${bh}" rx="8" data-tip="${esc(`公布的上机时间 ${F.dt(sl.ann)}\n实际 ${F.dt(sl.s)}，晚 ${F.dur(sl.delay)}`)}"/>`; }
+      // 三段：轨道 + 已经过去的部分
+      segs(sl).forEach(([a, b, ph, name], j, arr) => {
+        const x0 = X(a) + (j ? 1.5 : 0), x1 = X(b) - (j < arr.length - 1 ? 1.5 : 0), w = Math.max(1, x1 - x0);
+        const tip = ph === 1 ? `${sl.who} 队 · ${PH[0].name}（开卷）\n${list(T1)}\n${F.dt(a)} → ${F.dt(b)}` : ph === 2 ? `${sl.who} 队 · 开发期\n${list(T2)} 全部必做\n${F.dt(a)} → ${F.dt(b)}` : `${sl.who} 队 · 正式评测（组委会运行，断网）\n第 ${P.sealAt} 小时封存后\n${F.dt(a)} → ${F.dt(b)}${sl.makeup ? `\n含补时 ${sl.makeup} 小时` : ''}`;
+        s += `<rect class="trk" x="${x0}" y="${by}" width="${w}" height="${bh}" rx="${j === 0 ? 8 : 3}" data-tip="${esc(tip)}"/>`;
+        const done = t >= b, nowIn = t > a && t < b;
+        if (done || nowIn){ const ex = done ? x1 : X(t); s += `<rect class="el${ph}" x="${x0}" y="${by}" width="${Math.max(0, ex - x0)}" height="${bh}" rx="${j === 0 ? 8 : 3}" pointer-events="none"/>`; }
+        const lab = ph === 1 ? (T1[0] ? 'Infra' : '') : name;
+        const cw = ph === 1 ? T1.length * 20 + 6 : ph === 2 ? T2.length * 20 + 6 : 0;
+        if (w > cw + textW(lab, 10.5) + 14){
+          const lx = x0 + 8 + cw, filled = t >= a + (lx + textW(lab, 10.5) - x0) / k;
+          s += `<text class="seg-t ${filled ? (ph === 3 ? 'w3' : 'w') : 'm'}" x="${lx}" y="${cy + 3.8}">${esc(lab)}</text>`;
+        }
+        const tl = ph === 1 ? T1 : ph === 2 ? T2 : [];
+        if (tl.length && w >= tl.length * 20 + 8) tl.forEach((tk, q) => { s += `<g data-tip="${esc(`${tk.en}（${tk.zh}）· ${tk.points} 分`)}"><rect x="${x0 + 5 + q * 20}" y="${cy - 8}" width="16" height="16" rx="4" fill="var(--t-${tk.id}-bg)"/><use href="#i-${tk.icon}" x="${x0 + 8 + q * 20}" y="${cy - 5}" width="10" height="10" style="color:var(--t-${tk.id})"/></g>`; });
+      });
+      sl.outs.forEach(o => {
+        const ox = X(o.a), ow = X(o.b) - ox; if (ow <= 0) return;
+        const c = o.cause === 'degraded' ? 'out deg' : (o.comp || o.move) ? 'out' : 'out soft';
+        s += `<rect class="${c}" x="${ox}" y="${by}" width="${Math.max(2.5, ow)}" height="${bh}" rx="3" data-tip="${esc(`#${o.n} 第 ${o.at} 小时宕机 ${o.hours} 小时（${o.cause === 'platform' ? '平台故障' : o.cause === 'team' ? '队伍自己弄崩' : '部分故障，降配继续'}）\n${o.move ? '剩余时间挪到补赛窗口' : o.comp ? '停表，补等长时间' : o.cause === 'degraded' ? '不停表，成绩标“条件不一致”' : '不补时'}`)}"/>`;
+      });
+      if (sl.makeup && X(sl.e) < W - 60) s += `<text class="sm" x="${X(sl.e) + 6}" y="${cy + 4}">补 ${sl.makeup}h</text>`;
+      if (sl.quit){ const vx = X(sl.e), vw = X(sl.s + P.window) - vx; if (vw > 2){ s += `<rect class="void" x="${vx + 1.5}" y="${by}" width="${vw - 1.5}" height="${bh}" rx="3" data-tip="${esc(`${sl.who} 队第 ${sl.quit.at} 小时退出\n剩余 ${sl.quit.voidH} 小时作废，作缓冲`)}"/>`; if (vw > 70) s += `<text class="sm" x="${vx + 10}" y="${cy + 4}">作废 ${sl.quit.voidH}h</text>`; } }
+      const m = ev.mk.find(x => x.sl === sl);
+      if (m){
+        const rx = X(m.ra), ax = X(m.a), bx = X(m.b);
+        if (ax - rx > 1) s += `<rect class="mkr" x="${rx}" y="${cy - 4}" width="${ax - rx}" height="8" rx="4" data-tip="${esc(`${sl.who} 队补赛前从归档恢复现场\n${F.dt(m.ra)} → ${F.dt(m.a)}`)}"/>`;
+        if (bx - ax > 1){
+          s += `<rect class="trk" x="${ax + 1}" y="${by}" width="${bx - ax - 1}" height="${bh}" rx="8"/>`;
+          if (t > m.a) s += `<rect class="el2" x="${ax + 1}" y="${by}" width="${Math.max(0, X(Math.min(t, m.b)) - ax - 1)}" height="${bh}" rx="8" pointer-events="none"/>`;
+          s += `<rect class="mk" x="${ax + 1}" y="${by}" width="${bx - ax - 1}" height="${bh}" rx="8" data-tip="${esc(`${sl.who} 队补赛：剩余 ${sl.moved.remain} 小时\n${F.dt(m.a)} → ${F.dt(m.b)}${m.b > ev.mkB ? '\n超出补赛窗口' : ''}`)}"/>`;
+          if (bx - ax > 50) s += `<text class="seg-t ${t > m.a + 30 / k ? 'w' : 'm'}" x="${ax + 10}" y="${cy + 3.8}">补赛</text>`;
+        }
+      }
+      const rv = R.items.find(it => it.id === `review:${sl.L}`);
+      if (rv && rv.a < Z){ const ra = X(rv.a), rb = X(Math.min(rv.b, Z)); if (rb - ra > 2) s += `<rect class="rv${(rv.cls || []).includes('late') ? ' late' : ''}" x="${ra + 2}" y="${by + bh + 6}" width="${rb - ra - 2}" height="4" rx="2" data-tip="${esc(rv.tip)}"/>`; }
+      const lab = `${F.dt(sl.s)}${sl.delay > 0 ? ` · 晚 ${F.dur(sl.delay)}` : ''}`;
+      const x1 = X(sl.s);
+      s += `<text class="t-d" x="${x1 + 2}" y="${by + bh + 22}">${esc(lab)}</text>`;
+      R.flags.filter(f => f.team && (f.type === 'handover_fail' ? (slots.slice(0, i).reverse().find(x => x.ho) || {}).L === f.team : f.team === sl.L)).forEach(f => badges.push({x: X(f.h), y: by - 3, f}));
+    });
+    const placed = [];
+    badges.forEach(bd => { let x = bd.x; while (placed.some(p => p.y === bd.y && Math.abs(p.x - x) < 20)) x += 20; placed.push({x, y: bd.y}); s += `<g class="rb ${bd.f.sev}" data-tip="${esc(`#${bd.f.n} ${bd.f.title}\n${fT(bd.f.h)}`)}"><circle cx="${x}" cy="${bd.y}" r="8.5"/><text x="${x}" y="${bd.y + 3.3}" text-anchor="middle">${bd.f.n}</text></g>`; });
+    s += `<g id="phLayer"></g></svg>`;
+    $('ganttBox').innerHTML = s;
+    drawPlayhead();
+  }
+
+  /* ---- 赛前 / 赛后：分行图 ---- */
+  const ROWICON = {pod: ['infra', 'acc'], base: ['base', ''], reg: ['rules', ''], ppl: ['people', ''], score: ['check', ''], svc: ['chat', ''], rules: ['shield', ''], money: ['money', ''], after: ['open', '']};
+  function renderLanes(v){
+    const F = R.F, rows = (C.views && C.views[v]) || [];
+    const [A, Z] = domainOf(v);
+    const W = 1060, L = 214, RR = 20;
+    const plotW = W - L - RR, k = plotW / (Z - A), X = h => L + (Math.max(A, Math.min(Z, h)) - A) * k, pxDay = 24 * k;
+    const byId = new Map(); R.items.forEach(it => { if (it.id) byId.set(it.id, it); });
+    const M = R.metrics;
+    const vm = v === 'pre'
+      ? [M.start !== M.planned ? {h: M.planned, t: '原定开赛', c: 'ghost'} : null, {h: M.gateReady, t: '门禁满足', c: 'gate'}, {h: M.start, t: M.unfinished ? '开赛（硬开）' : '开赛', c: 'ink'}].filter(Boolean)
+      : [{h: M.eventEnd, t: '全部完赛', c: 'ink'}, ...R.post.bands.slice(1).map(b => ({h: b.a, t: b.name.replace('赛后 ', '第 '), c: 'soft'}))];
+    vm.sort((p, q) => p.h - q.h);
+    const vmRows = []; vm.forEach(m => { const x = X(m.h), w = textW(m.t, 10.5) + 16; let r = 0; while (vmRows.some(q => q.r === r && x - w / 2 < q.x1 && x + w / 2 > q.x0)) r++; m.r = r; m.x = x; m.w = w; vmRows.push({r, x0: x - w / 2 - 4, x1: x + w / 2 + 4}); });
+    const vmH = (Math.max(0, ...vm.map(m => m.r)) + 1) * 22;
+    const top = 74 + vmH, tH = 28;
+    const lay = []; let y = top;
+    rows.forEach(row => {
+      const its = row.ids.map(id => byId.get(id)).filter(it => it && (it.b != null ? it.b : it.a) >= A && it.a <= Z).sort((p, q) => p.a - q.a);
+      const tracks = [];
+      its.forEach(it => {
+        let x0, x1; it._out = null; it._left = false;
+        if (it.kind === 'ms'){ const lw = textW(it.label, 11) + 8; x0 = X(it.a) - 7; x1 = X(it.a) + 7 + lw; if (x1 > W - RR){ it._left = true; x0 = X(it.a) - 7 - lw; x1 = X(it.a) + 7; } }
+        else { x0 = X(it.a); x1 = X(it.b); const w = x1 - x0 - 1, lab = shortLabel(it.label); if (w <= textW(lab, 11) + 14 && pxDay >= 8 && it.a >= A && x1 + 6 + textW(lab, 11) < W - RR){ it._out = lab; x1 += 8 + textW(lab, 11); } }
+        let ti = tracks.findIndex(e => e + 4 <= x0); if (ti < 0){ ti = tracks.length; tracks.push(x1); } else tracks[ti] = x1;
+        it._t = ti;
+      });
+      const h = Math.max(50, Math.max(1, tracks.length) * tH + 18);
+      lay.push({row, y, h, its}); y += h;
+    });
+    const yb = y, H = yb + 52;
+    GX = {X, A, Z, top, yb, W, H, L, kind: v};
+    let s = `<svg class="gantt" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(`${STAGE[v]}分行图：${F.day(A)} 到 ${F.day(Z)}`)}">`;
+    lay.forEach((r, i) => { if (i) s += `<line class="ln-sep" x1="10" x2="${W - 8}" y1="${r.y}" y2="${r.y}"/>`; });
+    s += axis(X, A, Z, top, yb, {today: true});
+    lay.forEach(r => {
+      const row = r.row, cy = r.y + 25, tk = row.task ? TBY[row.task] : null;
+      if (tk) s += `<rect x="12" y="${cy - 12}" width="24" height="24" rx="7" fill="var(--t-${tk.id}-bg)"/><use href="#i-${tk.icon}" x="17" y="${cy - 7}" width="14" height="14" style="color:var(--t-${tk.id})"/>`;
+      else { const ic = ROWICON[row.id] || ['generic', '']; s += `<rect x="12" y="${cy - 12}" width="24" height="24" rx="7" fill="${ic[1] === 'acc' ? 'var(--acc-soft)' : 'var(--sunken)'}"/><use href="#i-${ic[0]}" x="17" y="${cy - 7}" width="14" height="14" style="color:${ic[1] === 'acc' ? 'var(--acc)' : 'var(--ink-2)'}"/>`; }
+      s += `<text class="nm" x="46" y="${cy - 2}">${esc(tk ? tk.en : row.name)}</text><text class="nm-s" x="46" y="${cy + 13}">${esc(tk ? `${tk.zh} · 判定器` : row.sub || '')}</text>`;
+    });
+    vm.forEach(m => {
+      if (m.h < A || m.h > Z) return;
+      const py = 14 + m.r * 22;
+      s += `<line class="vm ${m.c === 'ink' ? '' : m.c}" x1="${m.x}" x2="${m.x}" y1="${py + 9}" y2="${yb}"/><rect class="vmp ${m.c === 'ink' ? 'ink' : m.c === 'gate' ? 'gate' : ''}" x="${m.x - m.w / 2}" y="${py - 9}" width="${m.w}" height="18" rx="9"/><text class="vmt ${m.c === 'ink' ? 'ink' : m.c === 'gate' ? 'gate' : ''}" x="${m.x}" y="${py + 3.6}" text-anchor="middle">${esc(m.t)}</text>`;
+    });
+    lay.forEach(r => {
+      r.its.forEach(it => {
+        const y0 = r.y + 13 + it._t * tH, cls = it.cls || [], tip = esc(it.tip || it.label);
+        if (it.kind === 'ms'){
+          const x = X(it.a), cy = y0 + 10, mc = cls.includes('hit') ? 'hit' : cls.includes('late') ? 'late' : '';
+          s += `<circle class="msd ${mc}" cx="${x}" cy="${cy}" r="5" data-tip="${tip}"/>`;
+          s += it._left ? `<text class="mst" x="${x - 10}" y="${cy + 4}" text-anchor="end">${esc(it.label)}</text>` : `<text class="mst" x="${x + 10}" y="${cy + 4}">${esc(it.label)}</text>`;
+          return;
+        }
+        const x0 = X(it.a), x1 = X(it.b), w = Math.max(2, x1 - x0 - 1);
+        const kc = ['lb', ...cls.filter(c => ['crit', 'hit', 'late', 'ext', 'drop', 'cont'].includes(c))].join(' ');
+        s += `<rect class="${kc}" x="${x0}" y="${y0}" width="${w}" height="20" rx="5" data-tip="${tip}"/>`;
+        const lab = w > textW(it.label, 11) + 14 ? it.label : w > textW(shortLabel(it.label), 11) + 14 ? shortLabel(it.label) : null;
+        const tc = cls.includes('crit') ? 'w' : '';
+        if (cls.includes('drop')){ if (w > 64) s += `<text class="lt" x="${x0 + 7}" y="${y0 + 14}">没做完：${esc(shortLabel(it.label))}</text>`; }
+        else if (lab) s += `<text class="lt ${tc}" x="${x0 + 7}" y="${y0 + 14}">${esc(lab)}</text>`;
+        else if (it._out) s += `<text class="lt o" x="${x0 + w + 6}" y="${y0 + 14}">${esc(it._out)}</text>`;
+      });
+    });
+    const rb = [];
+    R.flags.filter(f => f.h >= A && f.h <= Z && stageOf(f.h) === v).forEach(f => { let x = X(f.h); while (rb.some(q => Math.abs(q - x) < 20)) x += 20; rb.push(x); s += `<g class="rb ${f.sev}" data-tip="${esc(`#${f.n} ${f.title}\n${fT(f.h)}`)}"><circle cx="${x}" cy="${top - 2}" r="8.5"/><text x="${x}" y="${top + 1.3}" text-anchor="middle">${f.n}</text></g>`; });
+    s += `<g id="phLayer"></g></svg>`;
+    $('ganttBox').innerHTML = s;
+    drawPlayhead();
+  }
+
+  /* ---------- now + ledger ---------- */
+  function machineAt(h){
+    const ev = R.event, F = R.F;
+    const sl = ev.played.find(x => h >= x.s && h < x.e);
+    if (sl){
+      const out = sl.outs.find(o => h >= o.a && h < o.b);
+      const ph = sl.seal != null && h >= sl.seal ? '正式评测' : sl.p1 != null && h >= sl.p1 ? '开发期' : PH[0].name;
+      return {tone: out ? 'crit' : 'acc', title: `${sl.who} 队 · ${ph}`, text: out ? `#${out.n} 宕机中，${out.comp ? '停表，补等长时间' : out.move ? '剩余时间挪到补赛窗口' : '不补时'}。` : ph === PH[0].name ? `${list(T1)} · 已用 ${clockOf(sl, h)} / ${P.phase1} 小时` : ph === '开发期' ? `${T2.length} 类应用并行 · ${F.dur(sl.seal - h)}后封存` : `组委会运行，断网考场 · ${F.dur(sl.e - h)}后下机`};
+    }
+    const out = ev.played.flatMap(x => x.outs.map(o => ({...o, who: x.who}))).find(o => h >= o.a && h < o.b);
+    if (out) return {tone: 'crit', title: `${out.who} 队长时间宕机`, text: `#${out.n} 修复中，剩余时间挪到补赛窗口。`};
+    const m = ev.mk.find(x => h >= x.ra && h < x.b);
+    if (m) return {tone: 'acc', title: `${m.sl.who} 队补赛`, text: h < m.a ? '从归档恢复现场中。' : `补剩余的 ${m.sl.moved.remain} 小时，${F.dur(m.b - h)}后结束。`};
+    const ho = ev.played.find(x => x.ho && h >= x.ho.a && h < x.ho.b);
+    if (ho){ const nx = ev.slots.find(x => x.kind !== 'empty' && x.i > ho.i); return {tone: '', title: nx ? `换队交接：${ho.who} → ${nx.who}` : `${ho.who} 队下机后归档`, text: `${C.handover}。${nx ? `${F.dur(nx.s - h)}后 ${nx.who} 队上机。` : ''}`}; }
+    const emp = ev.slots.find(x => x.kind === 'empty' && h >= x.s && h < x.e);
+    if (emp) return {tone: 'warn', title: `${emp.L} 队的空档`, text: '赛前退出，候补没补上，作缓冲。'};
+    const pt = R.prep.list.find(x => x.lane === 'pod' && x.durH > 0 && h >= x.es && h < x.ef && x.state !== 'drop');
+    if (pt) return {tone: '', title: pt.name, text: pt.note || '赛前，机器上的准备。'};
+    const qt = R.post.list.find(x => x.lane === 'pod' && h >= x.es && h < x.ef);
+    if (qt) return {tone: '', title: qt.name, text: qt.note || ''};
+    if (ev.pause && h >= ev.pause[0] && h < ev.pause[1]) return {tone: '', title: '节前停赛', text: '这段时间不排队伍。'};
+    const acc = R.prep.list.find(x => x.id === 'pod_accept');
+    if (acc && h < acc.es) return {tone: '', title: '还没到位', text: `${F.day(acc.es)} 到位验收。`};
+    if (h >= R.stages[2].a) return {tone: '', title: '赛后空闲', text: '可以作 Testbed。'};
+    return {tone: '', title: '空闲', text: h >= R.stages[1].a ? '等下一队上机。' : ''};
+  }
+  function renderNow(){
+    const F = R.F, s = R.stages, M = R.metrics, ev = R.event, st = stageOf(t);
+    const dayIdx = h0 => Math.floor((t - h0) / 24) + 1;
+    const meta = st === 'pre' ? `赛前第 ${dayIdx(Math.floor(s[0].a / 24) * 24)} 天 · 距开赛 ${F.dur(M.start - t)}` : st === 'in' ? `开赛第 ${dayIdx(Math.floor(M.start / 24) * 24)} 天 · 第 ${Math.floor(t - M.start)} / ${Math.round(M.eventEnd - M.start)} 小时` : t >= s[2].b ? '赛后 90 天计划已走完' : `赛后第 ${dayIdx(M.dayOne)} 天 · ${(R.post.bands.find(b => t >= b.a && t < b.b) || {}).name || ''}`;
+    const ms = machineAt(t);
+    const lanes = Object.fromEntries((C.lanes || []).map(l => [l.id, l.name]));
+    const work = R.items.filter(it => it.kind === 'bar' && it.lane !== 'pod' && !String(it.id || '').startsWith('review') && t >= it.a && t < it.b).map(i => [lanes[i.lane] || '', i.label]);
+    const rv = R.items.filter(it => String(it.id || '').startsWith('review') && t >= it.a && t < it.b);
+    if (rv.length) work.push(['评审与复现', rv.map(r => r.label).join('、')]);
+    const nextMs = R.items.filter(it => it.kind === 'ms' && it.a > t && !(it.cls || []).includes('ghost')).sort((p, q) => p.a - q.a || ((q.cls || []).includes('key') - (p.cls || []).includes('key')))[0];
+    const recent = R.log.filter(l => (l.kind === 'risk' || l.kind === 'warn' || l.kind === 'resp') && l.h <= t && l.h > t - 72).slice(-3);
+    $('nowCard').innerHTML = `<div class="lbl">时间轴所在时刻 · ${STAGE[st]}</div>
+      <div class="big">${bigDate(t, st === 'in')}</div>
+      <div class="now-meta">${esc(meta)}</div>
+      <div class="rows">
+        <div class="r">${ico('infra', ms.tone)}<div><b>${esc(ms.title)}</b><p>${esc(ms.text)}</p></div><span class="tag">${esc(MACHINE)}</span></div>
+        ${work.length ? `<div class="r">${ico('people')}<div><b>各组在做</b><ul>${work.slice(0, 6).map(x => `<li><span>${esc(x[0])}</span>${esc(x[1])}</li>`).join('')}</ul></div><span></span></div>` : ''}
+        ${recent.length ? `<div class="r">${ico('alert', 'warn')}<div><b>最近 3 天</b><ul>${recent.map(r => `<li>${r.n ? rnHTML(r.n) + ' ' : ''}${esc(r.title.replace(/^#\d+\s*/, ''))}</li>`).join('')}</ul></div><span></span></div>` : ''}
+        ${nextMs ? `<div class="r">${ico('flag')}<div><b>${esc(nextMs.label)}</b><p>下一个节点 · ${esc(fT(nextMs.a))}</p></div><span class="tag acc">还有 ${esc(F.dur(nextMs.a - t))}</span></div>` : ''}
+      </div>`;
+    $('ledgerNote').textContent = `${ev.slots.length} 个窗口，按上机顺序`;
+    $('ledger').innerHTML = ev.slots.map(sl => {
+      const ss = slotState(sl);
+      let note;
+      if (ss.k === 'empty') note = '赛前退出，空档作缓冲';
+      else if (ss.k === 'wait') note = `${F.dt(sl.s)} 上机 · 还有 ${F.dur(sl.s - t)}${sl.delay ? `（比公布晚 ${F.dur(sl.delay)}）` : ''}`;
+      else if (ss.k === 'p1') note = `${list(T1)} · ${F.dur(sl.p1 - t)}后转开发期`;
+      else if (ss.k === 'dev') note = `${T2.length} 类应用并行 · ${F.dur(sl.seal - t)}后封存`;
+      else if (ss.k === 'formal') note = `组委会运行正式评测 · ${F.dur(sl.e - t)}后下机`;
+      else if (ss.k === 'out') note = `#${ss.out.n} 宕机 ${ss.out.hours} 小时${ss.out.comp ? '，补时' : ss.out.move ? '，剩余挪到补赛' : ''}`;
+      else if (ss.k === 'mkwait') note = `剩余 ${sl.moved.remain} 小时，等补赛`;
+      else if (ss.k === 'mk') note = `补赛中 · 剩余 ${sl.moved.remain} 小时`;
+      else if (ss.k === 'quit') note = `第 ${sl.quit.at} 小时退出，剩余作废`;
+      else note = `${F.dt(sl.e)} 下机${sl.makeup ? ` · 含补时 ${sl.makeup} 小时` : ''}`;
+      const m = ev.mk.find(x => x.sl === sl);
+      const c = sl.kind === 'empty' || t < sl.s ? 0 : m && t >= m.a ? sl.moved.from + Math.min(t, m.b) - m.a : clockOf(sl, Math.min(t, sl.e));
+      const f1 = Math.max(0, Math.min(1, c / P.phase1)), f2 = Math.max(0, Math.min(1, (c - P.phase1) / (P.window - P.phase1)));
+      const tc = tk => { const p1 = tk.phase === 1; if (ss.k === 'wait' || ss.k === 'empty') return 'todo'; if (ss.k === 'p1') return p1 ? 'live' : 'todo'; if (['dev', 'formal', 'mk'].includes(ss.k)) return p1 ? '' : 'live'; return ''; };
+      const rs = R.flags.filter(f => f.team === sl.L && f.h <= t);
+      const avc = ss.cls === 'active' ? 'on' : ss.cls === 'alarm' ? 'alarm' : '';
+      const tagc = ss.cls === 'active' ? 'acc' : ss.cls === 'alarm' ? 'crit' : ss.k === 'done' ? 'good' : '';
+      return `<div class="lr"><span class="av ${avc}">${esc(sl.who)}</span>
+        <div><div class="nm">${esc(sl.who)} ${sl.kind === 'standby' ? `候补 <span class="tag">接 ${esc(sl.L)} 队</span>` : '队'}<span class="tag ${tagc}">${tagc ? '<i></i>' : ''}${esc(ss.pill)}</span></div><div class="nt">${esc(note)}</div>
+          ${rs.length ? `<div class="rk">${rs.map(f => `<span class="tag ${f.sev === 'critical' ? 'crit' : 'warn'}">#${f.n} ${esc((R.risks[f.n - 1] || {}).effect || f.title)}</span>`).join('')}</div>` : ''}</div>
+        <div class="prog"><div class="bar"><span style="flex:${P.phase1}"><i style="width:${f1 * 100}%"></i></span><span style="flex:${P.window - P.phase1}"><i style="width:${f2 * 100}%"></i></span></div><div class="chips">${TASKS.map(tk => tchip(tk, tc(tk))).join('')}</div></div>
+        <div class="val">${sl.kind === 'empty' ? '—' : `${Math.min(P.window, c)}<small>/ ${P.window} h</small>`}</div></div>`;
+    }).join('');
+  }
+
+  /* ---------- log ---------- */
+  const LOGF = [['all', '全部'], ['risk', '风险与应对'], ['ms', '节点']];
+  const KIND = {ms: ['flag', '', '节点'], act: ['dot', '', '进展'], risk: ['alert', 'crit', '风险'], resp: ['arrow', 'acc', '应对'], warn: ['alert', 'warn', '隐患'], info: ['info', '', '提示']};
+  const logVisible = l => logFilter === 'risk' ? ['risk', 'resp', 'warn'].includes(l.kind) : logFilter === 'ms' ? (l.kind === 'ms' || l.kind === 'warn') : true;
+  function renderLog(){
+    $('logTabs').innerHTML = LOGF.map(x => `<button type="button" data-f="${x[0]}" aria-pressed="${logFilter === x[0]}">${x[1]}</button>`).join('');
+    const rows = R.log.map((l, i) => ({l, i})).filter(x => logVisible(x.l));
+    $('logTitle').textContent = `${rows.length} 条`;
+    $('logList').innerHTML = rows.map(({l, i}) => {
+      const k = KIND[l.kind] || KIND.info;
+      const sev = l.n && R.risks[l.n - 1] ? R.risks[l.n - 1].def.sev : null;
+      const icon = l.kind === 'risk' && sev ? `<span class="ic ${sev === 'critical' ? 'crit' : 'warn'}" style="font:600 10px var(--fm)">#${l.n}</span>` : ico(k[0], k[1]);
+      return `<li class="le" data-i="${i}" data-h="${l.h}"><span class="le-t">${esc(fT(l.h))}</span>${icon}<div class="le-b"><b>${l.kind === 'risk' && l.n ? '' : ''}${esc(l.kind === 'risk' && l.n ? l.title.replace(/^#\d+\s*/, '') : l.title)}</b>${l.text ? `<p>${esc(l.text)}</p>` : ''}</div><span class="tag">${esc(k[2])}</span></li>`;
+    }).join('') || '<li class="empty">没有符合筛选的条目。</li>';
+    curLog = -2; markLog();
+  }
+  function markLog(){
+    const els = $('logList').querySelectorAll('.le'); let cur = null;
+    els.forEach(el => { const h = +el.dataset.h; el.classList.toggle('future', h > t); el.classList.remove('cur'); if (h <= t) cur = el; });
+    if (cur){ cur.classList.add('cur'); const i = +cur.dataset.i; if (i !== curLog){ curLog = i; const box = $('logList'), top = cur.offsetTop - box.offsetTop; if (top < box.scrollTop + 8 || top > box.scrollTop + box.clientHeight - 60) box.scrollTop = Math.max(0, top - box.clientHeight / 3); } }
+    else if (curLog !== -1){ curLog = -1; $('logList').scrollTop = 0; }
+  }
+  $('logTabs').addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; logFilter = b.dataset.f; renderLog(); });
+  $('logList').addEventListener('click', e => { const li = e.target.closest('.le'); if (!li) return; stop(); setT(Math.ceil(+li.dataset.h), true); });
+  function renderResults(){
+    const F = R.F;
+    const ds = R.disputes.slice().sort((p, q) => q.star - p.star);
+    $('disputes').innerHTML = ds.length ? ds.map(d => `<div class="al">${ico(d.star ? 'alert' : 'info', d.star ? 'crit' : 'warn')}<div><b>${d.star ? '★ ' : ''}${esc(d.name)}<span class="tag">${esc(d.area)}</span>${d.by.length ? `<span class="tag">${esc(d.by.join('、'))} 队</span>` : ''}</b><p>预防：${esc(d.prevent)}</p></div></div>`).join('') : `<p class="empty">这个情景没有推演出争执。</p>`;
+    const ws = R.warns.map(w => ({t: w.name, p: (w.consequence || '') + (w.state === 'drop' ? '开赛后机器被占用，补不了。' : w.state === 'short' ? `练习期实际只有 ${F.days(w.leadGot)}。` : '')}));
+    if (R.HM > P.gap) ws.push({t: `交接要 ${R.HM} 小时，间隔只有 ${P.gap} 小时`, p: `每次换队把下一队往后推 ${R.HM - P.gap} 小时，延误一路传到最后一队。`});
+    if (R.metrics.over > 0) ws.push({t: `比公布的赛程晚 ${F.dur(R.metrics.over)}结束`, p: `${R.metrics.delayedN} 队晚开表，最多晚 ${F.dur(R.metrics.maxDelay)}${R.metrics.movedN ? `；${R.metrics.movedN} 队挪到补赛窗口` : ''}。`});
+    const neg = R.prep.list.filter(x => x.slack != null && x.slack < 0 && x.durH > 0);
+    if (neg.length && P.launch === 'gate') ws.push({t: `${neg.length} 项赛前任务赶不上原定开赛`, p: `${neg.slice(0, 5).map(x => shortLabel(x.name)).join('、')}${neg.length > 5 ? ' 等' : ''}，所以开赛推迟。`});
+    const zero = R.prep.list.filter(x => x.slack != null && x.slack >= 0 && x.slack < 24 && x.durH > 0);
+    if (zero.length) ws.push({t: `${zero.length} 项赛前任务余量不到 1 天`, p: `${zero.map(x => shortLabel(x.name)).join('、')}：再晚一天就会推迟开赛。`});
+    if (R.metrics.prizeExt) ws.push({t: '奖金发放撞上春节', p: `顺延 ${F.days(R.metrics.prizeExt)}。预案 §3 提醒过：赛后计划和奖金发放要避开春节。`});
+    $('warns').innerHTML = ws.length ? ws.map(w => `<div class="al">${ico('alert', 'warn')}<div><b>${esc(w.t)}</b>${w.p ? `<p>${esc(w.p)}</p>` : ''}</div></div>`).join('') : `<p class="empty">没有推演出隐患。</p>`;
+  }
+
+  /* ---------- schedule table ---------- */
+  function renderSched(){
+    const F = R.F, ev = R.event;
+    $('schedHead').innerHTML = `<tr><th>队伍</th><th>上机</th><th>转开发期</th><th>封存</th><th>下机</th><th>补时</th><th>节假日</th><th>备注</th></tr>`;
+    $('schedBody').innerHTML = ev.slots.map(sl => {
+      const live = sl.kind !== 'empty' && t >= sl.s && t < sl.e, ss = slotState(sl);
+      const notes = [];
+      if (sl.kind === 'standby') notes.push(`候补，接 ${sl.L} 队`);
+      if (sl.kind === 'empty') notes.push('赛前退出，空档作缓冲');
+      if (sl.delay) notes.push(`比公布的 ${F.dt(sl.ann)} 晚 ${F.dur(sl.delay)}`);
+      if (sl.quit) notes.push(`第 ${sl.quit.at} 小时退出`);
+      if (sl.moved){ const m = ev.mk.find(x => x.sl === sl); notes.push(`剩余 ${sl.moved.remain} 小时 ${m ? F.dt(m.a) + ' 起补赛' : '挪到补赛'}`); }
+      if (sl.standbyQ) notes.push('用备用题');
+      if (sl.degraded) notes.push('条件不一致');
+      if (sl.outs.length) notes.push(sl.outs.map(o => `#${o.n} 宕机 ${o.hours}h`).join('、'));
+      const hs = sl.kind === 'empty' ? [] : R.holidays.filter(x => x.h < sl.e && x.h + 24 > sl.s).map(x => x.name);
+      const avc = ss.cls === 'active' ? 'on' : ss.cls === 'alarm' ? 'alarm' : '';
+      return `<tr class="${live ? 'live' : ''}"><td><span class="who"><span class="av ${avc}">${esc(sl.who)}</span>${sl.kind === 'standby' ? '候补' : '队'}</span></td>
+        <td class="mono">${sl.kind === 'empty' ? '—' : esc(F.dt(sl.s))}</td><td class="mono">${sl.p1 != null ? esc(F.dt(sl.p1)) : '—'}</td><td class="mono">${sl.seal != null ? esc(F.dt(sl.seal)) : '—'}</td>
+        <td class="mono">${sl.kind === 'empty' ? '—' : esc(F.dt(sl.e))}</td><td class="mono">${sl.makeup ? sl.makeup + ' h' : '—'}</td><td>${hs.length ? hs.map(h => `<span class="tag">${esc(h)}</span>`).join(' ') : '—'}</td><td class="wide">${esc(notes.join('；')) || '—'}</td></tr>`;
+    }).join('');
+    const M = R.metrics;
+    $('schedNote').textContent = `每队 ${P.window} 小时，第 ${P.sealAt} 小时封存。换队留 ${P.gap} 小时，交接实际要 ${R.HM} 小时${R.plan === 'pause' ? '；节前停赛' : ''}。补赛窗口 ${P.makeupDays} 天。${M.over > 0 ? `最后一队比公布晚 ${F.dur(M.over)}。` : ''}`;
+  }
+
+  /* ---------- one team ---------- */
+  function renderZoom(){
+    const ev = R.event, F = R.F;
+    $('ztabs').innerHTML = ev.slots.map((sl, i) => `<button type="button" aria-pressed="${i === sel}" data-i="${i}" ${sl.kind === 'empty' ? 'disabled' : ''} title="${esc(sl.kind === 'empty' ? sl.L + ' 队空档' : sl.who + ' 队')}">${esc(sl.who)}</button>`).join('');
+    let sl = ev.slots[sel];
+    if (!sl || sl.kind === 'empty'){ sel = Math.max(0, ev.slots.findIndex(x => x.kind !== 'empty')); sl = ev.slots[sel]; }
+    if (!sl || sl.kind === 'empty'){ $('zoomTitle').textContent = '没有队伍上机。'; $('detailBox').innerHTML = ''; return; }
+    const WIN = P.window, P1 = P.phase1, SP = P.sealAt, ss = slotState(sl);
+    $('zoomNote').textContent = `${ev.played.length} 队的结构相同，只是日期依次后移。横轴是这一队自己的比赛时钟；平台故障补时期间时钟停走，所以补时的宕机画成一条细线。`;
+    const mkSeg = ev.mk.find(m => m.sl === sl);
+    const wallOf = c => mkSeg && c > sl.moved.from ? mkSeg.a + (c - sl.moved.from) : sl.wall(c);
+    const stTxt = ss.k === 'wait' ? `等待上机，还有 ${F.dur(sl.s - t)}` : ['p1', 'dev', 'formal', 'out'].includes(ss.k) ? `进行中 · 第 ${clockOf(sl, t)} 小时` : ss.k === 'mk' ? '补赛中' : ss.k === 'mkwait' ? '等补赛' : ss.k === 'quit' ? '已退出' : '已完成';
+    $('zoomTitle').textContent = `${sl.who} 队${sl.kind === 'standby' ? `（候补，接 ${sl.L} 队）` : ''} · ${stTxt}`;
+    $('zoomSub').textContent = `${F.long(sl.s)} → ${F.long(sl.e)}${mkSeg ? `，补赛到 ${F.dt(mkSeg.b)}` : ''}`;
+    const W = 1060, L = 236, Rr = 24, plotW = W - L - Rr, top = 60, lh = 46;
+    const lanes = [...TASKS]; if (C.bonus) lanes.push({id: 'opt', en: C.bonus.en, zh: `${C.bonus.zh} · 可选，最高 +${C.bonus.max}`});
+    const yb = top + lanes.length * lh, H = yb + 42, X = h => L + h / WIN * plotW;
+    let s = `<svg class="detail" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(`${sl.who} 队 ${WIN} 小时窗口`)}">`;
+    [[0, P1, `${PH[0].name} · 开卷`, ''], [P1, SP, '开发期', ''], [SP, WIN, '正式评测 · 组委会运行', 'f']].forEach(([p, q, nm, c]) => { const w = X(q) - X(p) - 3; s += `<rect class="band ${c}" x="${X(p) + 1.5}" y="6" width="${Math.max(1, w)}" height="24" rx="6"/>`; if (w > textW(nm, 11.5) + 14) s += `<text class="bn" x="${X(p) + 10}" y="22">${esc(nm)}</text>`; });
+    const step = WIN <= 240 ? 24 : WIN <= 480 ? 48 : 96;
+    const ticks = []; for (let h = 0; h <= WIN; h += step) ticks.push(h);
+    if (ticks[ticks.length - 1] !== WIN){ if (X(WIN) - X(ticks[ticks.length - 1]) < 40) ticks.pop(); ticks.push(WIN); }
+    ticks.forEach(h => { const anc = h === 0 ? 'start' : h === WIN ? 'end' : 'middle'; s += `<line class="tick" x1="${X(h)}" x2="${X(h)}" y1="${top - 6}" y2="${yb}"/><text class="tk" x="${X(h)}" y="${yb + 16}" text-anchor="${anc}">${h}h</text><text class="tkd" x="${X(h)}" y="${yb + 31}" text-anchor="${anc}">${sl.quit && h > sl.quit.at ? '' : esc(F.day(wallOf(Math.min(h, WIN))))}</text>`; });
+    [P1, SP].forEach(h => { s += `<line class="tick p" x1="${X(h)}" x2="${X(h)}" y1="${top - 6}" y2="${yb}"/>`; });
+    const inPlay = ['p1', 'dev', 'formal', 'out', 'mk'].includes(ss.k);
+    const cNow = inPlay ? (ss.k === 'mk' ? sl.moved.from + (t - mkSeg.a) : clockOf(sl, t)) : ['done', 'quit'].includes(ss.k) ? (sl.quit ? sl.quit.at : WIN) : 0;
+    lanes.forEach((tk, j) => {
+      const cy = top + j * lh + lh / 2;
+      if (tk.id === 'opt'){
+        s += `<rect x="14" y="${cy - 12}" width="24" height="24" rx="7" fill="none" stroke="var(--line-2)" stroke-dasharray="3 3"/><use href="#i-opt" x="19" y="${cy - 7}" width="14" height="14" style="color:var(--muted)"/>`;
+        s += `<text class="en" x="48" y="${cy - 2}">${esc(tk.en)}</text><text class="zh" x="48" y="${cy + 14}">${esc(tk.zh)}</text>`;
+        s += `<rect class="opt" x="${X(P1) + 2}" y="${cy - 9}" width="${Math.max(0, X(WIN) - X(P1) - 4)}" height="18" rx="6"/>`;
+        return;
+      }
+      s += `<rect x="14" y="${cy - 12}" width="24" height="24" rx="7" fill="var(--t-${tk.id}-bg)"/><use href="#i-${tk.icon}" x="19" y="${cy - 7}" width="14" height="14" style="color:var(--t-${tk.id})"/>`;
+      s += `<text class="en" x="48" y="${cy - 2}">${esc(tk.en)}</text><text class="zh" x="48" y="${cy + 14}">${esc(tk.zh)} · ${tk.points || 0} 分</text>`;
+      const [a, b] = tk.phase === 1 ? [0, P1] : [P1, WIN];
+      s += `<rect class="trk" x="${X(a) + 1.5}" y="${cy - 8}" width="${Math.max(1, X(b) - X(a) - 3)}" height="16" rx="5"/>`;
+      const fe = Math.min(b, Math.max(a, cNow));
+      if (fe > a) s += `<rect class="b1" x="${X(a) + 1.5}" y="${cy - 8}" width="${Math.max(0, X(fe) - X(a) - 3)}" height="16" rx="5"/>`;
+      if (tk.phase !== 1) s += `<line stroke="var(--surface)" stroke-width="2" x1="${X(SP)}" x2="${X(SP)}" y1="${cy - 8}" y2="${cy + 8}"/>`;
+    });
+    if (sl.quit){ s += `<rect class="x" x="${X(sl.quit.at)}" y="${top - 6}" width="${X(WIN) - X(sl.quit.at)}" height="${yb - top + 6}" opacity=".85"/><text class="xt" x="${X(sl.quit.at) + 8}" y="${top + 8}">退出 · 剩余 ${sl.quit.voidH} 小时作废</text>`; }
+    if (sl.moved) s += `<text class="xt" x="${X(sl.moved.from) + 8}" y="${top + 8}">${mkSeg ? `之后的部分在补赛窗口完成（${F.dt(mkSeg.a)} 起）` : '剩余时间挪到补赛窗口'}</text>`;
+    sl.outs.forEach(o => {
+      const thin = o.comp || o.move || o.cause === 'degraded';
+      s += thin ? `<rect class="o" x="${X(o.at) - 1.5}" y="${top - 6}" width="3" height="${yb - top + 6}" ${o.cause === 'degraded' ? 'style="fill:var(--warn)"' : ''}/>` : `<rect class="o" x="${X(o.at)}" y="${top - 6}" width="${Math.max(3, X(o.at + o.hours) - X(o.at))}" height="${yb - top + 6}" opacity=".5"/>`;
+      s += `<text class="ot" x="${X(o.at) + 6}" y="${yb - 6}">#${o.n} 宕机 ${o.hours}h · ${o.move ? '挪补赛' : o.comp ? '补时' : o.cause === 'degraded' ? '降配' : '不补'}</text>`;
+    });
+    if (inPlay){
+      const nx = X(Math.min(WIN, cNow)); s += `<line class="nl" x1="${nx}" x2="${nx}" y1="${top - 8}" y2="${yb}"/>`;
+      const lab = `现在 ${Math.floor(cNow)}h`, lw = textW(lab, 10.5) + 16, lx = Math.min(Math.max(nx - lw / 2, L), W - Rr - lw);
+      s += `<rect class="np" x="${lx}" y="${top - 28}" width="${lw}" height="18" rx="9"/><text class="npt" x="${lx + lw / 2}" y="${top - 15.5}" text-anchor="middle">${esc(lab)}</text>`;
+    }
+    s += `</svg>`;
+    $('detailBox').innerHTML = s;
+  }
+  function renderCards(){
+    $('cards').innerHTML = TASKS.map(tk => `<article class="card tcard">
+      <div class="tcard-h">${tchip(tk, 'lg')}<div><b>${esc(tk.en)}</b><small>${esc(tk.zh)}</small></div></div>
+      <div class="meta"><span>${tk.phase === 1 ? `${esc(PH[0].name)} · 0–${P.phase1}h` : `${esc(PH[1].name)} · ${P.phase1}–${P.window}h`}</span><b>${tk.points || 0} 分</b></div>
+      <dl><div><dt>交付</dt><dd>${esc(tk.deliver)}</dd></div><div><dt>验收要点</dt><dd>${esc(tk.check)}</dd></div></dl>
+    </article>`).join('');
+  }
+  $('ztabs').addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b || b.disabled) return; sel = +b.dataset.i; if (view === 'in') renderEvent(); renderZoom(); });
+
+  /* ---------- score ---------- */
+  function renderScore(){
+    const formal = TASKS.reduce((a, x) => a + (x.points || 0), 0), bonus = C.bonus ? C.bonus.max : 0, sp = C.appScore || [];
+    $('scoreNote').textContent = `正式分 ${formal} 分，${TASKS.length} 个任务各 ${TASKS[0] ? TASKS[0].points : 25} 分；平台优化可选，最高再加 ${bonus} 分，总分最高 ${formal + bonus}。`;
+    $('scoreCard').innerHTML = `<div class="alloc" role="img" aria-label="${esc(TASKS.map(x => `${x.en} ${x.points}`).join('、'))}">${TASKS.map(x => `<div class="t-${esc(x.id)}" style="flex:${x.points}"></div>`).join('')}${bonus ? `<div class="opt" style="flex:${bonus}"></div>` : ''}</div>
+      <div class="arows">${TASKS.map(x => `<div class="ar">${tchip(x)}<div><b>${esc(x.en)}</b><small>${esc(x.zh)} · ${x.phase === 1 ? PH[0].name : PH[1].name}</small></div><span class="v">${x.points}<small>分</small></span></div>`).join('')}
+        ${bonus ? `<div class="ar"><span class="tchip" style="background:transparent;border:1.5px dashed var(--line-2);color:var(--muted)"><svg><use href="#i-opt"/></svg></span><div><b>${esc(C.bonus.en)}</b><small>${esc(C.bonus.zh)} · 可选 · ${esc(C.bonus.note || '')}</small></div><span class="v">≤ ${bonus}<small>分</small></span></div>` : ''}</div>
+      <div class="snotes">
+        <div><h4>每类应用 ${sp.reduce((a, x) => a + x[1], 0)} 分的构成</h4><div class="split3">${sp.map(x => `<i style="flex:${x[1]}"></i>`).join('')}</div><p>${esc(sp.map(x => `${x[0]} ${x[1]} 分`).join(' · '))}。${esc(C.appScoreNote || '')}</p></div>
+        <div><h4>两个阶段的工具边界</h4><p>${esc(PH[0].name)}（${esc(PH[0].tag)}）：${esc(PH[0].tools)}。${esc(PH[1].name)}：${esc(PH[1].tools)}。</p></div>
+        <div><h4>团队大奖</h4><p class="prize">${esc(C.prize ? C.prize.amount : '')}</p><p>${esc(C.prize ? C.prize.count : '')} · ${esc(C.prize ? C.prize.note : '')}</p></div>
+      </div>`;
+  }
+
+  /* ---------- prep table ---------- */
+  function renderPrep(){
+    const F = R.F, M = R.metrics;
+    const rows = R.prep.list.slice().sort((p, q) => p.es - q.es || p.ef - q.ef);
+    $('prepSum').textContent = `${P.scope === 'mvp' ? '最低可用版' : '完整版'} · ${rows.length} 项 · 关键路径 ${rows.filter(x => x.crit).length} 项`;
+    $('prepNote').textContent = `工期是估计值，用 − / + 改，整条时间线马上重算。余量按原定 ${F.dateCN(M.planned)} 开赛倒推。`;
+    const owner = id => ((C.lanes || []).find(l => l.id === id) || {}).owner || '';
+    $('prepBody').innerHTML = rows.map(x => {
+      const tags = [];
+      if (x.crit) tags.push('<span class="tag acc"><i></i>关键路径</span>');
+      if (x.gate) tags.push(`<span class="tag">${x.gate === 'hard' ? '门禁 · 必须' : '门禁'}</span>`);
+      if (x.state === 'drop') tags.push('<span class="tag warn">没做完 · 机器被占</span>');
+      if (x.state === 'late') tags.push('<span class="tag warn">开赛时没做完</span>');
+      if (x.state === 'short') tags.push(`<span class="tag warn">练习期只有 ${esc(F.days(x.leadGot))}</span>`);
+      (x.hits || []).forEach(r => tags.push(`<span class="tag crit">#${r.n} +${r.days} 天</span>`));
+      const c = C.prep.find(c => c.id === x.id), def = P.scope === 'mvp' && c.mvp != null ? c.mvp : c.days;
+      const chg = P.dur[x.id] != null && P.dur[x.id] !== def;
+      const slack = x.slack == null ? '—' : x.slack < 0 ? `<span class="neg">${esc(F.days(x.slack))}</span>` : esc(F.days(x.slack));
+      return `<tr><td>${esc(x.name)}</td><td class="wide" style="min-width:0">${esc(owner(x.lane))}</td><td><div class="stepper${chg ? ' chg' : ''}" data-d="${esc(x.id)}"><button type="button" data-s="-1" aria-label="减一天">−</button><input type="number" min="0" max="60" value="${x.base}" data-d="${esc(x.id)}" aria-label="${esc(x.name)} 工期（天）"><button type="button" data-s="1" aria-label="加一天">+</button></div></td><td class="mono">${esc(F.day(x.es))}</td><td class="mono">${esc(F.day(x.ef))}</td><td class="mono">${slack}</td><td>${tags.join(' ')}</td></tr>`;
+    }).join('');
+  }
+  const setDur = (id, v) => { stop(); P.dur[id] = clampInt(v, 0, 60, 0); recompute(); };
+  $('prepBody').addEventListener('click', e => { const b = e.target.closest('.stepper button'); if (!b) return; const st = b.parentElement, id = st.dataset.d; setDur(id, +st.querySelector('input').value + (+b.dataset.s)); });
+  $('prepBody').addEventListener('change', e => { const el = e.target.closest('input[data-d]'); if (el) setDur(el.dataset.d, el.value); });
+  $('durReset').addEventListener('click', () => { stop(); P.dur = {}; recompute(); });
+
+  /* ---------- register ---------- */
+  function renderRegister(){
+    const inj = new Map(); risks.forEach((r, i) => { if (!inj.has(r.type)) inj.set(r.type, []); inj.get(r.type).push(i + 1); });
+    const order = ['pre', 'in', 'post'];
+    const rows = C.register.slice().sort((p, q) => order.indexOf(p.stage) - order.indexOf(q.stage));
+    $('regSum').textContent = `预案第 3–7 节共 ${rows.length} 项，其中 ${rows.filter(x => x.inject).length} 项可以注入推演${inj.size ? `；本次注入 ${rows.filter(x => x.inject && inj.has(x.inject)).length} 项` : ''}。`;
+    $('regBody').innerHTML = rows.map(x => { const ns = x.inject && inj.get(x.inject); return `<tr class="${ns ? 'on' : ''}"><td><span class="tag">${STAGE[x.stage]}</span></td><td class="wide"><b>${esc(x.risk)}</b>${ns ? ` <span class="tag crit">#${ns.join(' #')}</span>` : ''}</td><td class="wide">${esc(x.resp)}</td><td class="wide">${esc(x.prep)}</td><td class="mono">${esc(x.ref)}</td><td>${x.inject ? `<button class="inj" type="button" data-inj="${esc(x.inject)}">＋ 注入</button>` : '<span class="lbl">只登记</span>'}</td></tr>`; }).join('');
+  }
+  $('regBody').addEventListener('click', e => { const b = e.target.closest('[data-inj]'); if (!b) return; stop(); risks.push(mkRisk(b.dataset.inj)); presetId = '__custom'; recompute(); $('risks').scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block: 'start'}); });
+
+  function renderNotes(){
+    $('notesList').innerHTML = (C.notes || []).map(n => `<li><b>${esc(n.kind)}：</b>${esc(n.text)}</li>`).join('') + `<li><b>当前推演参数：</b>${P.teams} 队，每队 ${P.window} 小时（第一阶段 ${P.phase1} 小时，第 ${P.sealAt} 小时封存），原定 ${esc(P.start)} ${pad(P.hour)}:00 开赛，换队间隔 ${P.gap} 小时，${P.scope === 'mvp' ? '最低可用版' : '完整版'} Benchmark，${P.launch === 'gate' ? '按启动门禁开赛' : '按日期硬开'}。</li>`;
+    $('sourceNote').innerHTML = `赛制来源：${esc(C.source.label)}。预案：<code>${esc(C.doc)}</code>。默认场景在 <code>scenario.js</code>，推演规则在 <code>engine.js</code>；页面上调的参数和风险只做临时推演，刷新即回到默认。旧版保留在 <code>v1/</code>、<code>v2/</code>。`;
+  }
+
+  /* ---------- time ---------- */
+  function setT(h, follow){
+    t = Math.round(h);
+    if (follow){ const v = stageOf(t); if (v !== view){ view = v; renderVTabs(); renderBoard(); } }
+    renderTime();
+  }
+  function renderTime(){
+    const [a, z] = domainOf(view), sc = $('scrub');
+    sc.min = a; sc.max = z; sc.value = Math.max(a, Math.min(z, t));
+    sc.style.setProperty('--p', ((Math.max(a, Math.min(z, t)) - a) / (z - a) * 100) + '%');
+    $('scrubT').textContent = fT(t);
+    if (view === 'in') renderEvent(); else drawPlayhead();
+    placeLifePh(); renderNow(); markLog(); renderSched(); renderZoom();
+  }
+  function renderAll(){
+    renderOverview(); renderRisks(); renderLife(); renderVTabs(); renderBoard();
+    renderLog(); renderResults(); renderCards(); renderScore(); renderPrep(); renderRegister(); renderNotes();
+    renderTime();
+  }
+  $('scrub').addEventListener('input', () => { stop(); setT(+$('scrub').value, false); });
+
+  /* ---------- pointer on chart ---------- */
+  const tip = $('tip');
+  let dragging = false, lastType = 'mouse';
+  const svgPt = e => { const svg = $('ganttBox').querySelector('svg'); if (!svg || !GX) return null; const rc = svg.getBoundingClientRect(); return {x: (e.clientX - rc.left) / rc.width * GX.W, y: (e.clientY - rc.top) / rc.height * GX.H}; };
+  function fromPointer(e){
+    const p = svgPt(e); if (!p) return;
+    if (p.x < GX.L - 4){
+      if (GX.kind === 'in' && !dragging){ const row = Math.floor((p.y - GX.top + 4) / GX.rowH); if (row >= 0 && row < R.event.slots.length && R.event.slots[row].kind !== 'empty'){ sel = row; renderEvent(); renderZoom(); $('team').scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block: 'start'}); } }
+      return;
+    }
+    stop(); const k = (GX.X(GX.A + 24) - GX.X(GX.A)) / 24;
+    setT(Math.max(GX.A, Math.min(GX.Z, GX.A + (p.x - GX.L) / k)), false);
+  }
+  $('ganttBox').addEventListener('pointerdown', e => { lastType = e.pointerType; if (e.pointerType !== 'mouse' || e.button !== 0) return; const p = svgPt(e); if (!p || p.x < GX.L - 4) return; dragging = true; $('ganttBox').setPointerCapture(e.pointerId); tip.hidden = true; fromPointer(e); });
+  $('ganttBox').addEventListener('pointermove', e => { if (dragging){ fromPointer(e); return; } showTip(e); });
+  $('ganttBox').addEventListener('pointerup', () => { dragging = false; });
+  $('ganttBox').addEventListener('pointerleave', () => { if (!dragging) tip.hidden = true; });
+  $('ganttBox').addEventListener('click', e => { if (lastType === 'mouse'){ const p = svgPt(e); if (p && p.x < GX.L - 4) fromPointer(e); return; } fromPointer(e); });
+  ['detailBox', 'strip'].forEach(id => { $(id).addEventListener('pointermove', showTip); $(id).addEventListener('pointerleave', () => { tip.hidden = true; }); });
+  function showTip(e){
+    const el = e.target.closest && e.target.closest('[data-tip],[title]');
+    const txt = el && (el.getAttribute('data-tip') || el.getAttribute('title'));
+    if (txt && e.pointerType === 'mouse'){
+      tip.textContent = txt; tip.hidden = false;
+      const tw = tip.offsetWidth, th = tip.offsetHeight;
+      let x = e.clientX + 14, y = e.clientY + 16;
+      if (x + tw > innerWidth - 8) x = e.clientX - tw - 14;
+      if (y + th > innerHeight - 8) y = e.clientY - th - 12;
+      tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    } else tip.hidden = true;
+  }
+
+  /* ---------- play ---------- */
+  const playBtn = $('play');
+  function setPlayUI(){ playBtn.innerHTML = `<svg><use href="#i-${playing ? 'pause' : 'play'}"/></svg><span>${playing ? '暂停' : '播放'}</span>`; }
+  function stop(){ if (!playing) return; playing = false; cancelAnimationFrame(raf); setPlayUI(); }
+  const SECS = {pre: 10, in: 18, post: 10};
+  playBtn.addEventListener('click', () => {
+    if (playing){ stop(); return; }
+    const [L0, L1] = life();
+    if (t >= L1) setT(L0, true);
+    playing = true; setPlayUI();
+    let last = performance.now(), acc = t, lastDraw = 0;
+    const tick = now => {
+      if (!playing) return;
+      const [a, z] = domainOf(view);
+      acc += (now - last) / 1000 * ((z - a) / SECS[view]); last = now;
+      if (acc >= L1){ setT(L1, true); playing = false; setPlayUI(); return; }
+      if (now - lastDraw > 50){ setT(Math.floor(acc), true); lastDraw = now; }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+  });
+
+  /* ---------- scroll spy ---------- */
+  (function spy(){
+    const links = [...document.querySelectorAll('#nav a[data-s]')];
+    const secs = links.map(a => document.getElementById(a.dataset.s)).filter(Boolean);
+    if (!('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(es => { es.forEach(en => { if (en.isIntersecting){ links.forEach(a => a.classList.toggle('on', a.dataset.s === en.target.id)); } }); }, {rootMargin: '-30% 0px -60% 0px'});
+    secs.forEach(s => io.observe(s));
+    links[0] && links[0].classList.add('on');
+  })();
+
+  /* ---------- boot ---------- */
+  R = ENG.simulate(C, P, []); B = R;
+  t = Math.max(R.stages[0].a, Math.min(R.stages[2].b, Math.round(todayH())));
+  view = stageOf(t);
+  syncInputs();
+  recompute();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>六个板块的示意图</title>
+<style>
+  html, body, figure { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+  body { color: #102c3a; font: 13px "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; }
+  figure { position: relative; }
+  .system-map__svg { display: block; width: 100%; height: 100%; }
+  .system-map__chrome { position: absolute; z-index: 1; top: 10px; right: 12px; display: flex; align-items: center; gap: 6px; }
+  .clock, button { background: #f6fafa; color: #102c3a; padding: 4px 8px; border: 1px solid #cce5e9; border-radius: 999px; font: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid #15677f; outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { button { display: none; } }
+</style>
+</head>
+<body>
+  <figure class="system-map" data-street data-loop aria-label="六个板块的示意图">
+    <div class="system-map__chrome">
+      <span class="clock" data-street-clock>北京时间</span>
+      <button type="button" data-loop-toggle aria-pressed="false">暂停动画</button>
+    </div>
+  </figure>
+  <script src="street.js"></script>
+  <script>
+    for (const anchor of document.querySelectorAll('a[href$=".html"]')) {
+      const route = anchor.getAttribute('href').slice(0, -5);
+      anchor.setAttribute('href', '../' + route + '/');
+      anchor.setAttribute('target', '_parent');
+    }
+    const button = document.querySelector('[data-loop-toggle]');
+    button.addEventListener('click', () => {
+      const street = window.gaacStreet;
+      if (!street) return;
+      const paused = !street.paused;
+      street.setPaused(paused);
+      button.textContent = paused ? '继续动画' : '暂停动画';
+      button.setAttribute('aria-pressed', String(paused));
+    });
+  </script>
+</body>
+</html>
