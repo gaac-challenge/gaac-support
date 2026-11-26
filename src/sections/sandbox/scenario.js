@@ -13,7 +13,7 @@
  * - riskTypes：可以注入的风险；presets：一键情景。
  * - 工期都是估计值〔假设〕，出处见 GAAC_赛务准备与预案_v0.1.md。
  * ===================================================================== */
-window.SANDBOX = {
+export default {
   name: 'GAAC 全程沙盘',
   eyebrow: 'Grand Agentic AI Challenge · 智能体大奖赛 · 全程沙盘推演',
   doc: 'GAAC_赛务准备与预案_v0.1.md',
