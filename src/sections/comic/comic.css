@@ -1,9 +1,0 @@
-.comic-page { border-radius: 24px; }
-.comic-page:not([data-theme="dark"]) {
-  --bg: #f6fafa;
-  --ink: #102c3a;
-  --acc: #17677d;
-  --acc-soft: #e6f8fc;
-  --line: #d9deda;
-}
-.comic-page-index { --f: 'DM Sans Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif; --fs: var(--f); }

@@ -4,9 +4,8 @@ import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { routes } from './src/sections';
 import blogPaths from './src/sections/blog/content/static-paths.json';
-import comicPaths from './src/sections/comic/content/static-paths.json';
 
-const readingPaths = { blog: blogPaths, comic: comicPaths };
+const readingPaths = { blog: blogPaths };
 const compatibility = new Map([
   ['legacy/index.html', '../sandbox/'],
   ['legacy/sandbox/index.html', '../../sandbox/'],

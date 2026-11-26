@@ -7,7 +7,7 @@ import { App } from './App';
 import { Article, Figure } from './components/Article';
 import { routes } from './sections';
 
-const readingPaths = { '/blog/:slug': ['install-agentx', 'mock-server', '393-traces'], '/comic/:volume': ['1', '2', '3', '4'] };
+const readingPaths = { '/blog/:slug': ['install-agentx', 'mock-server', '393-traces'] };
 
 const supportTitles: Record<string, string> = {
   '/': '五队共用一套 EdgePod', '/tasks': '两个阶段，正式分 100',
