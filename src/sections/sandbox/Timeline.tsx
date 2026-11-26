@@ -96,8 +96,8 @@ export function Timeline({ result, params, stage, time, selected, select, setSta
   const seekPointer = (event: PointerEvent<SVGSVGElement>) => seek(a + clamp((fraction(event) * 1060 - left) / (1040 - left), 0, 1) * (b - a));
   const title = stage === 'in' ? config.machineName + ' 上机日历' : stage === 'pre' ? '赛前：从准备开始到开赛' : '赛后：算分、复现、公布，再到 90 天计划';
   const subtitle = stage === 'in'
-    ? `每行一队，窗口 ${params.window} 小时，分三段：第一阶段 ${params.phase1} 小时、开发期、第 ${params.sealAt} 小时封存后的正式评测。已经比完的部分是靛紫，没比的是灰色轨道。`
-    : stage === 'pre' ? '每行一条工作线。靛紫是关键路径，也就是决定启动门禁时间的那条链；其余是灰色。竖线标出原定开赛、门禁满足和实际开赛。'
+    ? `每行一队，窗口 ${params.window} 小时，分三段：第一阶段 ${params.phase1} 小时、开发期、第 ${params.sealAt} 小时封存后的正式评测。已经比完的部分是深青，没比的是灰色轨道。`
+    : stage === 'pre' ? '每行一条工作线。深青是关键路径，也就是决定启动门禁时间的那条链；其余是灰色。竖线标出原定开赛、门禁满足和实际开赛。'
     : '从最后一队下机算赛后第 1 天。复现要用机器，算分要等复现，公布要等 7 天异议期；奖金发放遇到春节会顺延。';
   const legend = stage === 'in' ? contestLegend : [...commonLegend, ...(stage === 'pre' ? [['late', '开赛时没做完']] : []), ...dateLegend];
   return <>
