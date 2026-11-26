@@ -1,0 +1,11 @@
+.blog-page { border-radius: 24px; overflow-wrap: anywhere; }
+.blog-page:not([data-theme="dark"]) {
+  --bg: #f6fafa;
+  --ink: #102c3a;
+  --acc: #17677d;
+  --acc-ink: #102c3a;
+  --acc-soft: #e6f8fc;
+  --line: #d9deda;
+}
+.blog-page { --f: 'DM Sans Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif; --fd: var(--f); --fs: var(--f); }
+.blog-page .chart, .blog-page pre { max-width: 100%; overflow: auto; }
