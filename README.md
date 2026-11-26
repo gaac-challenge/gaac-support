@@ -19,10 +19,10 @@ pnpm build
 
 ```sh
 GAAC_BASE=/gaac-support/ pnpm build
-python3 tools/check-links.py --directory dist --base /gaac-support/ --files-only --strict
+python3 tools/check-links.py --directory dist --base /gaac-support/ --strict
 ```
 
-默认前缀是 `/`。React Router 使用构建前缀作为 basename。构建会为每个固定路由写入 `index.html`，因此普通静态服务器可以直接打开各板块入口。动手笔记的三篇文章也有独立入口。其余带参数的详情页通过服务器的 404 回退（`dist/404.html`）启动应用；GitHub Pages 也能使用它。若所用服务器无法指定 404 页面，请为实际的详情地址生成静态入口。当前没有启用 GitHub Pages。
+默认前缀是 `/`。React Router 使用构建前缀作为 basename。构建会为每个固定路由写入 `index.html`，因此普通静态服务器可以直接打开各板块入口。动手笔记的三篇文章也有独立入口。未知地址使用应用的 404 页面。静态服务器可将 `dist/404.html` 配置为回退页。
 
 ## 路由
 
@@ -36,18 +36,13 @@ python3 tools/check-links.py --directory dist --base /gaac-support/ --files-only
 
 导航中的「动手笔记」打开博客；页脚「推演」打开 React 沙盘。构建为已迁移板块的旧 URL 生成跳转页。
 
-## 板块与协作约定
+## 板块与内容编辑
 
-1. 每个板块在 `src/sections/<section>/` 下维护自己的 `routes.ts`、页面、组件、样式和内容数据。
-2. 已注册板块迁移时只修改自己目录下的 `routes.ts`，将 `legacy` 换成页面的 `load`。新增板块在 `src/sections/index.ts` 注册一项。
-3. 路由以 `/` 开头，保留 `label`、所属导航分组和 `navigation`。静态资源通过 `publicUrl` 加前缀，站内 React 路由使用 `SiteLink`。
-4. 通用页面外壳、`PageHeader`、Markdown `Article` 与 `Figure` 在 `src/components/`。共用设计变量在 `src/styles/theme.css`，板块样式限定在板块容器内。
-5. 转换脚本放在各自板块或 `tools/`，输出可重现的 JSON 或 Markdown；图像和 SVG 原样迁移。正文不要依赖原页面注入脚本。
-6. 旧版输入在 `public/legacy/<section>/`，某板块迁移且验收后删除对应旧目录。Vite 为旧沙盘和博客入口生成兼容链接。
-7. 同步上游时先 `git fetch upstream`，对照变更手动更新对应内容数据与素材，重跑转换和检查；不把旧静态目录整批覆盖到应用中。
+- 技术支持的版式在 `src/sections/support/pages/`，服务、赛制和占位页数据在 `src/sections/support/content/`。
+- 动手笔记的文章以 Markdown 保存，每篇有标题、导语等 frontmatter。围栏 `question`、`stats`、`drawing`、`sequence` 和 `pipeline` 使用对应的字段，分别渲染问题、统计数字、图表、时序和流程。
+- 沙盘的交互状态由 React 管理。规则和默认假设保留在 `engine.js` 和 `scenario.js`，时间轴用 SVG。沙盘使用浅色主题，并显示「推演假设，非正式赛程」。
+- 每个板块维护自己的路由和样式，通用布局及设计变量放在 `src/components/` 和 `src/styles/`。
+- 图表和街景脚本保持原样，在各自的 iframe 里绘制。运行 `python3 tools/check-artwork.py` 核对原始字节。
+- 旧沙盘和博客入口仍可跳转；同步上游时对照差异手动更新对应文章或数据。
 
-`tools/convert-support.py` 从历史提交或 `--source` 指定的 HTML 目录提取十页正文。街景的 `street.js` 保留原文件，在独立 frame 中运行，导航离开后由浏览器销毁该 frame。旧版赛程推演中的日期都是推演假设，正式规则以参赛手册为准。
-
-`node tools/convert-phase-two.mjs` 从第一阶段合并提交提取沙盘结构、博客正文，以及原始图表代码。正文保存为结构化数据并由 React 渲染。沙盘、博客的图表适配层在各自页面内挂载与清理。沙盘取消了深色模式，页面始终显示「推演假设，非正式赛程」。
-
-沙盘引擎测试对照原始脚本，覆盖默认情景、每个一键情景和全部可注入风险。
+沙盘引擎测试覆盖默认情景、每个一键情景和全部可注入风险。正式赛程以参赛手册为准。
