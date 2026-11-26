@@ -65,7 +65,7 @@ describe('registered route smoke test', () => {
     expect(await main.findByRole('link', { name: '搜索服务' })).toHaveAttribute('href', '/gaac-support/search/');
     expect(main.getByRole('link', { name: '我的队伍' })).toHaveAttribute('href', '/gaac-support/team/');
     expect(main.getByText('这部分还在筹备，比赛流程定下来以后在这里发布。')).toBeVisible();
-    expect(screen.getByRole('link', { name: '推演' })).toHaveAttribute('href', '/gaac-support/sandbox');
+    expect(screen.getByRole('link', { name: '赛程沙盘' })).toHaveAttribute('href', '/gaac-support/sandbox');
   });
 });
 

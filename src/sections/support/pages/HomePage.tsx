@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Street, SupportFrame } from '../components';
 
-const services = [
-  { title: '搜索服务', path: '/search/', ready: true, description: '查看接入方式、首次调用示例和常见问题。' },
-  { title: '队伍', path: '/team/', ready: true, description: '创建队伍、邀请队友和管理成员。' },
+const openServices = [
+  { title: '搜索服务', path: '/search/', description: '查看接入方式、首次调用示例和常见问题。' },
+  { title: '队伍', path: '/team/', description: '创建队伍、邀请队友和管理成员。' },
+];
+
+const pendingServices = [
   { title: '比赛任务', path: '/tasks/' },
   { title: '统一模型', path: '/model/' },
   { title: '数据集', path: '/data/' },
@@ -29,11 +32,15 @@ export function HomePage() {
     <section className="home-services" aria-labelledby="services-title">
       <h2 id="services-title">比赛服务</h2>
       <div className="home-service-grid">
-        {services.map(({ title, path, ready, description }) => <Link className="card home-service" to={path} key={path}>
-          <div><h3>{title}</h3><span className={ready ? 'home-chip ready' : 'home-chip'}>{ready ? '已开放' : '筹备中'}</span></div>
-          {description && <p>{description}</p>}
+        {openServices.map(({ title, path, description }) => <Link className="card home-service" to={path} key={path}>
+          <div><h3>{title}</h3><span className="home-chip ready">已开放</span></div>
+          <p>{description}</p>
         </Link>)}
       </div>
+      <h3 className="home-pending-title" id="pending-services-title">以下板块筹备中</h3>
+      <ul className="home-pending-grid" aria-labelledby="pending-services-title">
+        {pendingServices.map(({ title, path }) => <li key={path}><Link className="card home-service" to={path}>{title}</Link></li>)}
+      </ul>
     </section>
     <section className="home-services" aria-labelledby="reading-title">
       <h2 id="reading-title">推演与笔记</h2>

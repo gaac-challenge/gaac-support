@@ -39,7 +39,7 @@ python3 tools/check-links.py --directory dist --base /gaac-support/ --strict
 | `/sandbox` | 组委会赛程推演 | React，仅浅色，保留原推演规则 |
 | `/blog`、`/blog/:slug` | 动手笔记 | React。文章路径：`install-agentx`、`mock-server`、`393-traces` |
 
-导航中的「动手笔记」打开博客；页脚「推演」打开 React 沙盘。构建为已迁移板块的旧 URL 生成跳转页。
+导航中的「动手笔记」打开博客；页脚「赛程沙盘」打开 React 沙盘。构建为已迁移板块的旧 URL 生成跳转页。
 
 ## 板块与内容编辑
 

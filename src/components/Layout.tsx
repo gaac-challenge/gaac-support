@@ -47,7 +47,7 @@ export function Layout({ children }: { children: ReactNode }) {
     <footer className="site-footer">
       <div>
         <strong>{siteName}</strong>
-        <p>智能体大奖赛（Grand Agentic AI Challenge）的参赛技术支持。规则以参赛手册为准。</p>
+        <p>智能体大奖赛（Grand Agentic AI Challenge）参赛技术支持。</p>
       </div>
       <nav aria-label="板块"><h2>板块</h2><Link to="/tasks">比赛任务</Link><Link to="/model">统一模型</Link><Link to="/search">搜索服务</Link><Link to="/data">数据集</Link><Link to="/tools">工具应用</Link><Link to="/eval">测评服务</Link></nav>
       <nav aria-label="服务台"><h2>服务台</h2><Link to="/team/">我的队伍</Link><Link to="/status">运行状态</Link><Link to="/notices">公告与答疑</Link></nav>
