@@ -43,15 +43,15 @@ function SearchCoverage() {
     <div className={"container"}>
       <div className={"head"}>
         <h2 id={"cover-title"}>{"数据覆盖"}</h2>
-        <p className={"lead"}>{"实时模式搜公开网页；冻结模式下，通用搜索自动换成本队分配的语料。当前模式用 "}<code>{"GET /v1/status"}</code>{" 看。"}</p>
+        <p className={"lead"}>{"实时模式可搜索公开网页。当前模式和可用工具用 "}<code>{"GET /v1/status"}</code>{" 看。"}</p>
       </div>
       <div className={"sheet"}>
         <IndexTable headings={[{ content: "数据" , scope: "col" }, { content: "什么时候能用" , scope: "col" }, { content: "内容" , scope: "col" }]} rows={[
             { cells: [{ content: "通用网页" , className: "name" }, { content: "实时模式" }, { content: "经 SearXNG 搜公开网页、新闻和科学内容；公开 HTML 和 PDF 能读正文" }] },
-            { cells: [{ content: "比赛文档语料" , className: "name" }, { content: "冻结模式，按队分配版本" }, { content: "搜文档片段、读原文、定位引文、读表格" }] },
+            { cells: [{ content: "文档语料" , className: "name" }, { content: "取决于接入配置" }, { content: "搜文档片段、读原文、定位引文、读表格" }] },
             { cells: [{ content: "金融数据" , className: "name" }, { content: "可用性见接入状态" }, { content: "沪深 300、标普 500、恒生指数成分股；日行情、财务报表、ETF、汇率和部分宏观指标" }] },
             { cells: [{ content: "平台数据" , className: "name" }, { content: "实时模式" }, { content: "GitHub、Hacker News、V2EX；arXiv、OpenAlex、Crossref；雪球、Polymarket；YouTube" }] },
-            { cells: [{ content: "图片与图标" , className: "name" }, { content: "取决于服务模式" }, { content: "实时模式检索 Openverse 和 Wikimedia Commons 的开放许可图片；冻结模式用分配的图库。引用时保留许可和署名" }] },
+            { cells: [{ content: "图片与图标" , className: "name" }, { content: "取决于服务模式" }, { content: "可检索 Openverse 和 Wikimedia Commons 的开放许可图片。引用时保留许可和署名" }] },
           ]} />
       </div>
     </div>
