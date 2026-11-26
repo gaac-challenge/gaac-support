@@ -1,6 +1,6 @@
 # GAAC 技术支持（GAAC Support）
 
-智能体大奖赛的参赛技术支持与阅读资料站。技术支持、赛程推演、动手笔记由 React 渲染。
+智能体大奖赛的参赛技术支持与阅读资料站。技术支持、队伍管理、赛程推演和动手笔记由 React 渲染。
 
 ## 本地开发与构建
 
@@ -24,21 +24,28 @@ python3 tools/check-links.py --directory dist --base /gaac-support/ --strict
 
 默认前缀是 `/`。React Router 使用构建前缀作为 basename。构建会为每个固定路由写入 `index.html`，因此普通静态服务器可以直接打开各板块入口。动手笔记的三篇文章也有独立入口。未知地址使用应用的 404 页面。静态服务器可将 `dist/404.html` 配置为回退页。
 
+生产环境需将同源 `/api/v1/` 转发给队伍 API。所有队伍入口都是空应用壳，团队和账号数据只在浏览器运行时加载。服务器将 `/join/*` 内部重写到 `/join/index.html`，保留浏览器地址中的邀请令牌。
+
 ## 路由
 
 | 路由 | 内容 | 当前实现 |
 | --- | --- | --- |
 | `/` | 技术支持首页与街景 | React |
-| `/tasks`、`/model`、`/search`、`/eval` | 比赛任务、统一模型、搜索服务、测评服务 | React |
-| `/data`、`/tools`、`/notices`、`/status`、`/desk` | 数据集、工具应用、公告与答疑、运行状态、本队任务台 | React，保留原来的占位内容 |
+| `/search/` | 搜索服务 | 接入指南、示例和排查 |
+| `/tasks/`、`/model/`、`/eval/`、`/data/`、`/tools/`、`/notices/`、`/status/` | 比赛板块 | 筹备中 |
+| `/login/`、`/signup/`、`/account/` | 登录、注册、账号 | 运行时请求 |
+| `/team/`、`/join/<token>`、`/admin/` | 队伍、邀请、组委会管理 | 运行时请求 |
+| `/desk/` | 旧队伍入口 | 跳转到 `/team/` |
 | `/sandbox` | 组委会赛程推演 | React，仅浅色，保留原推演规则 |
 | `/blog`、`/blog/:slug` | 动手笔记 | React。文章路径：`install-agentx`、`mock-server`、`393-traces` |
 
-导航中的「动手笔记」打开博客；页脚「推演」打开 React 沙盘。构建为已迁移板块的旧 URL 生成跳转页。
+导航中的「动手笔记」打开博客；页脚「赛程沙盘」打开 React 沙盘。构建为已迁移板块的旧 URL 生成跳转页。
 
 ## 板块与内容编辑
 
-- 技术支持的版式在 `src/sections/support/pages/`，服务、赛制和占位页数据在 `src/sections/support/content/`。
+- 技术支持首页和搜索页在 `src/sections/support/pages/`，筹备中的板块共用占位布局。
+- 队伍服务位于 `src/sections/team/`。开发服务器默认启用内存模拟接口，刷新后恢复演示数据。用 `VITE_TEAM_MOCK=0 pnpm dev` 可关闭模拟。
+- 演示账号使用 `captain@example.test`、`member@example.test`、`ready@example.test`（可建队）、`solo@example.test`（可兑换）、`organizer@example.test`，密码均为 `demo-password-2026`。模拟注册邀请码为 `DEMO-CAPTAIN`，邀请入口为 `/join/demo-join`。
 - 动手笔记的文章以 Markdown 保存，每篇有标题、导语等 frontmatter。围栏 `question`、`stats`、`drawing`、`sequence` 和 `pipeline` 使用对应的字段，分别渲染问题、统计数字、图表、时序和流程。
 - 沙盘的交互状态由 React 管理。规则和默认假设保留在 `engine.js` 和 `scenario.js`，时间轴用 SVG。沙盘使用浅色主题，并显示「推演假设，非正式赛程」。
 - 每个板块维护自己的路由和样式，通用布局及设计变量放在 `src/components/` 和 `src/styles/`。

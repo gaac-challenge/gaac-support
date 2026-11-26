@@ -146,13 +146,22 @@ h1, h2, h3 { word-break: keep-all; overflow-wrap: break-word; min-width: 0; }
 }
 .support-banner { background: #e9f8fb; color: #23576a; border: 1px solid var(--line-blue); padding: 10px 16px; border-radius: 13px; margin-bottom: 19px; font-size: 14px; }
 .support-banner a { margin-inline-start: 6px; }
-.support-home .hero { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.1fr); align-items: center; gap: 24px; padding: 22px 4px 10px; }
-.support-home .hero__base { order: -1; }
-.support-home .hero h1 { font-size: clamp(38px, 5vw, 70px); line-height: 1.11; }
-.support-home .hero .lead { color: var(--muted); margin-top: 15px; }
-.support-home .hero .actions { margin-top: 24px; }
-.street-frame { margin: 0; padding: 10px; background: rgba(255,255,255,.7); border: 1px solid #dfebed; border-radius: var(--radius); box-shadow: var(--shadow); }
-.street-frame iframe { display: block; width: 100%; border: 0; border-radius: 16px; aspect-ratio: 4 / 1; }
+.site-shell > main:has(.support-home) { padding-top: 10px; }
+.support-home .hero__base { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 18px; padding-block: clamp(26px, 5vw, 64px); }
+.support-home .hero .lead { color: var(--muted); margin-top: 12px; }
+.street-frame { margin: 0 calc(-1 * var(--shell-gutter)); overflow: hidden; }
+.street-frame iframe { display: block; width: 100%; height: clamp(118px, 24.43vw, 450px); border: 0; }
+.home-services + .home-services { margin-top: clamp(26px, 4vw, 48px); }
+.home-service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 286px), 1fr)); gap: 12px; margin-top: 16px; }
+.home-pending-title { margin-top: 20px; color: var(--muted); font-size: .9rem; }
+.home-pending-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; list-style: none; margin: 9px 0 0; padding: 0; }
+.home-pending-grid .home-service { display: block; padding: 10px 14px; font-weight: 650; box-shadow: none; }
+.home-service { text-decoration: none; color: var(--ink); padding: 18px; }
+.home-service:hover { border-color: #77bdcd; }
+.home-service > div { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; }
+.home-service p { color: var(--muted); margin-top: 6px; }
+.home-chip { flex: none; padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; font-size: .8rem; color: var(--muted); }
+.home-chip.ready { background: var(--soft); border-color: var(--line-blue); color: var(--link); }
 .support-page .container { min-width: 0; }
 .support-page .sheet, .support-page .cols3 > article, .support-page .cols2 > article { background: #fff; border: 1px solid #dfebed; border-radius: var(--radius); box-shadow: var(--shadow); padding: clamp(15px, 3vw, 26px); }
 .support-page .head { margin-bottom: 15px; align-items: center; }
@@ -160,7 +169,7 @@ h1, h2, h3 { word-break: keep-all; overflow-wrap: break-word; min-width: 0; }
 .support-page .index { overflow-wrap: anywhere; }
 .support-page .code { max-width: 100%; overflow: auto; }
 @media (max-width: 880px) {
-  .support-home .hero, .support-page .head, .support-page .split, .support-page .split--rev, .support-page .cols3, .support-page .cols2 { grid-template-columns: minmax(0, 1fr); }
+  .support-page .head, .support-page .split, .support-page .split--rev, .support-page .cols3, .support-page .cols2 { grid-template-columns: minmax(0, 1fr); }
   .support-page .rotation, .support-page .figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .support-page .figures b { white-space: normal; }
   .support-page .week { grid-template-columns: minmax(0, 1fr); border-radius: 14px; }
@@ -173,7 +182,10 @@ h1, h2, h3 { word-break: keep-all; overflow-wrap: break-word; min-width: 0; }
   .support-page .index td { border: 0; padding: 4px 0; }
 }
 @media (max-width: 440px) {
-  .support-home .hero { padding-top: 8px; }
   .support-page .rotation { grid-template-columns: minmax(0, 1fr); }
-  .street-frame { padding: 6px; }
+}
+
+@media (max-width: 750px) {
+  .street-frame iframe { height: 190px; }
+  .home-pending-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 105px), 1fr)); }
 }

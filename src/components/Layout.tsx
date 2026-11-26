@@ -33,7 +33,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <NavigationLinks group="reading" />
       </nav>
       <div className="site-actions">
-        <Link className="pill primary" to="/desk">本队任务台</Link>
+        <Link className="pill primary" to="/team/">我的队伍</Link>
         <details className="site-menu site-menu-mobile" ref={mobile}>
           <summary className="pill secondary">菜单</summary>
           <div className="site-menu-panel">
@@ -47,12 +47,12 @@ export function Layout({ children }: { children: ReactNode }) {
     <footer className="site-footer">
       <div>
         <strong>{siteName}</strong>
-        <p>智能体大奖赛（Grand Agentic AI Challenge）的参赛技术支持。规则以参赛手册为准。</p>
+        <p>智能体大奖赛（Grand Agentic AI Challenge）参赛技术支持。</p>
       </div>
       <nav aria-label="板块"><h2>板块</h2><Link to="/tasks">比赛任务</Link><Link to="/model">统一模型</Link><Link to="/search">搜索服务</Link><Link to="/data">数据集</Link><Link to="/tools">工具应用</Link><Link to="/eval">测评服务</Link></nav>
-      <nav aria-label="服务台"><h2>服务台</h2><Link to="/desk">本队任务台</Link><Link to="/status">运行状态</Link><Link to="/notices">公告与答疑</Link></nav>
+      <nav aria-label="服务台"><h2>服务台</h2><Link to="/team/">我的队伍</Link><Link to="/status">运行状态</Link><Link to="/notices">公告与答疑</Link></nav>
       <nav aria-label="赛事"><h2>赛事</h2><a href={official}>GAAC 官网 <span aria-hidden="true">↗</span></a><a href={guide}>搜索接入指南 <span aria-hidden="true">↗</span></a><NavigationLinks group="secondary" /></nav>
-      <p className="site-colophon">草案，2026 年 11 月。开赛日期、下载地址和哈希定下来以后再填。</p>
+      <p className="site-colophon">比赛流程筹备中。</p>
     </footer>
   </div>;
 }

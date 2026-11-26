@@ -43,15 +43,15 @@ function SearchCoverage() {
     <div className={"container"}>
       <div className={"head"}>
         <h2 id={"cover-title"}>{"数据覆盖"}</h2>
-        <p className={"lead"}>{"实时模式搜公开网页；冻结模式下，通用搜索自动换成本队分配的语料。当前模式用 "}<code>{"GET /v1/status"}</code>{" 看。"}</p>
+        <p className={"lead"}>{"实时模式可搜索公开网页。当前模式和可用工具用 "}<code>{"GET /v1/status"}</code>{" 看。"}</p>
       </div>
       <div className={"sheet"}>
         <IndexTable headings={[{ content: "数据" , scope: "col" }, { content: "什么时候能用" , scope: "col" }, { content: "内容" , scope: "col" }]} rows={[
             { cells: [{ content: "通用网页" , className: "name" }, { content: "实时模式" }, { content: "经 SearXNG 搜公开网页、新闻和科学内容；公开 HTML 和 PDF 能读正文" }] },
-            { cells: [{ content: "比赛文档语料" , className: "name" }, { content: "冻结模式，按队分配版本" }, { content: "搜文档片段、读原文、定位引文、读表格" }] },
-            { cells: [{ content: "金融数据" , className: "name" }, { content: "按队分配版本，各阶段同一快照" }, { content: "沪深 300、标普 500、恒生指数成分股；日行情、财务报表、ETF、汇率和部分宏观指标" }] },
+            { cells: [{ content: "文档语料" , className: "name" }, { content: "取决于接入配置" }, { content: "搜文档片段、读原文、定位引文、读表格" }] },
+            { cells: [{ content: "金融数据" , className: "name" }, { content: "可用性见接入状态" }, { content: "沪深 300、标普 500、恒生指数成分股；日行情、财务报表、ETF、汇率和部分宏观指标" }] },
             { cells: [{ content: "平台数据" , className: "name" }, { content: "实时模式" }, { content: "GitHub、Hacker News、V2EX；arXiv、OpenAlex、Crossref；雪球、Polymarket；YouTube" }] },
-            { cells: [{ content: "图片与图标" , className: "name" }, { content: "随比赛模式切换" }, { content: "实时模式检索 Openverse 和 Wikimedia Commons 的开放许可图片；冻结模式用分配的图库。引用时保留许可和署名" }] },
+            { cells: [{ content: "图片与图标" , className: "name" }, { content: "取决于服务模式" }, { content: "可检索 Openverse 和 Wikimedia Commons 的开放许可图片。引用时保留许可和署名" }] },
           ]} />
       </div>
     </div>
@@ -67,11 +67,11 @@ function Troubleshooting() {
       </div>
       <div className={"sheet"}>
         <IndexTable headings={[{ content: "情况" , scope: "col" }, { content: "怎么办" , scope: "col" }]} rows={[
-            { cells: [{ content: "401 / 403" , className: "name" }, { content: <>{"确认运行客户端的终端设了 "}<code>{"GAAC_KEY"}</code>{"，请求带了 Bearer 头。密钥过期、被撤销或本队窗口已结束，找组织方"}</> }] },
+            { cells: [{ content: "401 / 403" , className: "name" }, { content: <>{"确认运行客户端的终端设了 "}<code>{"GAAC_KEY"}</code>{"，请求带了 Bearer 头。如密钥过期或被撤销，请联系组委会"}</> }] },
             { cells: [{ content: "429" , className: "name" }, { content: <>{"按错误里的 "}<code>{"retry_after"}</code>{" 等一会儿再试；剩余额度和重置时间用 "}<code>{"GET /v1/status"}</code>{" 看"}</> }] },
             { cells: [{ content: "503 / 504" , className: "name" }, { content: <>{"看错误里的 "}<code>{"code"}</code>{" 分清维护、队伍暂停、语料未就绪还是上游异常；"}<code>{"retryable"}</code>{" 为 true 才重试"}</> }] },
             { cells: [{ content: "密钥丢失或泄露" , className: "name" }, { content: "队长提供队伍 ID 和已知的密钥前缀，申请撤销旧密钥并换发" }] },
-            { cells: [{ content: "换阶段后结果变了" , className: "name" }, { content: <>{"正常：默认来源随模式切换。先看 "}<code>{"/v1/status"}</code>{" 里的 "}<code>{"mode"}</code>{" 和 "}<code>{"tools"}</code></> }] },
+            { cells: [{ content: "搜索来源有变化" , className: "name" }, { content: <>{"正常：默认来源随模式切换。先看 "}<code>{"/v1/status"}</code>{" 里的 "}<code>{"mode"}</code>{" 和 "}<code>{"tools"}</code></> }] },
           ]} />
       </div>
       <p className={"note"}>{"完整的接口参数、Codex 配置和各数据源的示例，见 "}<SupportLink className={"ext"} href={"https://search-api.54-82-224-126.sslip.io/guide/#reference"}>{"接入指南的 API 参考"}</SupportLink>{"。"}</p>
@@ -80,8 +80,8 @@ function Troubleshooting() {
 }
 
 export function SearchPage() {
-  return <SupportFrame title={"搜索服务：GAAC 技术支持"} banner={<>{"API 密钥在参赛资格确认后由队长领取。"}<SupportLink href={"https://search-api.54-82-224-126.sslip.io/guide/#onboarding"}>{"看领取方式"}</SupportLink></>}>
-    <PageHeader title={"GAAC Agentic Search"} id={"page-title"} description={<><p className={"lead"}>{"一把队伍密钥，三种接法：REST、MCP、SearXNG 兼容接口。搜索来源随比赛模式切换。"}</p></>} actions={<><SupportLink className={"pill primary"} href={"https://search-api.54-82-224-126.sslip.io/guide/"}>{"打开接入指南"}</SupportLink><SupportLink className={"pill secondary"} href={"#first"}>{"看首次调用"}</SupportLink></>}>{<></>}</PageHeader>
+  return <SupportFrame title={"搜索服务：GAAC 技术支持"} banner={<>{"API 密钥由组委会发放。"}<SupportLink href={"https://search-api.54-82-224-126.sslip.io/guide/#onboarding"}>{"查看密钥接入说明"}</SupportLink></>}>
+    <PageHeader title={"GAAC Agentic Search"} id={"page-title"} description={<><p className={"lead"}>{"一把队伍密钥，三种接法：REST、MCP、SearXNG 兼容接口。可用工具和额度请查看接入状态。"}</p></>} actions={<><SupportLink className={"pill primary"} href={"https://search-api.54-82-224-126.sslip.io/guide/"}>{"打开接入指南"}</SupportLink><SupportLink className={"pill secondary"} href={"#first"}>{"看首次调用"}</SupportLink></>}>{<></>}</PageHeader>
     <FirstCall />
     <IntegrationMethods />
     <SearchCoverage />

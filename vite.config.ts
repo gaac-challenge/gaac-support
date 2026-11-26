@@ -7,6 +7,7 @@ import blogPaths from './src/sections/blog/content/static-paths.json';
 
 const readingPaths = { blog: blogPaths };
 const compatibility = new Map([
+  ['desk/index.html', '../team/'],
   ['legacy/index.html', '../sandbox/'],
   ['legacy/sandbox/index.html', '../../sandbox/'],
   ...Object.entries(readingPaths).flatMap(([section, paths]) =>
