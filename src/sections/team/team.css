@@ -1,0 +1,28 @@
+.team-area { display: grid; gap: 16px; max-width: 990px; margin-inline: auto; }
+.team-area .page-heading h1 { font-size: clamp(32px, 5vw, 48px); }
+.team-area .page-heading { padding: clamp(20px, 4vw, 42px); }
+.team-account-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.team-account-bar button { margin-inline-start: auto; }
+.team-stack { display: grid; align-content: start; gap: 12px; }
+.team-narrow { width: min(100%, 580px); }
+.team-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+.team-form { width: min(100%, 490px); }
+.team-form fieldset { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 12px; }
+.team-form label { display: grid; gap: 4px; font-weight: 650; }
+.team-form input { width: 100%; min-height: 44px; padding: 8px 12px; border: 1px solid #aabcbc; border-radius: 12px; background: white; color: var(--ink); }
+.team-form button { justify-self: start; }
+.team-area small { color: var(--muted); }
+.team-area button:disabled { opacity: .6; cursor: default; }
+.team-chip { display: inline-block; border-radius: 999px; padding: 3px 8px; background: var(--soft); color: var(--link); font-size: 13px; }
+.team-quiet { color: var(--ink); background: white; border-color: var(--line-blue); }
+.team-quiet:hover { background: var(--soft); }
+.team-message { padding: 12px 16px; border-radius: 12px; background: var(--soft); }
+.team-error { border: 1px solid #e5beb6; background: #fff4ee; color: #782e1c; }
+.team-list { list-style: none; padding: 0; margin: 0; }
+.team-list > li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; border-top: 1px solid var(--line); padding: 12px 0; overflow-wrap: anywhere; }
+.team-detail { border-top: 1px solid var(--line); padding-top: 10px; }
+.team-detail code { color: var(--muted); }
+.team-detail .team-list { margin-top: 10px; }
+.team-dialog { max-width: min(620px, calc(100% - 28px)); max-height: 84vh; padding: 22px; border: 1px solid var(--line-blue); border-radius: var(--radius); color: var(--ink); background: var(--paper); box-shadow: var(--shadow); }
+.team-dialog::backdrop { background: rgb(16 44 58 / .42); }
+.team-secret { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; background: var(--soft); border-radius: 12px; overflow-wrap: anywhere; }

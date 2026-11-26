@@ -6,17 +6,19 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
 import { Article, Figure } from './components/Article';
 import { routes } from './sections';
+import { createMockFetch } from './sections/team/mock';
 
 const readingPaths = { '/blog/:slug': ['install-agentx', 'mock-server', '393-traces'] };
 
 const supportTitles: Record<string, string> = {
-  '/': '五队共用一套 EdgePod', '/tasks': '两个阶段，正式分 100',
-  '/model': 'DeepSeek V4.1 Flash 1017', '/search': 'GAAC Agentic Search',
-  '/data': '数据集', '/tools': '工具应用', '/eval': '四项测评，进度不一',
-  '/notices': '公告与答疑', '/status': '运行状态', '/desk': '本队任务台',
+  '/': 'GAAC 技术支持', '/tasks': '比赛任务',
+  '/model': '统一模型', '/search': 'GAAC Agentic Search',
+  '/data': '数据集', '/tools': '工具应用', '/eval': '测评服务',
+  '/notices': '公告与答疑', '/status': '运行状态', '/desk': '我的队伍',
 };
 
 beforeAll(async () => {
+  vi.stubGlobal('fetch', createMockFetch());
   vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
   vi.stubGlobal('matchMedia', vi.fn(() => ({
     matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn(),
@@ -57,11 +59,12 @@ describe('registered route smoke test', () => {
     expect(await screen.findByRole('heading', { name: '页面未找到' })).toBeVisible();
   });
 
-  it('keeps support navigation and fragments under the configured base', async () => {
+  it('keeps support navigation under the configured base', async () => {
     renderPath('/eval');
-    const links = await within(screen.getByRole('main')).findAllByRole('link', { name: '看计分规则' });
-    expect(links).toHaveLength(2);
-    for (const link of links) expect(link).toHaveAttribute('href', '/gaac-support/tasks#score-title');
+    const main = within(screen.getByRole('main'));
+    expect(await main.findByRole('link', { name: '搜索服务' })).toHaveAttribute('href', '/gaac-support/search/');
+    expect(main.getByRole('link', { name: '我的队伍' })).toHaveAttribute('href', '/gaac-support/team/');
+    expect(main.getByText('这部分还在筹备，比赛流程定下来以后在这里发布。')).toBeVisible();
     expect(screen.getByRole('link', { name: '推演' })).toHaveAttribute('href', '/gaac-support/sandbox');
   });
 });

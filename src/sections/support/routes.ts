@@ -12,7 +12,6 @@ export const support: Section = {
     { path: '/eval', label: '测评服务', load: () => import('./SupportPage') },
     { path: '/notices', label: '公告与答疑', load: () => import('./SupportPage') },
     { path: '/status', label: '运行状态', load: () => import('./SupportPage') },
-    { path: '/desk', label: '本队任务台', load: () => import('./SupportPage') },
   ],
   navigation: ['/tasks', '/model', '/search', '/data', '/tools', '/eval', '/notices', '/status'],
 };
