@@ -65,7 +65,7 @@ export function Secret({ title, entries, onClose }: { title: string; entries: st
 }
 
 export function InviteList<T extends Invite>({ items, busy, title, revoke }: {
-  items: T[]; busy: boolean; title: (invite: T) => string; revoke: (id: string) => void;
+  items: T[]; busy: boolean; title: (invite: T) => ReactNode; revoke: (id: string) => void;
 }) {
   if (!items.length) return <p>暂无邀请。</p>;
   return <ul className="team-list">{items.map((invite) => {

@@ -8,7 +8,7 @@ const stageLabels: Record<string, string> = { forming: '组队中', qualified: '
 export function Members({ members, actions }: { members: Member[]; actions?: (member: Member) => React.ReactNode }) {
   return <ul className="team-list">{members.map((member) => <li key={member.user_id}>
     <div><strong>{member.display_name}</strong> <span className="team-chip">{member.role === 'captain' ? '队长' : '队员'}</span>
-      <p>{member.email}</p><small>邀请人：{member.invited_by?.display_name ?? '—'} · 加入于 <DateText value={member.joined_at} /></small></div>
+      <p>{member.email}</p><small>{member.invited_by && `邀请人：${member.invited_by.display_name} · `}加入于 <DateText value={member.joined_at} /></small></div>
     {actions && <div className="actions">{actions(member)}</div>}
   </li>)}</ul>;
 }
@@ -68,7 +68,7 @@ function WithTeam({ session, run, busy, refresh }: Props) {
     <PageHeader title={team.name} description={<><code>{team.slug}</code> <span className="team-chip">{stageLabels[team.stage] ?? '比赛阶段更新中'}</span></>} />
     {!verified && <p className="team-message">邮箱尚未验证。需要验证的操作暂不可用，请联系组委会。</p>}
     {frozen && <p className="team-message">当前阶段的成员名单已锁定，增减成员或退出请联系组委会。</p>}
-    {captain && verified && team.status === 'forming' && <section className="card team-stack">
+    {captain && verified && team.status === 'forming' && <section className="card team-stack team-rename">
       <h2>队伍设置</h2>
       <Form submit="保存队名" busy={busy} onSubmit={(data) => void run(() => update(() => patch('/team', { name: value(data, 'name').trim() })))}>
         <label>队名<input required name="name" defaultValue={team.name} maxLength={100} /></label>
@@ -93,7 +93,7 @@ function WithTeam({ session, run, busy, refresh }: Props) {
         <label>最多使用次数<input type="number" name="max_uses" min={1} max={10} defaultValue={1} required /></label>
         <label>有效天数<input type="number" name="expires_in_days" min={1} max={14} defaultValue={7} required /></label>
       </Form>}
-      {roster && <InviteList items={roster.invites ?? []} title={(invite) => '队伍邀请 · ' + invite.id.slice(-6)} busy={busy || !verified}
+      {roster && <InviteList items={roster.invites ?? []} title={(invite) => <>邀请链接 · 创建于 <DateText value={invite.created_at} /></>} busy={busy || !verified}
         revoke={(id) => void run(() => update(() => post('/team/invites/' + encodeURIComponent(id) + '/revoke')))} />}
     </section>}
     {secret && <Secret title="队伍邀请链接" entries={[secret]} onClose={() => setSecret(undefined)} />}

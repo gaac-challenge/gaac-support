@@ -70,8 +70,8 @@ export function JoinPage({ token, session, run, busy, refresh }: Actions & { tok
         {session?.team ? <><p>你的账号已加入一支队伍。</p><Link to="/team/">查看我的队伍</Link></>
           : session || signedIn ? <button className="pill primary" disabled={busy} onClick={() => void run(async () => { await redeem(); await finish(); })}>接受邀请</button>
           : <>
-            <div className="actions"><button className="pill secondary" type="button" aria-pressed={!signup} disabled={busy} onClick={() => setSignup(false)}>使用已有账号</button>
-              <button className="pill secondary" type="button" aria-pressed={signup} disabled={busy} onClick={() => setSignup(true)}>注册新账号</button></div>
+            <div className="actions" role="group" aria-label="选择加入方式"><button className={'pill ' + (signup ? 'secondary' : 'primary')} type="button" aria-pressed={!signup} disabled={busy} onClick={() => setSignup(false)}>使用已有账号</button>
+              <button className={'pill ' + (signup ? 'primary' : 'secondary')} type="button" aria-pressed={signup} disabled={busy} onClick={() => setSignup(true)}>注册新账号</button></div>
             <Credentials key={String(signup)} signup={signup} token={token} run={run} busy={busy} success={async (user) => {
               if (user.must_change_password) {
                 await refresh();

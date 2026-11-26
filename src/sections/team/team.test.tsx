@@ -75,6 +75,8 @@ it('shows a captain’s generated invite once and keeps the count in the list', 
   await click('我已保存', dialog);
   expect(main().queryByText(/\/join\/demo-join-/)).toBeNull();
   expect(await main().findByText('0 / 1 次 · 有效', {}, wait)).toBeVisible();
+  expect(main().getAllByText('邀请链接 · 创建于')).toHaveLength(2);
+  expect(main().queryByText(/队伍邀请 · link-|邀请人：—/)).toBeNull();
 });
 
 it('logs in from an invite link and redeems it', async () => {
@@ -90,7 +92,11 @@ it('logs in from an invite link and redeems it', async () => {
 
 it('adds a new member at sign-up from a team link', async () => {
   const fetch = show('/join/demo-join');
+  const login = await main().findByRole('button', { name: '使用已有账号', pressed: true }, wait);
+  expect(login).toHaveClass('primary');
   await click('注册新账号');
+  expect(main().getByRole('button', { name: '注册新账号', pressed: true })).toHaveClass('primary');
+  expect(login).toHaveAttribute('aria-pressed', 'false');
   fill('邮箱', 'recruit@example.test');
   fill('显示名称', '何星');
   fill('密码', demoPassword);
