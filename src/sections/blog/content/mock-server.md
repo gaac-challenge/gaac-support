@@ -100,37 +100,44 @@ meta: ["2026-11-22","agentx-harness 1.0.14 · aiperf-mock-server 0.13.0","抓包
     {
       "from": "发出请求",
       "to": "收到",
-      "payload": "`POST /v1/chat/completions`请求头：`X-Request-ID`（每个请求不同）· `X-Correlation-ID`（同一条会话不变）· `Accept: text/event-stream`请求体：`model` · `messages`（31 条，约 35 万字符）· `stream: true` · `max_completion_tokens: 4045` · `ignore_eos: true` · `stream_options.include_usage: true`"
+      "payload": "`POST /v1/chat/completions`请求头：`X-Request-ID`（每个请求不同）· `X-Correlation-ID`（同一条会话不变）· `Accept: text/event-stream`请求体：`model` · `messages`（31 条，约 35 万字符）· `stream: true` · `max_completion_tokens: 4045` · `ignore_eos: true` · `stream_options.include_usage: true`",
+      "direction": "to"
     },
     {
       "from": "首字时延从这里截止",
       "to": "开始生成",
-      "payload": "`data: {\"delta\": {\"role\": \"assistant\", \"content\": \"So t\"}}`第 1 个块"
+      "payload": "`data: {\"delta\": {\"role\": \"assistant\", \"content\": \"So t\"}}`第 1 个块",
+      "direction": "from"
     },
     {
       "from": "token 间隔从这里量",
       "to": "逐个推送",
-      "payload": "`data: {\"delta\": {\"content\": \"hou \"}}` …每块一个 token，共 4,045 块"
+      "payload": "`data: {\"delta\": {\"content\": \"hou \"}}` …每块一个 token，共 4,045 块",
+      "direction": "from"
     },
     {
       "from": "同时进行",
       "to": "回监控数据",
-      "payload": "`GET /metrics` ⇄ 每 334 毫秒一次读缓存命中、缓存占用、排队数"
+      "payload": "`GET /metrics` ⇄ 每 334 毫秒一次读缓存命中、缓存占用、排队数",
+      "direction": "both"
     },
     {
       "from": "",
       "to": "生成完毕",
-      "payload": "`data: {\"delta\": {\"content\": \"or a\"}, \"finish_reason\": \"length\"}`到了 4,045 个，因长度上限而停"
+      "payload": "`data: {\"delta\": {\"content\": \"or a\"}, \"finish_reason\": \"length\"}`到了 4,045 个，因长度上限而停",
+      "direction": "from"
     },
     {
       "from": "AgentX 采信这几个数",
       "to": "报用量",
-      "payload": "`data: {\"usage\": {\"prompt_tokens\": 78926, \"completion_tokens\": 4045, \"prompt_tokens_details\": {\"cached_tokens\": 23677}}}`用量块：输入、输出、命中缓存的 token 数"
+      "payload": "`data: {\"usage\": {\"prompt_tokens\": 78926, \"completion_tokens\": 4045, \"prompt_tokens_details\": {\"cached_tokens\": 23677}}}`用量块：输入、输出、命中缓存的 token 数",
+      "direction": "from"
     },
     {
       "from": "请求结束",
       "to": "关流",
-      "payload": "`data: [DONE]`"
+      "payload": "`data: [DONE]`",
+      "direction": "from"
     }
   ]
 }

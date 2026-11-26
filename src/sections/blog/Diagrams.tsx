@@ -1,7 +1,7 @@
 import Markdown from 'react-markdown';
 
 type Legend = { id: string; title: string; label: string; description: string };
-type SequenceData = Legend & { heading: string[]; caption: string; messages: { from: string; payload: string; to: string }[] };
+type SequenceData = Legend & { heading: string[]; caption: string; messages: { from: string; payload: string; to: string; direction: 'to' | 'from' | 'both' }[] };
 type PipelineData = Legend & { rows: { group: string; steps: { title: string; detail: string; availability: string }[] }[]; key: string[] };
 
 function FigureHeading({ title, label, description }: Legend) {
@@ -14,8 +14,8 @@ export function SequenceDiagram({ data }: { data: SequenceData }) {
     <div className="blog-diagram-scroll" tabIndex={0}>
       <div className="blog-sequence">
         <div className="blog-sequence-label">{data.heading.map((name) => <b key={name}>{name}</b>)}</div>
-        {data.messages.map(({ from, payload, to }) => <div className="blog-sequence-row" key={payload}>
-          <span>{from}</span><div><Markdown>{payload}</Markdown></div><span>{to}</span>
+        {data.messages.map(({ from, payload, to, direction }) => <div className="blog-sequence-row" key={payload}>
+          <span>{from}</span><div><Markdown>{payload}</Markdown><i className={'blog-sequence-arrow ' + direction} aria-hidden="true" /></div><span>{to}</span>
         </div>)}
       </div>
     </div>

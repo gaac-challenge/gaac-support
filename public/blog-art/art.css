@@ -40,3 +40,6 @@ main > div { display: flow-root; }
   .brow { grid-template-columns: 70px minmax(0, 1fr); }
   .brow .r { grid-column: 2; font-size: .75rem; }
 }
+@media (max-width: 520px) {
+  .brow .r { text-align: start; margin-top: -3px; }
+}
