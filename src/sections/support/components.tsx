@@ -54,15 +54,6 @@ export function IndexTable({ headings, rows }: { headings: TableCell[]; rows: Ta
   </table>;
 }
 
-export function Facts({ className, facts }: { className: string; facts: { label: ReactNode; value: ReactNode }[] }) {
-  return <dl className={className}>{facts.map(({ label, value }, index) => <div key={index}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>;
-}
-
-export function WeekBar({ label, slots }: { label: string; slots: { label: ReactNode; hours: ReactNode; variant?: string }[] }) {
-  return <ol className="week" aria-label={label}>{slots.map(({ label, hours, variant }, index) =>
-    <li className={variant} key={index}><b>{label}</b><small>{hours}</small></li>)}</ol>;
-}
-
 export function SupportList({ className, items }: { className: string; items: ReactNode[] }) {
   const list = items.map((item, index) => <li key={index}>{item}</li>);
   return className === 'steps' ? <ol className={className}>{list}</ol> : <ul className={className}>{list}</ul>;

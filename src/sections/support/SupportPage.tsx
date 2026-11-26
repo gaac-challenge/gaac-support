@@ -1,22 +1,22 @@
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { PageHeader } from '../../components/PageHeader';
-import { SupportFrame, SupportLink } from './components';
-import { placeholders } from './content/placeholders';
-import { EvaluationPage } from './pages/EvaluationPage';
+import { SupportFrame } from './components';
 import { HomePage } from './pages/HomePage';
-import { ModelPage } from './pages/ModelPage';
 import { SearchPage } from './pages/SearchPage';
-import { TasksPage } from './pages/TasksPage';
+import { support } from './routes';
 
-const pages = { '/': HomePage, '/tasks': TasksPage, '/model': ModelPage, '/search': SearchPage, '/eval': EvaluationPage };
+function Placeholder({ title }: { title: string }) {
+  return <SupportFrame title={title}>
+    <PageHeader title={title} description={<p>这部分还在筹备，比赛流程定下来以后在这里发布。</p>} actions={<>
+      <Link className="pill secondary" to="/search/">搜索服务</Link>
+      <Link className="pill primary" to="/team/">我的队伍</Link>
+    </>} />
+  </SupportFrame>;
+}
 
 export default function SupportPage() {
   const path = useLocation().pathname.replace(/\/$/, '') || '/';
-  const Page = pages[path as keyof typeof pages];
-  if (Page) return <Page />;
-  const { pageTitle, heading, message, learnMore = { href: 'tasks.html', label: '看比赛任务' } } = placeholders[path];
-  return <SupportFrame title={pageTitle}><PageHeader title={heading} description={<p className="lead">{message}</p>} actions={<>
-    <SupportLink className="pill primary" href="index.html">回到首页</SupportLink>
-    <SupportLink className="pill secondary" href={learnMore.href}>{learnMore.label}</SupportLink>
-  </>} /></SupportFrame>;
+  if (path === '/') return <HomePage />;
+  if (path === '/search') return <SearchPage />;
+  return <Placeholder title={support.routes.find((route) => route.path === path)!.label} />;
 }
