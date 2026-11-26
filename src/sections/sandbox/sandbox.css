@@ -300,6 +300,7 @@
 
 .sandbox-main #params > .pill, .sandbox-main #prep > .pill { justify-self: end; }
 .sandbox-team-controls > .sandbox-row { flex-wrap: nowrap; }
+.sandbox-page #sched .sandbox-card { padding: 0; }
 .sandbox-page #sched table { min-width: 760px; }
 .sandbox-page #sched :is(th, td):not(:last-child) { white-space: nowrap; }
 .sandbox-page #sched td { vertical-align: middle; }
