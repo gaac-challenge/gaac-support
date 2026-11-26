@@ -7,6 +7,8 @@ import { App } from './App';
 import { Article, Figure } from './components/Article';
 import { routes } from './sections';
 
+const readingPaths = { '/blog/:slug': ['install-agentx', 'mock-server', '393-traces'] };
+
 const supportTitles: Record<string, string> = {
   '/': '五队共用一套 EdgePod', '/tasks': '两个阶段，正式分 100',
   '/model': 'DeepSeek V4.1 Flash 1017', '/search': 'GAAC Agentic Search',
@@ -16,6 +18,13 @@ const supportTitles: Record<string, string> = {
 
 beforeAll(async () => {
   vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+  vi.stubGlobal('matchMedia', vi.fn(() => ({
+    matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn(),
+  })));
+  Object.defineProperty(SVGElement.prototype, 'getComputedTextLength', {
+    configurable: true,
+    value: function (this: SVGElement) { return (this.textContent?.length ?? 0) * 8; },
+  });
   await import('./sections/support/SupportPage');
 });
 afterEach(cleanup);
@@ -25,13 +34,18 @@ function renderPath(path: string) {
 }
 
 describe('registered route smoke test', () => {
-  it.each(routes)('renders $path', async (route) => {
-    const path = route.path.replace(':slug', 'sample-article').replace(':volume', '1').replace('*', 'site/results');
+  const cases = routes.flatMap((route) => {
+    const variants = readingPaths[route.path as keyof typeof readingPaths];
+    return variants
+      ? variants.map((slug) => ({ route, path: route.path.replace(/:(slug|volume)/, slug) }))
+      : [{ route, path: route.path.replace(':slug', 'sample-article').replace('*', 'site/results') }];
+  });
+  it.each(cases)('renders $path', async ({ route, path }) => {
     renderPath(path);
     const main = within(screen.getByRole('main'));
     const heading = await main.findByRole('heading', { level: 1 }, { timeout: 3000 });
     expect(heading).toBeVisible();
-    if (route.load) expect(heading).toHaveTextContent(supportTitles[path]);
+    if (supportTitles[path]) expect(heading).toHaveTextContent(supportTitles[path]);
     if (route.legacy) {
       expect(heading).toHaveTextContent(route.label);
       expect(main.getByRole('link', { name: '打开原版页面' })).toHaveAttribute('href', expect.stringContaining(route.legacy));
@@ -48,7 +62,7 @@ describe('registered route smoke test', () => {
     const links = await within(screen.getByRole('main')).findAllByRole('link', { name: '看计分规则' });
     expect(links).toHaveLength(2);
     for (const link of links) expect(link).toHaveAttribute('href', '/gaac-support/tasks#score-title');
-    expect(screen.getByRole('link', { name: '推演' })).toHaveAttribute('href', expect.stringContaining('legacy/sandbox/'));
+    expect(screen.getByRole('link', { name: '推演' })).toHaveAttribute('href', '/gaac-support/sandbox');
   });
 });
 

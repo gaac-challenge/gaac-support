@@ -38,7 +38,14 @@ export function Callout({ title, children }: { title?: ReactNode; children: Reac
   return <aside className="article-callout">{title && <strong>{title}</strong>}{children}</aside>;
 }
 
-export function Article({ title, description, markdown, children }: {
+export function Article(props: { content: ReactNode } | {
+  title: string; description?: ReactNode; markdown: string; children?: ReactNode;
+}) {
+  if ('content' in props) return <article className="article">{props.content}</article>;
+  return <MarkdownArticle {...props} />;
+}
+
+function MarkdownArticle({ title, description, markdown, children }: {
   title: string; description?: ReactNode; markdown: string; children?: ReactNode;
 }) {
   const headings = outline(parser.parse(markdown)).filter(({ depth }) => depth === 2 || depth === 3);
