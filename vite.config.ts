@@ -3,8 +3,18 @@ import { dirname, resolve } from 'node:path';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { routes } from './src/sections';
+import blogPaths from './src/sections/blog/content/static-paths.json';
+import comicPaths from './src/sections/comic/content/static-paths.json';
 
-const sandboxPath = 'legacy/sandbox/index.html';
+const readingPaths = { blog: blogPaths, comic: comicPaths };
+const compatibility = new Map([
+  ['legacy/index.html', '../sandbox/'],
+  ['legacy/sandbox/index.html', '../../sandbox/'],
+  ...Object.entries(readingPaths).flatMap(([section, paths]) =>
+    Object.entries(paths).map(([filename, slug]): [string, string] => [
+      `legacy/${section}/${filename}`, `../../${section}/${slug ? slug + '/' : ''}`,
+    ])),
+]);
 const handbookPath = 'legacy/agent-bench/deep-research/research-plan/rules.html';
 
 function redirect(relative: string) {
@@ -12,15 +22,7 @@ function redirect(relative: string) {
 }
 
 function legacyFiles(root: string) {
-  const documents = new Map<string, string>();
-  const sandboxSource = resolve(root, sandboxPath);
-  if (existsSync(sandboxSource)) {
-    const html = readFileSync(sandboxSource, 'utf8')
-      .replace(/href="(?=(?:infra|prep|agent-bench|blog|comic)\/)/g, 'href="../')
-      .replace('href="support/index.html"', 'href="../../"');
-    documents.set(sandboxPath, html);
-    documents.set('legacy/index.html', redirect('sandbox/'));
-  }
+  const documents = new Map([...compatibility].map(([name, target]) => [name, redirect(target)]));
   if (existsSync(resolve(root, 'legacy/agent-bench/deep-research/notes/rules.html'))) {
     documents.set(handbookPath, redirect('../notes/rules.html'));
   }
@@ -34,14 +36,14 @@ function staticRoutes(base: string): Plugin {
       server.middlewares.use((request, response, next) => {
         const pathname = new URL(request.url ?? '/', 'http://localhost').pathname;
         if (!pathname.startsWith(base)) return next();
-        const relative = pathname.slice(base.length).replace(/\/$/, '/index.html');
-        if (relative === 'legacy' || relative === 'legacy/sandbox') {
+        const relative = decodeURIComponent(pathname.slice(base.length)).replace(/\/$/, '/index.html');
+        if (relative === 'legacy' || compatibility.has(relative + '/index.html')) {
           response.writeHead(301, { Location: pathname + '/' });
           response.end();
           return;
         }
         const path = relative;
-        if (![sandboxPath, handbookPath, 'legacy/index.html'].includes(path)) return next();
+        if (path !== handbookPath && !compatibility.has(path)) return next();
         const html = legacyFiles(server.config.publicDir).get(path);
         if (!html) return next();
         response.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -52,14 +54,20 @@ function staticRoutes(base: string): Plugin {
       if (!dir) return;
       const html = readFileSync(resolve(dir, 'index.html'), 'utf8');
       writeFileSync(resolve(dir, '404.html'), html);
-      for (const { path } of routes) {
+      const detailPaths = Object.entries(readingPaths).flatMap(([section, paths]) =>
+        Object.values(paths).filter(Boolean).map((slug) => ({ path: `/${section}/${slug}` })));
+      for (const { path } of [...routes, ...detailPaths]) {
         const target = path.replace(/\/\*$/, '').slice(1);
         if (!target || target.includes(':') || target.includes('*')) continue;
         const file = resolve(dir, target, 'index.html');
         mkdirSync(dirname(file), { recursive: true });
         writeFileSync(file, html);
       }
-      for (const [path, content] of legacyFiles(dir)) writeFileSync(resolve(dir, path), content);
+      for (const [path, content] of legacyFiles(dir)) {
+        const file = resolve(dir, path);
+        mkdirSync(dirname(file), { recursive: true });
+        writeFileSync(file, content);
+      }
     },
   };
 }
