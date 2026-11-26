@@ -35,7 +35,12 @@ function staticRoutes(base: string): Plugin {
         const pathname = new URL(request.url ?? '/', 'http://localhost').pathname;
         if (!pathname.startsWith(base)) return next();
         const relative = pathname.slice(base.length).replace(/\/$/, '/index.html');
-        const path = relative === 'legacy' || relative === 'legacy/sandbox' ? relative + '/index.html' : relative;
+        if (relative === 'legacy' || relative === 'legacy/sandbox') {
+          response.writeHead(301, { Location: pathname + '/' });
+          response.end();
+          return;
+        }
+        const path = relative;
         if (![sandboxPath, handbookPath, 'legacy/index.html'].includes(path)) return next();
         const html = legacyFiles(server.config.publicDir).get(path);
         if (!html) return next();

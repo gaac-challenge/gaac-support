@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { sections, routes } from '../sections';
+import { sections } from '../sections';
 import { publicUrl, SiteLink } from './links';
 
 const official = 'https://gaac.gosim.org/';
