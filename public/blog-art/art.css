@@ -30,3 +30,13 @@ td, th { padding: 4px; border-bottom: 1px solid var(--line); text-align: start; 
 .tip { position: fixed; visibility: hidden; color: white; background: var(--ink); border-radius: 6px; padding: 6px; z-index: 2; pointer-events: none; }
 .tip.on, .tip.show { visibility: visible; }
 main > div[hidden] { display: block; position: absolute; visibility: hidden; top: 0; left: 0; width: 100%; }
+main > div { display: flow-root; }
+.brow { grid-template-columns: 90px minmax(0, 1fr) 142px; }
+.brow .bar { border-radius: 3px; overflow: hidden; gap: 2px; }
+.brow i { background: var(--acc); }
+.brow i.new { background: var(--bar-2); }
+.brow .r { text-align: end; }
+@media (max-width: 520px) {
+  .brow { grid-template-columns: 70px minmax(0, 1fr); }
+  .brow .r { grid-column: 2; font-size: .75rem; }
+}

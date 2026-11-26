@@ -6,6 +6,7 @@ import { Article } from '../../components/Article';
 import { PageHeader } from '../../components/PageHeader';
 import { publicUrl, SiteLink } from '../../components/links';
 import { PipelineDiagram, SequenceDiagram } from './Diagrams';
+import { Category, Checklist, Gap, NextPosts, NoteBox, Playback, Reasons } from './ArticleBlocks';
 
 type Metadata = { title: string; series: string; kicker: string; description: string; meta: string[] };
 type Stat = { value: string; label: string };
@@ -31,7 +32,7 @@ function StatRow({ stats }: { stats: Stat[] }) {
   </li>)}</ul>;
 }
 
-function Figure({ slug, data }: { slug: string; data: Drawing }) {
+function DrawingFrame({ slug, drawing, title }: { slug: string; drawing: string; title: string }) {
   const ref = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState(190);
   useEffect(() => {
@@ -42,11 +43,15 @@ function Figure({ slug, data }: { slug: string; data: Drawing }) {
     window.addEventListener('message', resize);
     return () => window.removeEventListener('message', resize);
   }, []);
-  const src = publicUrl('blog-art/index.html?' + new URLSearchParams({ post: slug, figure: data.drawing }));
+  const src = publicUrl('blog-art/index.html?' + new URLSearchParams({ post: slug, figure: drawing }));
+  return <iframe ref={ref} className="blog-drawing" src={src} height={height} title={title} />;
+}
+
+function Figure({ slug, data }: { slug: string; data: Drawing }) {
   return <figure className="blog-figure card" id={data.drawing}>
     {data.title && <header><strong>{data.title}</strong><span>{data.label}</span></header>}
     {data.description && <p>{data.description}</p>}
-    <iframe ref={ref} src={src} height={height} title={data.title ?? '四个回合的块编号'} />
+    <DrawingFrame slug={slug} drawing={data.drawing} title={data.title ?? '四个回合的块编号'} />
     {data.caption && <figcaption><Markdown>{data.caption}</Markdown></figcaption>}
   </figure>;
 }
@@ -55,16 +60,18 @@ function fenced(children: ReactNode) {
   const code = Children.toArray(children)[0];
   if (!isValidElement<{ className?: string; children?: ReactNode }>(code)) return;
   const kind = code.props.className?.replace(/^language-/, '');
-  if (kind && ['question', 'stats', 'drawing', 'sequence', 'pipeline'].includes(kind)) return { kind, value: JSON.parse(String(code.props.children)) };
+  if (kind && ['question', 'stats', 'drawing', 'sequence', 'pipeline', 'playback', 'reasons', 'gap', 'category', 'next', 'callout', 'checklist'].includes(kind)) return { kind, value: JSON.parse(String(code.props.children)) };
 }
 
 function heading(children: ReactNode) {
   const pieces = Children.toArray(children);
   const tail = pieces.at(-1);
-  if (typeof tail !== 'string') return { children };
-  const marker = /\s+\{#([\w-]+)\}$/.exec(tail);
-  if (!marker) return { children };
-  return { id: marker[1], children: [...pieces.slice(0, -1), tail.slice(0, marker.index)] };
+  const marker = typeof tail === 'string' ? /\s+\{#([\w-]+)\}$/.exec(tail) : null;
+  const values = marker && typeof tail === 'string' ? [...pieces.slice(0, -1), tail.slice(0, marker.index)] : pieces;
+  const first = values[0];
+  const ordinal = typeof first === 'string' && /^[0-9]{2}/.exec(first);
+  if (ordinal && typeof first === 'string') values[0] = first.slice(2);
+  return { id: marker?.[1], children: <>{ordinal && <span className="blog-section-number">{ordinal[0]}</span>}{values}</> };
 }
 
 export function BlogPost({ slug, post }: { slug: string; post: ReturnType<typeof parsePost> }) {
@@ -85,6 +92,13 @@ export function BlogPost({ slug, post }: { slug: string; post: ReturnType<typeof
           if (block?.kind === 'drawing') return <Figure slug={slug} data={block.value} />;
           if (block?.kind === 'sequence') return <SequenceDiagram data={block.value} />;
           if (block?.kind === 'pipeline') return <PipelineDiagram data={block.value} />;
+          if (block?.kind === 'playback') return <Playback data={block.value} drawing={<DrawingFrame slug={slug} drawing="blocks" title="四个回合的块编号" />} />;
+          if (block?.kind === 'reasons') return <Reasons items={block.value} />;
+          if (block?.kind === 'gap') return <Gap data={block.value} />;
+          if (block?.kind === 'category') return <Category {...block.value} />;
+          if (block?.kind === 'next') return <NextPosts items={block.value} />;
+          if (block?.kind === 'callout') return <NoteBox {...block.value} />;
+          if (block?.kind === 'checklist') return <Checklist items={block.value} />;
           return <pre>{children}</pre>;
         },
         h2: ({ children }) => <h2 {...heading(children)} />,

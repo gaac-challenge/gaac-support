@@ -36,6 +36,6 @@ if (Object.hasOwn(entries, post) && Object.hasOwn(entries[post], figure)) {
   script.src = './' + post + '.js';
   document.body.append(script);
   new ResizeObserver(() => {
-    parent.postMessage({ type: 'gaac-blog-drawing', height: Math.ceil(root.getBoundingClientRect().height) }, location.origin);
+    parent.postMessage({ type: 'gaac-blog-drawing', height: Math.ceil(root.getBoundingClientRect().height + 1) }, location.origin);
   }).observe(root);
 }
