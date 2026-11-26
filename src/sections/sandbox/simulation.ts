@@ -12,29 +12,32 @@ type Field = { k: string; label: string; unit?: string } & (
   { type: 'sel'; def: string; options: [string, string][] }
 );
 type RiskType = { type: string; stage: Stage; name: string; fields: Field[]; sev: string; ref: string };
-type Task = { id: string; en: string; zh: string; points: number; phase: number };
+export type Task = { icon: string; deliver: string; check: string; id: string; en: string; zh: string; points: number; phase: number };
 export type Params = Record<string, Value | Record<string, number>> & {
-  start: string; hour: number; prepStart: string; edgepodArrive: string; teams: number;
+  start: string; hour: number; prepStart: string; edgepodArrive: string; teams: number; makeupDays: number; gap: number;
   window: number; phase1: number; sealAt: number; scope: string; launch: string; dur: Record<string, number>;
 };
-type Item = { id?: string; a: number; b?: number; lane: string; stage: Stage; kind: string; label?: string; who?: string; tip: string };
-export type Slot = { i: number; L: string; who: string; kind: string; s: number; e: number; p1?: number; seal?: number; ann: number; standbyQ?: boolean; degraded?: boolean; delay: number; makeup: number; lost: number; wall?: (hour: number) => number; quit?: { at: number }; moved?: { from: number; remain: number }; ho?: { a: number; b: number }; outs: { a: number; b: number; at: number; n: number; hours: number; cause: string; comp?: boolean; move?: boolean }[] };
-type Prep = { id: string; name: string; lane: string; durH: number; base: number; state?: string; leadGot: number; hits: { n: number; days: number }[]; es: number; ef: number; slack: number | null; crit: boolean; gate?: string };
-type Log = { h: number; kind: string; title: string; text: string; lane: string };
+export type Item = { cls?: string[]; id?: string; a: number; b?: number; lane: string; stage: Stage; kind: string; label?: string; who?: string; tip: string };
+export type Slot = { i: number; L: string; who: string; kind: string; s: number; e: number; p1?: number; seal?: number; ann: number; standbyQ?: boolean; degraded?: boolean; delay: number; makeup: number; lost: number; wall?: (hour: number) => number; quit?: { at: number; voidH: number }; moved?: { from: number; remain: number }; ho?: { a: number; b: number; extra?: number }; outs: { a: number; b: number; at: number; n: number; hours: number; cause: string; comp?: boolean; move?: boolean }[] };
+type Prep = { note?: string; id: string; name: string; lane: string; durH: number; base: number; state?: string; leadGot: number; hits: { n: number; days: number }[]; es: number; ef: number; slack: number | null; crit: boolean; gate?: string };
+type Log = { n?: number; h: number; kind: string; title: string; text: string; lane: string };
 export type Result = {
   T0: number;
   HM: number; plan: string; holidays: { h: number; name: string }[];
-  F: { dt: (h: number) => string; day: (h: number) => string; dur: (h: number) => string; days: (h: number) => string };
+  F: { D: (h: number) => Date; y0: number; long: (h: number) => string; dateCN: (h: number) => string; dt: (h: number) => string; day: (h: number) => string; dur: (h: number) => string; days: (h: number) => string };
   lanes: { id: string; name: string; owner: string }[];
   stages: { id: Stage; name: string; a: number; b: number }[];
   items: Item[];
   log: Log[];
-  event: { slots: Slot[]; mk: { sl: Slot; ra: number; a: number; b: number }[]; mkB: number };
+  event: { slots: Slot[]; played: Slot[]; pause: [number, number] | null; mk: { sl: Slot; ra: number; a: number; b: number; ho: { b: number } }[]; mkA: number; mkB: number };
   prep: { list: Prep[] };
-  metrics: { start: number; planned: number; gateReady: number; gateBy: string; eventEnd: number; day90: number; slip: number; announce: number | null; prize: number | null; makeupH: number; voidH: number; critTxt: string; riskHit: number };
-  risks: { def: RiskType; status: string; effect: string }[];
-  warns: { name: string; consequence: string }[];
-  disputes: { id: string; title?: string; name?: string; text?: string; resp?: string; star: number; by: string[] }[];
+  post: { list: Prep[]; bands: { a: number; b: number; name: string }[] };
+  flags: { h: number; n: number; sev: string; title: string; team?: string; type: string }[];
+  blackout: { a: number; b: number; name: string } | null;
+  metrics: { unfinished: number; over: number; dayOne: number; delayedN: number; movedN: number; standbyN: number; maxDelay: number; emptyH: number; prizeExt: number; riskDead: number; start: number; planned: number; gateReady: number; gateBy: string; eventEnd: number; day90: number; slip: number; announce: number | null; prize: number | null; makeupH: number; voidH: number; critTxt: string; riskHit: number };
+  risks: { h?: number; def: RiskType; status: string; effect: string }[];
+  warns: { name: string; consequence: string; state?: string; leadGot: number }[];
+  disputes: { id: string; name: string; area: string; prevent: string; star: number; by: string[] }[];
 };
 
 export const config = scenario as {
@@ -43,6 +46,7 @@ export const config = scenario as {
   presets: { id: string; name: string; desc: string; risks: Risk[] }[];
   register: { stage: Stage; risk: string; resp: string; prep: string; ref: string; inject?: string }[];
   views: Record<'pre' | 'post', { id: string; name?: string; sub?: string; task?: string; ids: string[] }[]>;
+  handover: string; postEvent: { name: string; note: string }[];
   tasks: Task[]; phases: { name: string; tag: string; tools: string }[];
   bonus: { zh: string; en: string; max: number; note: string };
   appScore: [string, number][]; appScoreNote: string;
@@ -62,11 +66,11 @@ export function makeRisk(type: string, overrides: Partial<Risk> = {}): Risk {
   return { type, ...Object.fromEntries(riskTypes[type].fields.map(({ k, def }) => [k, overrides[k] ?? def])) };
 }
 
-export function roll(params: Params): Risk[] {
-  const pick = <T,>(choices: T[]) => choices[Math.floor(Math.random() * choices.length)];
+export function roll(params: Params, random = Math.random): Risk[] {
+  const pick = <T,>(choices: T[]) => choices[Math.floor(random() * choices.length)];
   const by = (stage: Stage) => config.riskTypes.filter((type) => type.stage === stage);
   const selected = [pick(by('pre')), pick(by('in')), pick(by('in')), pick(by('post'))];
-  if (Math.random() < .5) selected.push(pick(config.riskTypes));
+  if (random() < .5) selected.push(pick(config.riskTypes));
   const seen = new Set<string>();
   return selected.flatMap(({ type, fields }) => {
     if (seen.has(type) && type !== 'outage') return [];
@@ -76,7 +80,7 @@ export function roll(params: Params): Risk[] {
       if (field.type === 'sel') return [field.k, pick(field.options)[0]];
       const hi = field.k === 'at' ? params.window - 1 : Math.min(field.max, Math.max(field.def * 2, field.min + 1));
       const lo = field.k === 'at' ? 1 : Math.max(field.min, Math.round(field.def / 2));
-      return [field.k, Math.round(lo + Math.random() * (hi - lo))];
+      return [field.k, Math.round(lo + random() * (hi - lo))];
     });
     return [makeRisk(type, Object.fromEntries(choices))];
   });
@@ -115,22 +119,55 @@ export function adjust(params: Params, key: string, value: Value): Params {
   return next;
 }
 
-export function describeSlot(result: Result, slot: Slot, time: number) {
-  const { F } = result;
-  if (slot.kind === 'empty') return { label: '空档', note: '赛前退出，空档作缓冲' };
-  if (time < slot.s) return { label: '等待', note: F.dt(slot.s) + ' 上机 · 还有 ' + F.dur(slot.s - time) };
+export function slotState(result: Result, slot: Slot, time: number) {
+  if (slot.kind === 'empty') return { kind: 'empty', label: '空档' } as const;
+  if (time < slot.s) return { kind: 'wait', label: '等待' } as const;
   const outage = slot.outs.find(({ a, b }) => time >= a && time < b);
-  if (outage) return { label: '宕机', note: `#${outage.n} 宕机 ${outage.hours} 小时${outage.comp ? '，补时' : outage.move ? '，剩余挪到补赛' : ''}` };
+  if (outage && time < Math.max(slot.e, outage.b)) return { kind: 'out', label: '宕机', outage } as const;
   if (time < slot.e) {
-    if (slot.seal != null && time >= slot.seal) return { label: '正式评测', note: '组委会运行正式评测 · ' + F.dur(slot.e - time) + '后下机' };
-    if (slot.p1 != null && time >= slot.p1) return { label: '开发期', note: '距封存还有 ' + F.dur((slot.seal ?? slot.e) - time) };
-    return { label: config.phases[0].name, note: F.dur((slot.p1 ?? slot.e) - time) + '后转开发期' };
+    if (slot.seal != null && time >= slot.seal) return { kind: 'formal', label: '正式评测' } as const;
+    if (slot.p1 != null && time >= slot.p1) return { kind: 'dev', label: '开发期' } as const;
+    return { kind: 'p1', label: config.phases[0].name } as const;
   }
   const makeup = result.event.mk.find((entry) => entry.sl === slot);
-  if (makeup && slot.moved && time < makeup.b) return {
-    label: time < makeup.a ? '等补赛' : '补赛',
-    note: `剩余 ${slot.moved.remain} 小时 · ${F.dt(makeup.a)} 起补赛`,
+  if (makeup && time < makeup.a) return { kind: 'mkwait', label: '等补赛' } as const;
+  if (makeup && time < makeup.b) return { kind: 'mk', label: '补赛' } as const;
+  if (slot.quit) return { kind: 'quit', label: '已退出' } as const;
+  return { kind: 'done', label: '完成' } as const;
+}
+
+export function describeSlot(result: Result, slot: Slot, time: number) {
+  const state = slotState(result, slot, time);
+  const { F } = result;
+  const notes = {
+    empty: () => '赛前退出，空档作缓冲',
+    wait: () => `${F.dt(slot.s)} 上机 · 还有 ${F.dur(slot.s - time)}${slot.delay ? `（比公布晚 ${F.dur(slot.delay)}）` : ''}`,
+    p1: () => `${config.tasks.filter((task) => task.phase === 1).map(({ en }) => en).join('、')} · ${F.dur((slot.p1 ?? slot.e) - time)}后转开发期`,
+    dev: () => `${config.tasks.filter((task) => task.phase !== 1).length} 类应用并行 · ${F.dur((slot.seal ?? slot.e) - time)}后封存`,
+    formal: () => `组委会运行正式评测 · ${F.dur(slot.e - time)}后下机`,
+    out: () => state.kind === 'out' ? `#${state.outage.n} 宕机 ${state.outage.hours} 小时${state.outage.comp ? '，补时' : state.outage.move ? '，剩余挪到补赛' : ''}` : '',
+    mkwait: () => `剩余 ${slot.moved?.remain} 小时，等补赛`,
+    mk: () => `补赛中 · 剩余 ${slot.moved?.remain} 小时`,
+    quit: () => `第 ${slot.quit?.at} 小时退出，剩余作废`,
+    done: () => `${F.dt(slot.e)} 下机${slot.makeup ? ` · 含补时 ${slot.makeup} 小时` : ''}`,
   };
-  if (slot.quit) return { label: '已退出', note: `第 ${slot.quit.at} 小时退出，剩余作废` };
-  return { label: '完成', note: F.dt(slot.e) + ' 下机' + (slot.makeup ? ` · 含补时 ${slot.makeup} 小时` : '') };
+  return { ...state, note: notes[state.kind]() };
+}
+
+export const shortLabel = (label: string) => label.split(/：| · |（| → /)[0];
+export const stamp = (result: Result, hour: number) => atStage(result, hour) === 'in' ? result.F.dt(hour) : result.F.day(hour);
+export function todayHour(result: Result) {
+  const now = new Date();
+  return (Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - result.T0) / 3600000 + now.getHours();
+}
+
+export function clockOf(slot: Slot, wallHour: number, window: number) {
+  if (wallHour >= slot.e) return slot.quit?.at ?? slot.moved?.from ?? window;
+  let lo = 0, hi = window;
+  for (let step = 0; step < 22; step++) {
+    const middle = (lo + hi) / 2;
+    if ((slot.wall?.(middle) ?? slot.s + middle) <= wallHour) lo = middle;
+    else hi = middle;
+  }
+  return Math.floor(lo);
 }

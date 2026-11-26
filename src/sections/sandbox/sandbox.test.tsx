@@ -43,7 +43,7 @@ describe('sandbox controls', () => {
     expect(screen.getAllByRole('button', { name: '删除这条风险' })).toHaveLength(3);
     expect(screen.getByRole('combobox', { name: '情景' })).toHaveDisplayValue('随机');
     for (const stage of ['赛前', '赛中', '赛后']) {
-      expect(within(screen.getByRole('region', { name: '情景与风险' })).getByText(new RegExp('^#\\d+ [^#]* · ' + stage + '$'))).toBeVisible();
+      expect(within(screen.getByRole('region', { name: '情景与风险' })).getAllByText(new RegExp('^' + stage + ' · 预案')).length).toBeGreaterThan(0);
     }
     fireEvent.click(screen.getByRole('button', { name: '恢复默认' }));
     expect(screen.getByRole('spinbutton', { name: '队伍数' })).toHaveValue(5);
@@ -54,10 +54,11 @@ describe('sandbox controls', () => {
     open();
     fireEvent.change(screen.getByRole('combobox', { name: '添加风险' }), { target: { value: 'outage' } });
     const risk = within(screen.getByRole('region', { name: '情景与风险' }));
-    expect(risk.getByText('#1 机器宕机 · 赛中')).toBeVisible();
+    expect(risk.getByText('机器宕机', { selector: 'strong' })).toBeVisible();
     fireEvent.change(risk.getByRole('spinbutton', { name: '停' }), { target: { value: '30' } });
     expect(risk.getByRole('spinbutton', { name: '停' })).toHaveValue(30);
     const register = within(screen.getByRole('region', { name: '风险登记册' }));
+    fireEvent.click(register.getByText('预案第 3–7 节的全部风险'));
     fireEvent.click(register.getAllByRole('button', { name: /注入/ })[0]);
     expect(risk.getAllByRole('button', { name: '删除这条风险' })).toHaveLength(2);
     expect(location.hash).toBe('#risks');
@@ -73,12 +74,12 @@ describe('sandbox controls', () => {
     const start = result.stages[0].a, end = result.stages[2].b;
     const output = screen.getByLabelText('当前时刻');
     fireEvent.pointerDown(band, { clientX: 100 });
-    expect(output).toHaveTextContent(result.F.dt(start));
+    expect(output).toHaveTextContent(result.F.day(start));
     fireEvent.pointerMove(band, { clientX: 550 });
-    expect(output).toHaveTextContent(result.F.dt(Math.round((start + end) / 2)));
+    expect(output).toHaveTextContent(result.F.day(Math.round((start + end) / 2)));
     fireEvent.pointerUp(band);
     fireEvent.pointerMove(band, { clientX: 1000 });
-    expect(output).toHaveTextContent(result.F.dt(Math.round((start + end) / 2)));
+    expect(output).toHaveTextContent(result.F.day(Math.round((start + end) / 2)));
   });
 
   it('gives every sidebar link its own titled section', () => {
