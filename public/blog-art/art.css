@@ -1,0 +1,32 @@
+@font-face { font-family: "DM Sans Variable"; src: url("dm-sans-latin-wght-normal.woff2") format("woff2"); font-style: normal; font-weight: 100 1000; font-display: swap; }
+
+:root {
+  color-scheme: light;
+  --ink: #102c3a;
+  --ink-2: #345260;
+  --surface: #fff;
+  --line: #d9deda;
+  --line-2: #cce5e9;
+  --acc: #17677d;
+  --acc-wash: #e4f6fa;
+  --bar-2: #8bc6d3;
+  --bar-3: #99a9b4;
+  --muted: #606665;
+}
+body { margin: 0; font: 13px/1.5 'DM Sans Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif; color: var(--ink); }
+.chart svg { display: block; width: 100%; height: auto; }
+.chart svg text { fill: var(--ink); font-size: 12px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+.legend span::before { content: ''; display: inline-block; width: .65em; height: .65em; margin-right: 5px; border-radius: 50%; background: var(--bar-2); }
+details { padding-block: 6px; }
+summary { cursor: pointer; }
+.tbl { overflow: auto; }
+table { width: 100%; border-collapse: collapse; }
+td, th { padding: 4px; border-bottom: 1px solid var(--line); text-align: start; }
+.brow { display: grid; grid-template-columns: auto minmax(5rem, 1fr) auto; gap: 6px; align-items: center; margin-block: 6px; }
+.brow .bar { display: flex; height: 12px; }
+.brow i { background: var(--bar-2); }
+.brow i.new { background: var(--acc); }
+.tip { position: fixed; visibility: hidden; color: white; background: var(--ink); border-radius: 6px; padding: 6px; z-index: 2; pointer-events: none; }
+.tip.on, .tip.show { visibility: visible; }
+main > div[hidden] { display: block; position: absolute; visibility: hidden; top: 0; left: 0; width: 100%; }

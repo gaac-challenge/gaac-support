@@ -1,26 +1,23 @@
-import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Article } from '../../components/Article';
-import { ConvertedContent, type ConvertedPage } from '../../components/ConvertedContent';
 import { MissingPage, usePageTitle } from '../../components/Layout';
-// @ts-expect-error Original chart code is an isolated JavaScript module.
-import { drawings } from './drawings.js';
-import pages from './content/pages.json';
-import './content/source.css';
+import { BlogIndex } from './BlogIndex';
+import { BlogPost, parsePost } from './BlogPost';
+import install from './content/install-agentx.md?raw';
+import mock from './content/mock-server.md?raw';
+import traces from './content/393-traces.md?raw';
 import './blog.css';
 
-const entries: Record<string, ConvertedPage> = pages;
-const mountDrawings: Record<string, (root: HTMLDivElement, signal: AbortSignal) => void> = drawings;
+const posts = {
+  'install-agentx': parsePost(install),
+  'mock-server': parsePost(mock),
+  '393-traces': parsePost(traces),
+};
 
 export default function BlogPage() {
-  const { slug = '' } = useParams();
-  const page = Object.hasOwn(entries, slug) ? entries[slug] : undefined;
-  usePageTitle(page?.title ?? '页面未找到');
-  const mount = useCallback((root: HTMLDivElement) => {
-    const lifecycle = new AbortController();
-    mountDrawings[slug]?.(root, lifecycle.signal);
-    return () => lifecycle.abort();
-  }, [slug]);
-  if (!page) return <MissingPage />;
-  return <Article content={<ConvertedContent key={slug} className={'blog-page blog-page-' + (slug || 'index')} page={page} mount={mount} />} />;
+  const { slug } = useParams();
+  const post = slug && Object.hasOwn(posts, slug) ? posts[slug as keyof typeof posts] : undefined;
+  usePageTitle(post?.meta.title ?? (slug ? '页面未找到' : '动手笔记'));
+  if (!slug) return <BlogIndex />;
+  if (!post) return <MissingPage />;
+  return <BlogPost key={slug} slug={slug} post={post} />;
 }
