@@ -1,25 +1,77 @@
-.sandbox-page.sandbox-page-index {
-  --bg: transparent;
-  --sunken: #f2f9fa;
-  --ink: #102c3a;
-  --ink-2: #345260;
-  --line: #d9deda;
-  --acc: #17677d;
-  --acc-ink: #102c3a;
-  --acc-1: #8ae6ff;
-  --acc-2: #102c3a;
-  --acc-soft: #e6f8fc;
-  --f: 'DM Sans Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  --fd: var(--f);
+.sandbox-page { display: grid; grid-template-columns: 218px minmax(0, 1fr); align-items: start; gap: 24px; }
+.sandbox-main, .sandbox-section { display: grid; gap: 16px; min-width: 0; }
+.sandbox-main { gap: 36px; }
+.sandbox-section { scroll-margin-top: 20px; }
+.sandbox-section h2, .sandbox-section h3, .sandbox-section p { margin: 0; }
+.sandbox-section h2 { font-size: 1.6rem; font-weight: 500; }
+.sandbox-section h3 { font-size: 1.06rem; }
+.sandbox-section p, .sandbox-page small { color: var(--muted); }
+.sandbox-section h1 { margin: 0; font-size: clamp(2rem, 4vw, 3.75rem); font-weight: 500; line-height: 1.12; }
+.sandbox-section h1 small { display: block; font-size: .7em; margin-top: .35em; font-weight: 500; }
+.sandbox-side { position: sticky; top: 16px; padding: 18px; }
+.sandbox-side small, .sandbox-side a { display: block; }
+.sandbox-side nav { display: grid; gap: 2px; margin-top: 12px; }
+.sandbox-side a { padding: 7px 9px; border-radius: 9px; color: var(--ink); text-decoration: none; }
+.sandbox-side a:hover { background: var(--soft); }
+.sandbox-top, .sandbox-scrub, .sandbox-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.sandbox-top { justify-content: space-between; padding: 12px 18px; }
+.sandbox-page input:not([type="range"]), .sandbox-page select { color: var(--ink); background: white; font: inherit; border: 1px solid var(--line); border-radius: 7px; padding: 6px; max-width: 100%; }
+.sandbox-page input[type="number"] { width: 82px; }
+.sandbox-page .pill { padding: 8px 13px; min-height: 38px; }
+.sandbox-page [aria-pressed="true"] { background: var(--ink); color: white; }
+.sandbox-disclaimer { justify-self: start; border-radius: 999px; background: var(--soft); padding: 6px 14px; font-weight: 700; }
+.sandbox-section .sandbox-disclaimer { color: var(--ink); }
+.sandbox-eyebrow { font-size: .78rem; }
+.sandbox-overview-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.sandbox-parameter-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.sandbox-card { min-width: 0; padding: 18px; display: grid; gap: 12px; }
+.sandbox-start > strong { font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 500; }
+.sandbox-start dl { display: flex; gap: 14px; flex-wrap: wrap; margin: 0; padding-top: 12px; border-top: 1px solid var(--line); }
+.sandbox-start dd { margin: 3px 0 0; font-size: 1.3rem; }
+.sandbox-findings > div + div, .sandbox-risk, .sandbox-param + .sandbox-param { border-top: 1px solid var(--line); padding-top: 10px; }
+.sandbox-param, .sandbox-risk { display: grid; gap: 6px; }
+.sandbox-param small { display: block; }
+.sandbox-band svg { width: 100%; height: 38px; cursor: ew-resize; touch-action: pan-y; }
+.sandbox-band .sandbox-row { margin-top: 8px; }
+.sandbox-scroll { overflow: auto; }
+.sandbox-gantt { display: block; width: 100%; min-width: 700px; font-size: 13px; touch-action: pan-y; }
+.sandbox-gantt text { fill: var(--ink); font-size: 13px; }
+.sandbox-gantt .sandbox-gantt-owner { fill: var(--muted); font-size: 10px; }
+.sandbox-gridline { stroke: var(--line); }
+.sandbox-playhead { stroke: var(--ink); stroke-width: 2; }
+.stage-pre, .gantt-reserve rect { fill: var(--soft); }
+.stage-in, .gantt-bar rect { fill: var(--cyan); }
+.stage-post, .gantt-ho rect { fill: var(--line-blue); }
+.gantt-ms circle, .gantt-win rect { fill: #17677d; }
+.gantt-win text { fill: white; }
+.gantt-mk rect { fill: #afe5d3; }
+.gantt-empty rect, .gantt-pause rect, .gantt-void rect, .gantt-outage { fill: #f8dac7; }
+.sandbox-scrub input { flex: 1 1 150px; }
+.sandbox-page table { width: 100%; border-collapse: collapse; text-align: start; }
+.sandbox-page th, .sandbox-page td { padding: 8px 12px; border-bottom: 1px solid var(--line); text-align: start; vertical-align: top; }
+.sandbox-page :is(td, th):first-child { min-width: 70px; }
+.sandbox-page #register table { min-width: 720px; }
+.sandbox-page #register td:last-child { white-space: nowrap; }
+.sandbox-page #register th:nth-child(2) { min-width: 135px; }
+.sandbox-page details:not([open]) .sandbox-scroll { display: none; }
+.sandbox-page summary { cursor: pointer; }
+.sandbox-log { max-height: 350px; overflow: auto; padding-left: 24px; }
+.sandbox-log li { margin-block: 8px; }
+.sandbox-log small { display: block; }
+.sandbox-log [data-future="true"] { opacity: .72; }
+.sandbox-text-button { border: 0; background: transparent; color: var(--ink); text-align: left; text-decoration: underline; padding: 0; font: inherit; cursor: pointer; }
+@media (max-width: 920px) {
+  .sandbox-page { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .sandbox-side { position: static; padding: 12px; }
+  .sandbox-side > strong, .sandbox-side > small { display: none; }
+  .sandbox-side nav { display: flex; overflow: auto; margin: 0; white-space: nowrap; }
+  .sandbox-overview-grid, .sandbox-parameter-grid { grid-template-columns: minmax(0, 1fr); }
 }
-.sandbox-page .side { border: 1px solid var(--line); border-radius: 24px; }
-.sandbox-page .card { border-radius: 24px; }
-.sandbox-page .sandbox-disclaimer {
-  display: inline-block;
-  padding: 6px 14px;
-  margin-bottom: 16px;
-  border-radius: 999px;
-  background: #e6f8fc;
-  color: #102c3a;
-  font-weight: 700;
-}
+.sandbox-page details.sandbox-card { display: block; }
+.sandbox-page details[open] > summary { margin-bottom: 12px; }
+.sandbox-ledger { margin: 0; padding: 0; list-style: none; }
+.sandbox-ledger li { padding: 7px 0; border-bottom: 1px solid var(--line); }
+.sandbox-ledger small { display: block; }
+.sandbox-stepper { flex-wrap: nowrap; }
+.sandbox-stepper button { font: inherit; color: var(--ink); border: 1px solid var(--line); background: var(--soft); border-radius: 6px; cursor: pointer; }
+.sandbox-stepper input[type="number"] { width: 60px; }
