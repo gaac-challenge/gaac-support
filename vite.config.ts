@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -14,18 +14,8 @@ const compatibility = new Map([
       `legacy/${section}/${filename}`, `../../${section}/${slug ? slug + '/' : ''}`,
     ])),
 ]);
-const handbookPath = 'legacy/agent-bench/deep-research/research-plan/rules.html';
-
 function redirect(relative: string) {
   return `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>GAAC 技术支持</title><meta http-equiv="refresh" content="0;url=${relative}"><a href="${relative}">继续</a><script>location.replace(${JSON.stringify(relative)} + location.hash)</script></html>`;
-}
-
-function legacyFiles(root: string) {
-  const documents = new Map([...compatibility].map(([name, target]) => [name, redirect(target)]));
-  if (existsSync(resolve(root, 'legacy/agent-bench/deep-research/notes/rules.html'))) {
-    documents.set(handbookPath, redirect('../notes/rules.html'));
-  }
-  return documents;
 }
 
 function staticRoutes(base: string): Plugin {
@@ -42,11 +32,10 @@ function staticRoutes(base: string): Plugin {
           return;
         }
         const path = relative;
-        if (path !== handbookPath && !compatibility.has(path)) return next();
-        const html = legacyFiles(server.config.publicDir).get(path);
-        if (!html) return next();
+        const target = compatibility.get(path);
+        if (!target) return next();
         response.setHeader('Content-Type', 'text/html; charset=utf-8');
-        response.end(html);
+        response.end(redirect(target));
       });
     },
     writeBundle({ dir }) {
@@ -62,10 +51,10 @@ function staticRoutes(base: string): Plugin {
         mkdirSync(dirname(file), { recursive: true });
         writeFileSync(file, html);
       }
-      for (const [path, content] of legacyFiles(dir)) {
+      for (const [path, content] of compatibility) {
         const file = resolve(dir, path);
         mkdirSync(dirname(file), { recursive: true });
-        writeFileSync(file, content);
+        writeFileSync(file, redirect(content));
       }
     },
   };

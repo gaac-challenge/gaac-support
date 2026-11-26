@@ -18,10 +18,8 @@ function NavigationLinks({ group }: { group: (typeof sections)[number]['group'] 
 
 export function Layout({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
-  const reading = useRef<HTMLDetailsElement>(null);
   const mobile = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
-    if (reading.current) reading.current.open = false;
     if (mobile.current) mobile.current.open = false;
   }, [pathname]);
   return <div className="site-shell">
@@ -32,10 +30,7 @@ export function Layout({ children }: { children: ReactNode }) {
       </Link>
       <nav className="site-nav" aria-label="板块">
         <NavigationLinks group="support" />
-        <details className="site-menu" ref={reading}>
-          <summary>资料</summary>
-          <div className="site-menu-panel"><NavigationLinks group="reading" /></div>
-        </details>
+        <NavigationLinks group="reading" />
       </nav>
       <div className="site-actions">
         <Link className="pill primary" to="/desk">本队任务台</Link>
@@ -43,7 +38,7 @@ export function Layout({ children }: { children: ReactNode }) {
           <summary className="pill secondary">菜单</summary>
           <div className="site-menu-panel">
             <nav aria-label="板块"><NavigationLinks group="support" /></nav>
-            <nav aria-label="资料"><NavigationLinks group="reading" /></nav>
+            <nav aria-label="动手笔记"><NavigationLinks group="reading" /></nav>
           </div>
         </details>
       </div>

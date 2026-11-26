@@ -1,6 +1,6 @@
 # GAAC 技术支持（GAAC Support）
 
-智能体大奖赛的参赛技术支持与阅读资料站。技术支持、赛程推演、动手笔记由 React 渲染；其余阅读板块通过旧版入口继续使用。
+智能体大奖赛的参赛技术支持与阅读资料站。技术支持、赛程推演、动手笔记由 React 渲染。
 
 ## 本地开发与构建
 
@@ -33,11 +33,8 @@ python3 tools/check-links.py --directory dist --base /gaac-support/ --files-only
 | `/data`、`/tools`、`/notices`、`/status`、`/desk` | 数据集、工具应用、公告与答疑、运行状态、本队任务台 | React，保留原来的占位内容 |
 | `/sandbox` | 组委会赛程推演 | React，仅浅色，保留原推演规则 |
 | `/blog`、`/blog/:slug` | 动手笔记 | React。文章路径：`install-agentx`、`mock-server`、`393-traces` |
-| `/infra`、`/infra/:slug` | 推理基础设施 | `legacy/infra/` |
-| `/prep`、`/prep/:slug` | DeepSeek 推理读本 | `legacy/prep/` |
-| `/bench/deep-research/*` | 深度研究评测与原有子结构 | `legacy/agent-bench/deep-research/site/` |
 
-「资料」保留各阅读板块的入口；页脚「推演」打开 React 沙盘。构建为已迁移板块的旧 URL 生成跳转页。
+导航中的「动手笔记」打开博客；页脚「推演」打开 React 沙盘。构建为已迁移板块的旧 URL 生成跳转页。
 
 ## 板块与协作约定
 
@@ -46,7 +43,7 @@ python3 tools/check-links.py --directory dist --base /gaac-support/ --files-only
 3. 路由以 `/` 开头，保留 `label`、所属导航分组和 `navigation`。静态资源通过 `publicUrl` 加前缀，站内 React 路由使用 `SiteLink`。
 4. 通用页面外壳、`PageHeader`、Markdown `Article` 与 `Figure` 在 `src/components/`。共用设计变量在 `src/styles/theme.css`，板块样式限定在板块容器内。
 5. 转换脚本放在各自板块或 `tools/`，输出可重现的 JSON 或 Markdown；图像和 SVG 原样迁移。正文不要依赖原页面注入脚本。
-6. 旧版输入在 `public/legacy/<section>/`，某板块迁移且验收后删除对应旧目录。Vite 为旧沙盘、博客和手册入口生成兼容链接。
+6. 旧版输入在 `public/legacy/<section>/`，某板块迁移且验收后删除对应旧目录。Vite 为旧沙盘和博客入口生成兼容链接。
 7. 同步上游时先 `git fetch upstream`，对照变更手动更新对应内容数据与素材，重跑转换和检查；不把旧静态目录整批覆盖到应用中。
 
 `tools/convert-support.py` 从历史提交或 `--source` 指定的 HTML 目录提取十页正文。街景的 `street.js` 保留原文件，在独立 frame 中运行，导航离开后由浏览器销毁该 frame。旧版赛程推演中的日期都是推演假设，正式规则以参赛手册为准。
