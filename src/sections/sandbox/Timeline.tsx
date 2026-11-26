@@ -1,4 +1,4 @@
-import { useRef, type PointerEvent } from 'react';
+import { useRef, useState, type PointerEvent } from 'react';
 import { atStage, clamp, config, stamp, stageNames, todayHour, type Params, type Result, type Stage } from './simulation';
 import { Gantt, timelineDomain } from './Gantt';
 import { Icon } from './icons';
@@ -92,6 +92,7 @@ export function Timeline({ result, params, stage, time, selected, select, setSta
   const { a, b } = domain;
   const left = stage === 'in' ? 168 : 214;
   const drag = useRef(false);
+  const [tip, setTip] = useState<{ text: string; x: number; y: number }>();
   const seekPointer = (event: PointerEvent<SVGSVGElement>) => seek(a + clamp((fraction(event) * 1060 - left) / (1040 - left), 0, 1) * (b - a));
   const title = stage === 'in' ? config.machineName + ' 上机日历' : stage === 'pre' ? '赛前：从准备开始到开赛' : '赛后：算分、复现、公布，再到 90 天计划';
   const subtitle = stage === 'in'
@@ -112,15 +113,26 @@ export function Timeline({ result, params, stage, time, selected, select, setSta
             onPointerDown: (event) => {
               if (event.button !== 0 || fraction(event) * 1060 < left) return;
               drag.current = true;
+              setTip(undefined);
               event.currentTarget.setPointerCapture?.(event.pointerId);
               seekPointer(event);
             },
-            onPointerMove: (event) => { if (drag.current) seekPointer(event); },
+            onPointerMove: (event) => {
+              if (drag.current) { seekPointer(event); return; }
+              const text = event.target instanceof Element ? event.target.closest('[data-tip]')?.getAttribute('data-tip') : null;
+              setTip(text ? { text, x: event.clientX, y: event.clientY } : undefined);
+            },
+            onPointerLeave: () => setTip(undefined),
             onPointerUp: () => { drag.current = false; },
             onPointerCancel: () => { drag.current = false; },
             onLostPointerCapture: () => { drag.current = false; },
           }} />
       </div>
+      {tip && <div className="sandbox-chart-tip" role="tooltip" style={{
+        left: Math.min(tip.x + 14, window.innerWidth - 312),
+        top: tip.y > window.innerHeight - 118 ? tip.y - 10 : tip.y + 14,
+        transform: tip.y > window.innerHeight - 118 ? 'translateY(-100%)' : undefined,
+      }}>{tip.text}</div>}
       <ul className="sandbox-legend" aria-label="图例">{legend.map(([key, label]) =>
         <li key={label}><span className={'sandbox-legend-chip ' + key} />{label}</li>)}
         {stage === 'in' && config.tasks.map((task) => <li key={task.id}><span className={'sandbox-icon-chip task-' + task.id}><Icon name={task.icon} /></span>{task.en}</li>)}

@@ -49,7 +49,10 @@
 .sandbox-log li { margin-block: 8px; }
 .sandbox-log small { display: block; }
 .sandbox-log [data-future="true"] { opacity: .72; }
-.sandbox-text-button { border: 0; background: transparent; color: var(--ink); text-align: left; text-decoration: underline; padding: 0; font: inherit; cursor: pointer; }
+.sandbox-text-button { display: inline-flex; align-items: center; gap: 7px; border: 0; background: transparent; color: var(--ink); text-align: left; padding: 0; font: inherit; cursor: pointer; }
+.sandbox-text-button:hover:not(:disabled) { text-decoration: underline; }
+.sandbox-text-button:disabled { cursor: default; }
+.sandbox-team-badge { display: inline-grid; place-items: center; min-width: 26px; height: 26px; border: 1px solid var(--line-blue); border-radius: 50%; background: var(--soft); font-size: .8rem; }
 @media (max-width: 920px) {
   .sandbox-page { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .sandbox-side { position: static; padding: 12px; }
@@ -297,3 +300,9 @@
 
 .sandbox-main #params > .pill, .sandbox-main #prep > .pill { justify-self: end; }
 .sandbox-team-controls > .sandbox-row { flex-wrap: nowrap; }
+.sandbox-page #sched table { min-width: 760px; }
+.sandbox-page #sched :is(th, td):not(:last-child) { white-space: nowrap; }
+.sandbox-page #sched td { vertical-align: middle; }
+.sandbox-page #sched td:nth-child(n + 2):nth-child(-n + 6) { font: .82rem ui-monospace, monospace; }
+.sandbox-chart-tip { position: fixed; z-index: 30; max-width: min(300px, calc(100vw - 16px)); padding: 7px 10px; border-radius: 8px; color: white; background: var(--ink); box-shadow: var(--shadow); white-space: pre-line; font-size: .8rem; pointer-events: none; }
+.sandbox-gantt .el1, .sandbox-gantt .el2, .sandbox-gantt .el3 { pointer-events: none; }

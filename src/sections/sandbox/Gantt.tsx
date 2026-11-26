@@ -83,7 +83,7 @@ function Flags({ flags, x, y }: { flags: Result['flags']; x: (hour: number) => n
     let at = x(h);
     while (placed.some((value) => Math.abs(value - at) < 20)) at += 20;
     placed.push(at);
-    return <g key={n} className={'rb ' + sev}><title>#{n} {title}</title><circle cx={at} cy={y} r="8.5" />
+    return <g key={n} className={'rb ' + sev} data-tip={`#${n} ${title}`}><circle cx={at} cy={y} r="8.5" />
       <text x={at} y={y + 3.3} textAnchor="middle">{n}</text></g>;
   })}</>;
 }
@@ -172,7 +172,7 @@ function LaneChart({ result, time, stage, domain, svgProps }: ChartProps & { sta
           const at = x(item.a), y0 = row.position + 13 + track * 28;
           const label = item.label ?? '', classes = (item.cls ?? []).join(' ');
           if (item.kind === 'ms') return <g key={item.id}>
-            <circle className={'msd ' + classes} cx={at} cy={y0 + 10} r="5"><title>{item.tip}</title></circle>
+            <circle className={'msd ' + classes} cx={at} cy={y0 + 10} r="5" data-tip={item.tip} />
             <text className="mst" x={at + (leftLabel ? -10 : 10)} y={y0 + 14} textAnchor={leftLabel ? 'end' : 'start'}>{label}</text>
           </g>;
           const size = Math.max(2, x(item.b ?? item.a) - at - 1);
@@ -180,7 +180,7 @@ function LaneChart({ result, time, stage, domain, svgProps }: ChartProps & { sta
           const fits = size > estimateText(label) + 14 ? label : size > estimateText(short) + 14 ? short : '';
           const dropped = item.cls?.includes('drop');
           return <g key={item.id}>
-            <rect className={'lb ' + classes} x={at} y={y0} width={size} height="20" rx="5"><title>{item.tip}</title></rect>
+            <rect className={'lb ' + classes} x={at} y={y0} width={size} height="20" rx="5" data-tip={item.tip} />
             {dropped ? size > 64 && <text className="lt" x={at + 7} y={y0 + 14}>没做完：{short}</text>
               : (fits || labelOutside) && <text className={`lt ${!fits ? 'outside' : item.cls?.includes('crit') ? 'inverse' : ''}`}
                 x={fits ? at + 7 : at + size + 6} y={y0 + 14}>{fits || labelOutside}</text>}
@@ -233,15 +233,13 @@ function ContestChart({ result, params, time, domain, selected, select, svgProps
           <text className="nm-s" x="54" y={cy + 13}>{status.label}</text>
         </g>
         {slot.kind === 'empty' ? <>
-          <rect className="emp" x={x(slot.s)} y={by} width={x(slot.e) - x(slot.s)} height={barHeight} rx="8">
-            <title>{slot.L} 队赛前退出，候补没补上，作缓冲。</title>
-          </rect>
+          <rect className="emp" x={x(slot.s)} y={by} width={x(slot.e) - x(slot.s)} height={barHeight} rx="8" data-tip={`${slot.L} 队赛前退出，候补没补上，作缓冲。`} />
           {x(slot.e) - x(slot.s) > 150 && <text className="sm" x={x(slot.s) + 12} y={cy + 4}>{slot.L} 队退出 · 空档作缓冲</text>}
         </> : <>
           {prior?.ho && x(prior.ho.b) - x(prior.ho.a) > 2 && <rect className="ho" x={x(prior.ho.a) + 1} y={cy - 4}
-            width={x(prior.ho.b) - x(prior.ho.a) - 2} height="8" rx="4"><title>换队交接（{prior.who} 队下机后） · {config.handover}</title></rect>}
+            width={x(prior.ho.b) - x(prior.ho.a) - 2} height="8" rx="4" data-tip={`换队交接（${prior.who} 队下机后） · ${config.handover}`} />}
           {slot.delay > 0 && x(slot.s) - x(slot.ann) > 2 && <rect className="ghost" x={x(slot.ann)} y={by}
-            width={x(slot.s) - x(slot.ann)} height={barHeight} rx="8"><title>公布的上机时间 {F.dt(slot.ann)}，实际 {F.dt(slot.s)}，晚 {F.dur(slot.delay)}</title></rect>}
+            width={x(slot.s) - x(slot.ann)} height={barHeight} rx="8" data-tip={`公布的上机时间 ${F.dt(slot.ann)}，实际 ${F.dt(slot.s)}，晚 ${F.dur(slot.delay)}`} />}
           {segments.map((segment, segmentIndex) => {
             const start = x(segment.a) + (segmentIndex ? 1.5 : 0);
             const end = x(segment.b) - (segmentIndex < segments.length - 1 ? 1.5 : 0), size = Math.max(1, end - start);
@@ -249,32 +247,30 @@ function ContestChart({ result, params, time, domain, selected, select, svgProps
             const nameX = start + 8 + iconWidth;
             const fill = time > segment.a ? Math.max(0, x(Math.min(segment.b, time)) - start) : 0;
             return <g key={segment.phase}>
-              <rect className="trk" x={start} y={by} width={size} height={barHeight} rx={segmentIndex ? 3 : 8}><title>{segment.label} · {F.dt(segment.a)} → {F.dt(segment.b)}</title></rect>
+              <rect className="trk" x={start} y={by} width={size} height={barHeight} rx={segmentIndex ? 3 : 8} data-tip={`${segment.label} · ${F.dt(segment.a)} → ${F.dt(segment.b)}`} />
               {fill > 0 && <rect className={'el' + segment.phase} x={start} y={by} width={Math.min(size, fill)} height={barHeight} rx={segmentIndex ? 3 : 8} />}
               {size > iconWidth + estimateText(segment.label, 10.5) + 14 && <text className={`seg-t ${start + fill > nameX + estimateText(segment.label) ? 'inverse' : ''}`} x={nameX} y={cy + 3.8}>{segment.label}</text>}
-              {size >= segment.tasks.length * 20 + 8 && segment.tasks.map(({ id, icon, en, zh, points }, i) => <g key={id}>
-                <title>{en}（{zh}）· {points} 分</title><rect className={'chart-task chart-task-' + id} x={start + 5 + i * 20} y={cy - 8} width="16" height="16" rx="4" />
+              {size >= segment.tasks.length * 20 + 8 && segment.tasks.map(({ id, icon, en, zh, points }, i) => <g key={id} data-tip={`${en}（${zh}）· ${points} 分`}>
+                <rect className={'chart-task chart-task-' + id} x={start + 5 + i * 20} y={cy - 8} width="16" height="16" rx="4" />
                 <use href={'#i-' + icon} x={start + 8 + i * 20} y={cy - 5} width="10" height="10" />
               </g>)}
             </g>;
           })}
           {slot.outs.filter((outage) => x(outage.b) > x(outage.a)).map((outage) => <rect key={outage.n} className={'out ' + (outage.cause === 'degraded' ? 'deg' : outage.comp || outage.move ? '' : 'soft')} x={x(outage.a)} y={by}
-            width={Math.max(2.5, x(outage.b) - x(outage.a))} height={barHeight} rx="3">
-            <title>#{outage.n} 第 {outage.at} 小时宕机 {outage.hours} 小时 · {outage.move ? '剩余时间挪到补赛窗口' : outage.comp ? '停表，补等长时间' : outage.cause === 'degraded' ? '不停表，成绩标“条件不一致”' : '不补时'}</title>
-          </rect>)}
+            width={Math.max(2.5, x(outage.b) - x(outage.a))} height={barHeight} rx="3"
+            data-tip={`#${outage.n} 第 ${outage.at} 小时宕机 ${outage.hours} 小时 · ${outage.move ? '剩余时间挪到补赛窗口' : outage.comp ? '停表，补等长时间' : outage.cause === 'degraded' ? '不停表，成绩标“条件不一致”' : '不补时'}`} />)}
           {slot.makeup > 0 && x(slot.e) < width - 60 && <text className="sm" x={x(slot.e) + 6} y={cy + 4}>补 {slot.makeup}h</text>}
           {slot.quit && x(slot.s + params.window) - x(slot.e) > 2 && <g>
             <rect className="void" x={x(slot.e) + 1.5} y={by} width={x(slot.s + params.window) - x(slot.e) - 1.5} height={barHeight} rx="3" />
             {x(slot.s + params.window) - x(slot.e) > 70 && <text className="sm" x={x(slot.e) + 10} y={cy + 4}>作废 {slot.quit.voidH}h</text>}
           </g>}
           {makeup && <>
-            {x(makeup.a) - x(makeup.ra) > 1 && <rect className="mkr" x={x(makeup.ra)} y={cy - 4} width={x(makeup.a) - x(makeup.ra)} height="8" rx="4"><title>从归档恢复现场中。</title></rect>}
-            {x(makeup.b) - x(makeup.a) > 1 && <rect className="mk" x={x(makeup.a) + 1} y={by} width={x(makeup.b) - x(makeup.a) - 1} height={barHeight} rx="8">
-              <title>{slot.who} 队补赛：剩余 {slot.moved?.remain} 小时{'\n'}{F.dt(makeup.a)} → {F.dt(makeup.b)}{makeup.b > event.mkB && '\n超出补赛窗口'}</title>
-            </rect>}
+            {x(makeup.a) - x(makeup.ra) > 1 && <rect className="mkr" x={x(makeup.ra)} y={cy - 4} width={x(makeup.a) - x(makeup.ra)} height="8" rx="4" data-tip="从归档恢复现场中。" />}
+            {x(makeup.b) - x(makeup.a) > 1 && <rect className="mk" x={x(makeup.a) + 1} y={by} width={x(makeup.b) - x(makeup.a) - 1} height={barHeight} rx="8"
+              data-tip={`${slot.who} 队补赛：剩余 ${slot.moved?.remain} 小时\n${F.dt(makeup.a)} → ${F.dt(makeup.b)}${makeup.b > event.mkB ? '\n超出补赛窗口' : ''}`} />}
             {x(makeup.b) - x(makeup.a) > 50 && <text className="seg-t" x={x(makeup.a) + 10} y={cy + 3.8}>补赛</text>}
           </>}
-          {review && reviewWidth > 2 && <rect className={`rv ${review.cls?.includes('late') ? 'late' : ''}`} x={x(review.a) + 2} y={by + barHeight + 6} width={reviewWidth - 2} height="4" rx="2"><title>{review.tip}</title></rect>}
+          {review && reviewWidth > 2 && <rect className={`rv ${review.cls?.includes('late') ? 'late' : ''}`} x={x(review.a) + 2} y={by + barHeight + 6} width={reviewWidth - 2} height="4" rx="2" data-tip={review.tip} />}
           <text className="t-d" x={x(slot.s) + 2} y={by + barHeight + 22}>{F.dt(slot.s)}{slot.delay > 0 && ' · 晚 ' + F.dur(slot.delay)}</text>
           <Flags flags={flags} x={x} y={by - 3} />
         </>}

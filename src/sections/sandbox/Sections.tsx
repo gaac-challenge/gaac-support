@@ -76,7 +76,7 @@ export function Schedule({ result, select }: { result: Result; select: (index: n
       ].filter(Boolean);
       const date = (hour?: number) => empty || hour == null ? '—' : F.dt(hour);
       return <tr key={slot.L}>
-        <td><button className="sandbox-text-button" type="button" disabled={empty} onClick={() => select(index)}>{slot.who ?? slot.L}{slot.kind === 'standby' ? '候补' : '队'}</button></td>
+        <td><button className="sandbox-text-button" type="button" disabled={empty} onClick={() => select(index)}><span className="sandbox-team-badge">{slot.who ?? slot.L}</span>{slot.kind === 'standby' ? '候补' : '队'}</button></td>
         <td>{date(slot.s)}</td><td>{date(slot.p1)}</td><td>{date(slot.seal)}</td><td>{date(slot.e)}</td>
         <td>{slot.makeup ? slot.makeup + ' h' : '—'}</td><td>{holidayNames.join(' ') || '—'}</td>
         <td>{notes.join('；') || '—'}</td>
