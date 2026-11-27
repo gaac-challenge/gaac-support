@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, beforeAll, expect, it, vi } from 'vitest';
 import { App } from '../../App';
 import { createMockFetch, demoPassword } from './mock';
@@ -26,6 +26,10 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+function CurrentPath() {
+  return <span data-testid="current-path" hidden>{useLocation().pathname}</span>;
+}
+
 function show(path: string, account?: string, override?: (path: string) => Response | undefined) {
   const mock = createMockFetch({ account });
   const fetch = vi.fn<typeof window.fetch>((input, options) => {
@@ -33,7 +37,7 @@ function show(path: string, account?: string, override?: (path: string) => Respo
     return response ? Promise.resolve(response) : mock(input, options);
   });
   vi.stubGlobal('fetch', fetch);
-  render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>);
+  render(<MemoryRouter initialEntries={[path]}><App /><CurrentPath /></MemoryRouter>);
   return fetch;
 }
 
@@ -47,6 +51,30 @@ async function confirm(name: string, root = main()) {
   await click('确认' + name, within(await main().findByRole('dialog', { name }, wait)));
 }
 const heading = (name: string) => main().findByRole('heading', { name }, wait);
+
+it('offers an inline login and captain registration on the signed-out team page', async () => {
+  show('/team/');
+  expect(await heading('我的队伍')).toBeVisible();
+  const login = within(main().getByRole('region', { name: '登录' }));
+  expect(login.getByLabelText('邮箱')).toBeVisible();
+  expect(login.getByLabelText('密码')).toHaveAttribute('type', 'password');
+  expect(login.getByRole('button', { name: '登录' })).toBeVisible();
+  expect(main().getByRole('link', { name: '用邀请码注册' })).toHaveAttribute('href', '/signup/');
+});
+
+it.each([
+  ['/team/', 'captain', '极光实验室'],
+  ['/admin/', 'organizer', '创建注册邀请码'],
+  ['/account/', 'captain', '修改密码'],
+])('preserves %s after inline login', async (path, account, signedInHeading) => {
+  show(path);
+  await main().findByRole('region', { name: '登录' }, wait);
+  fill('邮箱', account + '@example.test');
+  fill('密码', demoPassword);
+  await click('登录');
+  expect(await heading(signedInHeading)).toBeVisible();
+  expect(screen.getByTestId('current-path').textContent).toBe(path);
+});
 
 it('redeems a registration code at sign-up and creates a team', async () => {
   const fetch = show('/signup/');
@@ -148,7 +176,7 @@ it('forces a password update when the API returns password_change_required', asy
 
 it('completes the forced change flow after sign-in', async () => {
   show('/login/');
-  await heading('登录');
+  await main().findByRole('heading', { name: '登录', level: 1 }, wait);
   fill('邮箱', 'temporary@example.test');
   fill('密码', demoPassword);
   await click('登录');
