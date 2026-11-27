@@ -37,7 +37,7 @@ export function Sidebar({ selected, riskCount, riskHit }: { selected: string; ri
           <Icon name={navIcons[start + index]} />{label}
         </a>)}
       </div>)}
-      <div className="sandbox-nav-group"><small>相关</small><Link to="/blog"><Icon name="list" />动手笔记 · 一篇一个小问题</Link>
+      <div className="sandbox-nav-group">
         <Link to="/"><Icon name="infra" />GAAC 技术支持</Link></div>
     </nav>
     <div className="sandbox-side-scenario"><small>当前情景</small><b>{scenario}</b>

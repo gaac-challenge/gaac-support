@@ -30,7 +30,6 @@ export function Layout({ children }: { children: ReactNode }) {
       </Link>
       <nav className="site-nav" aria-label="板块">
         <NavigationLinks group="support" />
-        <NavigationLinks group="reading" />
       </nav>
       <div className="site-actions">
         <Link className="pill primary" to="/team/">我的队伍</Link>
@@ -38,7 +37,6 @@ export function Layout({ children }: { children: ReactNode }) {
           <summary className="pill secondary">菜单</summary>
           <div className="site-menu-panel">
             <nav aria-label="板块"><NavigationLinks group="support" /></nav>
-            <nav aria-label="动手笔记"><NavigationLinks group="reading" /></nav>
           </div>
         </details>
       </div>
