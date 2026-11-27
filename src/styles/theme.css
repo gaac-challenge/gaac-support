@@ -87,8 +87,8 @@ pre { white-space: pre-wrap; }
   .site-header { display: flex; justify-content: space-between; }
   .site-nav { display: none; }
   .site-menu-mobile { display: block; position: static; }
-  .site-menu-mobile .site-menu-panel { inset-inline: 0; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
-  .site-menu-mobile nav { display: grid; align-content: start; }
+  .site-menu-mobile .site-menu-panel { inset-inline: 0; min-width: 0; display: grid; }
+  .site-menu-mobile nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 10px; align-content: start; }
   .site-menu-mobile a { padding: 8px; border-radius: var(--radius-sm); text-decoration: none; }
   .site-menu-mobile a:hover, .site-menu-mobile a[aria-current="page"] { background: var(--soft); }
 }

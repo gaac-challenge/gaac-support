@@ -8,8 +8,6 @@ import { Article, Figure } from './components/Article';
 import { routes } from './sections';
 import { createMockFetch } from './sections/team/mock';
 
-const readingPaths = { '/blog/:slug': ['install-agentx', 'mock-server', '393-traces'] };
-
 const supportTitles: Record<string, string> = {
   '/': 'GAAC 技术支持', '/tasks': '比赛任务',
   '/model': '统一模型', '/search': '搜索服务',
@@ -36,12 +34,7 @@ function renderPath(path: string) {
 }
 
 describe('registered route smoke test', () => {
-  const cases = routes.flatMap((route) => {
-    const variants = readingPaths[route.path as keyof typeof readingPaths];
-    return variants
-      ? variants.map((slug) => ({ route, path: route.path.replace(/:(slug|volume)/, slug) }))
-      : [{ route, path: route.path.replace(':slug', 'sample-article').replace('*', 'site/results') }];
-  });
+  const cases = routes.map((route) => ({ route, path: route.path.replace('*', 'demo-join') }));
   it.each(cases)('renders $path', async ({ route, path }) => {
     renderPath(path);
     const main = within(screen.getByRole('main'));

@@ -42,11 +42,10 @@ export function HomePage() {
         {pendingServices.map(({ title, path }) => <li key={path}><Link className="card home-service" to={path}>{title}</Link></li>)}
       </ul>
     </section>
-    <section className="home-services" aria-labelledby="reading-title">
-      <h2 id="reading-title">推演与笔记</h2>
-      <div className="home-service-grid home-explore">
+    <section className="home-services" aria-labelledby="simulation-title">
+      <h2 id="simulation-title">赛程推演</h2>
+      <div className="home-service-grid">
         <Link className="card home-service" to="/sandbox/"><div><h3>赛程沙盘</h3><span className="home-chip">推演</span></div></Link>
-        <Link className="card home-service" to="/blog/"><div><h3>动手笔记</h3><span className="home-chip">笔记</span></div></Link>
       </div>
     </section>
   </SupportFrame>;

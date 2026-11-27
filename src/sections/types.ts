@@ -8,7 +8,7 @@ export interface SiteRoute {
 }
 
 export interface Section {
-  group: 'support' | 'reading' | 'secondary';
+  group: 'support' | 'secondary';
   routes: readonly SiteRoute[];
   navigation: readonly string[];
 }

@@ -3,17 +3,11 @@ import { dirname, resolve } from 'node:path';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { routes } from './src/sections';
-import blogPaths from './src/sections/blog/content/static-paths.json';
 
-const readingPaths = { blog: blogPaths };
 const compatibility = new Map([
   ['desk/index.html', '../team/'],
   ['legacy/index.html', '../sandbox/'],
   ['legacy/sandbox/index.html', '../../sandbox/'],
-  ...Object.entries(readingPaths).flatMap(([section, paths]) =>
-    Object.entries(paths).map(([filename, slug]): [string, string] => [
-      `legacy/${section}/${filename}`, `../../${section}/${slug ? slug + '/' : ''}`,
-    ])),
 ]);
 function redirect(relative: string) {
   return `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>GAAC 技术支持</title><meta http-equiv="refresh" content="0;url=${relative}"><a href="${relative}">继续</a><script>location.replace(${JSON.stringify(relative)} + location.hash)</script></html>`;
@@ -43,9 +37,7 @@ function staticRoutes(base: string): Plugin {
       if (!dir) return;
       const html = readFileSync(resolve(dir, 'index.html'), 'utf8');
       writeFileSync(resolve(dir, '404.html'), html);
-      const detailPaths = Object.entries(readingPaths).flatMap(([section, paths]) =>
-        Object.values(paths).filter(Boolean).map((slug) => ({ path: `/${section}/${slug}` })));
-      for (const { path } of [...routes, ...detailPaths]) {
+      for (const { path } of routes) {
         const target = path.replace(/\/\*$/, '').slice(1);
         if (!target || target.includes(':') || target.includes('*')) continue;
         const file = resolve(dir, target, 'index.html');
