@@ -6,7 +6,7 @@ import { api, errorCode, errorMessage, passwordRequired, post, type Config, type
 import { AccountPage, AuthPage, JoinPage } from './Auth';
 import TeamPage from './TeamPage';
 import AdminPage from './AdminPage';
-import { AuthLinks, type Run } from './ui';
+import type { Run } from './ui';
 import { team } from './routes';
 import './team.css';
 
@@ -23,7 +23,8 @@ export default function TeamArea() {
   const [error, setError] = useState<{ path: string; text: string }>();
   const [busy, setBusy] = useState(false);
   const running = useRef(false);
-  usePageTitle(isJoin ? '加入队伍' : team.routes.find((route) => route.path === path)?.label ?? '我的队伍');
+  const title = isJoin ? '加入队伍' : team.routes.find((route) => route.path === path)?.label ?? '我的队伍';
+  usePageTitle(title);
 
   async function refresh(signal?: AbortSignal) {
     try {
@@ -85,10 +86,15 @@ export default function TeamArea() {
 
   function page() {
     if (isJoin) return <JoinPage key={token} token={token} session={session ?? null} {...actions} />;
-    if (path === '/login' || path === '/signup') return session ? <Navigate to="/team/" replace /> : <AuthPage key={path} signup={path === '/signup'} config={config} {...actions} />;
+    if (session && (path === '/login' || path === '/signup')) return <Navigate to="/team/" replace />;
     if (path === '/account' && (session || forced)) return <AccountPage session={session ?? null} forced={forced} join={location.state?.join} {...actions} />;
-    if (!session) return <PageHeader title={path === '/admin' ? '组委会管理' : path === '/account' ? '我的账号' : '我的队伍'}
-      description="登录后即可使用队伍服务。没有账号时，请使用组委会的注册邀请码或队友的邀请链接注册。" actions={<AuthLinks />} />;
+    if (!session) {
+      const lead = path === '/signup' ? '使用组委会发放的邀请码注册队长账号。'
+        : path === '/admin' ? '使用组委会账号登录管理后台。'
+          : path === '/account' ? '登录后可以管理账号资料和密码。'
+            : '登录后可以创建队伍、邀请队友、管理成员。';
+      return <AuthPage key={path} title={title} lead={lead} signup={path === '/signup'} config={config} {...actions} />;
+    }
     if (path === '/admin') return session.user.role === 'organizer' ? <AdminPage self={session.user.id} run={run} busy={busy} />
       : <PageHeader title="组委会管理" description="此页面仅对组委会账号开放。" />;
     return <TeamPage session={session} {...actions} />;

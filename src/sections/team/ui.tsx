@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
 import type { Invite } from './api';
 
 export type Run = (work: () => Promise<void>) => Promise<void>;
@@ -20,10 +19,6 @@ export const value = (values: FormData, key: string) => String(values.get(key) ?
 
 export function DateText({ value: date }: { value: string }) {
   return <time dateTime={date}>{new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Shanghai' }).format(new Date(date))}</time>;
-}
-
-export function AuthLinks() {
-  return <div className="actions"><Link className="pill primary" to="/login/">登录</Link><Link className="pill secondary" to="/signup/">注册</Link></div>;
 }
 
 export function Confirm({ label, message, busy, onConfirm }: { label: string; message: string; busy: boolean; onConfirm: () => void }) {

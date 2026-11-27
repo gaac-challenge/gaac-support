@@ -26,19 +26,40 @@ export function Credentials({ signup, token, run, busy, success }: Pick<Actions,
   </Form>;
 }
 
-export function AuthPage({ signup, config, run, busy, refresh }: Actions & { signup: boolean; config: Config | null }) {
+export function AuthPage({ title, lead, signup, config, run, busy, refresh }: Actions & {
+  title: string; lead: string; signup: boolean; config: Config | null;
+}) {
   const navigate = useNavigate();
   return <>
-    <PageHeader title={signup ? '注册' : '登录'} description={signup ? '使用组委会发放的邀请码注册队长账号。' : '登录后创建队伍或管理现有队伍。'} />
-    <section className="card team-stack team-narrow">
-      <Credentials signup={signup} run={run} busy={busy} success={async (user) => {
-        await refresh();
-        navigate(user.must_change_password ? '/account/' : '/team/', { replace: true });
-      }} />
-      {signup && config?.accounts?.email_verification === 'required' && <p>当前要求验证邮箱。注册后请联系组委会完成验证。</p>}
-      {!signup && <p>忘记密码请联系组委会重置。</p>}
-      <Link to={signup ? '/login/' : '/signup/'}>{signup ? '已有账号？登录' : '没有账号？注册'}</Link>
-    </section>
+    <div className="team-auth-title">
+      <h1>{title}</h1>
+      <p>{lead}</p>
+    </div>
+    <div className="team-auth-layout">
+      <section className="card team-stack team-auth-card" aria-labelledby="team-auth-form">
+        <h2 id="team-auth-form">{signup ? '创建账号' : '登录'}</h2>
+        <Credentials signup={signup} run={run} busy={busy} success={async (user) => {
+          await refresh();
+          if (user.must_change_password) navigate('/account/', { replace: true });
+          else if (signup) navigate('/team/', { replace: true });
+        }} />
+        {signup && config?.accounts?.email_verification === 'required' && <p>当前要求验证邮箱。注册后请联系组委会完成验证。</p>}
+        {!signup && <small>忘记密码请联系组委会重置。</small>}
+      </section>
+      <section className="card team-stack team-auth-guide" aria-labelledby="team-auth-guide">
+        <h2 id="team-auth-guide">{signup ? '注册说明' : '还没有账号？'}</h2>
+        <div className="team-auth-option">
+          <h3>队长</h3>
+          <p>{signup ? '此页面供持有组委会注册邀请码的队长使用。' : '使用组委会发放的注册邀请码创建账号。'}</p>
+          {!signup && <Link className="pill secondary" to="/signup/">用邀请码注册</Link>}
+        </div>
+        <div className="team-auth-option">
+          <h3>队员</h3>
+          <p>打开队长发来的邀请链接，按提示注册并加入队伍。</p>
+        </div>
+        {signup && <Link to="/login/">已有账号？登录</Link>}
+      </section>
+    </div>
   </>;
 }
 
