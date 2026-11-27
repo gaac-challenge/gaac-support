@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Street, SupportFrame } from '../components';
 
 const openServices = [
-  { title: '搜索服务', path: '/search/', description: '查看接入方式、首次调用示例和常见问题。' },
+  { title: '搜索服务', path: '/search/', description: '网页、平台、文档、行情和图片，一把密钥接入。' },
   { title: '队伍', path: '/team/', description: '创建队伍、邀请队友和管理成员。' },
 ];
 
