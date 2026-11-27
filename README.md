@@ -49,7 +49,7 @@ python3 tools/check-links.py --directory dist --base /gaac-support/ --strict
 - 动手笔记的文章以 Markdown 保存，每篇有标题、导语等 frontmatter。围栏 `question`、`stats`、`drawing`、`sequence` 和 `pipeline` 使用对应的字段，分别渲染问题、统计数字、图表、时序和流程。
 - 沙盘的交互状态由 React 管理。规则和默认假设保留在 `engine.js` 和 `scenario.js`，时间轴用 SVG。沙盘使用浅色主题，并显示「推演假设，非正式赛程」。
 - 每个板块维护自己的路由和样式，通用布局及设计变量放在 `src/components/` 和 `src/styles/`。
-- 图表和街景脚本保持原样，在各自的 iframe 里绘制。运行 `python3 tools/check-artwork.py` 核对原始字节。
+- 图表和街景在各自的 iframe 里绘制。运行 `python3 tools/check-artwork.py` 核对图表脚本的原始字节，以及街景脚本仅调整了颜色值。
 - 旧沙盘和博客入口仍可跳转；同步上游时对照差异手动更新对应文章或数据。
 
 沙盘引擎测试覆盖默认情景、每个一键情景和全部可注入风险。正式赛程以参赛手册为准。
