@@ -27,4 +27,9 @@ for file, slug in {
         raise SystemExit(f"Original drawing missing: {file}")
     check(f"public/blog-art/{slug}.js", drawing[1])
 
-check("public/street/street.js", read("6713490", "support/assets/street.js"))
+street = Path("public/street/street.js")
+original = read("6713490", "support/assets/street.js")
+hex_literal = rb'"#[0-9a-fA-F]{6}"'
+if re.sub(hex_literal, b'"#000000"', street.read_bytes()) != re.sub(hex_literal, b'"#000000"', original):
+    raise SystemExit(f"Changes outside the palette: {street}")
+print(sha256(street.read_bytes()).hexdigest(), street, "(only palette literals changed)")
